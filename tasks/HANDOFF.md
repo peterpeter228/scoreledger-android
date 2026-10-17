@@ -1,3 +1,13 @@
+# Current delivery checkpoint — 2026-10-17
+
+The first localBetaDebug candidate is fixed-signed and passed AOSP API26/30/36 tests. The delivered business APK must remain SHA256 d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92, source58a91061b33e853f66e475bdc2273ff6af5c63c8, build38991766567. Test-only e0c971 captures diagnostics internally; all production/build Git blob IDs are unchanged.
+
+Each API passed34 ordinary methods; two opt-in methods skipped normal discovery then passed individually across same-APK install-r. This is not distinct-version upgrade or physical-phone acceptance. Broad70-case mapping remains4PASS/52PARTIAL/14NOT_RUN. Core64 checks, Python46 contracts and 8 JVM test methods passed. PDF is explicitly bounded200 pages, without truncation. Real provider/TalkBack/physical/maximum-scale/payment/publication remain unverified.
+
+Supplemental visual capture38993300734 passed. Parent inspected3 UI screenshots and2 PDF pages. Current task: deliver the verified first internal beta bundle; retain remaining acceptance gaps for later iterations. No secrets belong in source or delivery. Fixed signing recovery is owner-only Drive; do not copy it into delivery.
+
+Previous chronological checkpoints below are historical and may describe resolved failures.
+
 # 当前交接
 阶段：D00，实际取得并安全解压用户 ZIP，完整读取启动规范与 PRD。
 目录独立于易绘创项目；没有指定或使用远程仓库。

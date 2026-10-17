@@ -1,7 +1,7 @@
 {
-  "kitVersion": "1.0",
-  "createdAtUtc": "2026-10-16T16:57:14.789586+00:00",
-  "description": "Transport integrity only; not a digital signature; does not prove Android compilation.",
+  "description": "Current source delivery integrity; excludes this manifest and checksum file. Original input kit checksums preserved separately.",
+  "businessCommit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+  "diagnosticCommit": "e0c971eaf125c133bc110f5d714f82854085c27c",
   "files": [
     {
       "path": ".gitattributes",
@@ -10,13 +10,23 @@
     },
     {
       "path": ".github/workflows/android-ci.yml",
-      "sizeBytes": 2069,
-      "sha256": "bdf84c626cd52f32957963a3b0f2fc3eedb22fa0a7708ac93eb46bdcfd6825ce"
+      "sizeBytes": 5840,
+      "sha256": "7fd01a3161351bcfe835d55e5f16f26b079a704f68b48337be2c18139aaa0220"
+    },
+    {
+      "path": ".github/workflows/android-device-tests.yml",
+      "sizeBytes": 1707,
+      "sha256": "d8f488635142ef8cb817fe366115587b092fec59fe95311c64cc4f5700988978"
+    },
+    {
+      "path": ".github/workflows/android-signed-device-tests.yml",
+      "sizeBytes": 4226,
+      "sha256": "2912d0203c4fa9948f1c60d604fee3047f87441a792077bb520bd507cded128b"
     },
     {
       "path": ".gitignore",
-      "sizeBytes": 207,
-      "sha256": "58d0a4451d7c6438e3431e3532d69c04dd547ef78f593db864d3addb09d1da3c"
+      "sizeBytes": 285,
+      "sha256": "a8c00d087f5ba5efb6b1d6735a22fdc2b214ae3962c37d92dc1375234799f114"
     },
     {
       "path": "AGENTS.md",
@@ -24,9 +34,9 @@
       "sha256": "3f2b6edbe78cadf4b5116bb8152e5544506415ffb93d37e2af924785b6541c08"
     },
     {
-      "path": "DOT_ALL_IN_ONE.md",
-      "sizeBytes": 78075,
-      "sha256": "84b2d7c9293fa5ac616161e1e4f557d4e0a5fe6eaf256c1ff6aff8bc0fda7d88"
+      "path": "DELIVERY_README_ZH.txt",
+      "sizeBytes": 3115,
+      "sha256": "4e308372e8ada4cd935c35542dc4e943720cea0f03fee2363f701422e84f3eba"
     },
     {
       "path": "DOT_RESUME_PROMPT.txt",
@@ -45,8 +55,13 @@
     },
     {
       "path": "PROJECT_STATE.json",
-      "sizeBytes": 757,
-      "sha256": "2446976af7f62181f5422741290c66c24a1b731ef5be3af9ac2bf8db7bfcd1ee"
+      "sizeBytes": 8518,
+      "sha256": "d8c0fc74a5eda7d658599688d1b49e27c01fc8f7bc30a75ff140c6e0944110c2"
+    },
+    {
+      "path": "README.md",
+      "sizeBytes": 649,
+      "sha256": "d7252120d339d3aadd5e19ea58efb1ef160ee01db3ebf4eb3192c8f1f92a1c81"
     },
     {
       "path": "README_先读.md",
@@ -60,8 +75,8 @@
     },
     {
       "path": "app/build.gradle.kts",
-      "sizeBytes": 3344,
-      "sha256": "455fb976b38e3e4e9c300a246ecdd60ac5093bb6f045a5264cc5bd17911f67c0"
+      "sizeBytes": 5250,
+      "sha256": "da709f291658e660eed7f2b6a20f34ed3ba8353d6f917be01315738f6020e3ba"
     },
     {
       "path": "app/proguard-rules.pro",
@@ -74,14 +89,109 @@
       "sha256": "f483ba2d9fe1af8241c4571440f6e2d66ac951a0e2c659801b9c9e6acce8688b"
     },
     {
+      "path": "app/schemas/com.example.scoreledger.data.ScoreDatabase/1.json",
+      "sizeBytes": 8845,
+      "sha256": "77ce03ba97fdb76b07b73faf88b25619f3972944351768cc208cbc570d959ede"
+    },
+    {
+      "path": "app/schemas/com.example.scoreledger.data.ScoreDatabase/2.json",
+      "sizeBytes": 10595,
+      "sha256": "50f8c93b42c6e4c6bec216d4c2300ddf894132a53f77a1261b8a0406bca3eee1"
+    },
+    {
+      "path": "app/src/androidTest/assets/room-v1.json",
+      "sizeBytes": 8845,
+      "sha256": "77ce03ba97fdb76b07b73faf88b25619f3972944351768cc208cbc570d959ede"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/BackupDialogFailureTest.kt",
+      "sizeBytes": 4571,
+      "sha256": "cb1933bd839bfd47da5c4b43c08c6e1d439261ada5c043c0daf16ac2fc6c4a33"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/BackupReplacementTest.kt",
+      "sizeBytes": 5507,
+      "sha256": "4ae0cbf598eeba96ab4d611ea68282c04e1dc2a5aedf726aeb45cc7fa9d48c6d"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/BackupSafRecreationTest.kt",
+      "sizeBytes": 4284,
+      "sha256": "897cd4fd3b883a69d6a7bd3c389d13ef600cf29ff8d6a9868d4f6d0b9b11b844"
+    },
+    {
       "path": "app/src/androidTest/java/com/example/scoreledger/DatabaseSmokeTest.kt",
       "sizeBytes": 1284,
       "sha256": "a0f46a8495cbbb729f97d2a0a4e3dc00ebdd37bd8cd8333f94d52854df383792"
     },
     {
+      "path": "app/src/androidTest/java/com/example/scoreledger/DraftIntegrityTest.kt",
+      "sizeBytes": 12657,
+      "sha256": "7fdbaac6615006b7c04fe232f96bcb68035edea88df1971f7c39e88bd18fae33"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/EntryNavigationTest.kt",
+      "sizeBytes": 2484,
+      "sha256": "74c7fd02e86ae6b8b3bed2258c6637eeddd93e4e21915fc8a07dbf1e4f25c4c8"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/IsolatedUiContext.kt",
+      "sizeBytes": 1152,
+      "sha256": "aabf54fd439c8b77ff96bb7209e4631d910c3056c65dcec0de39ef38acb79968"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/NativeReportPreviewTest.kt",
+      "sizeBytes": 2535,
+      "sha256": "d4a66c37f33490f1afc280d320f5f3ebc709b653cfbf4359643e91b1fc8b696e"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/PdfReportTest.kt",
+      "sizeBytes": 7731,
+      "sha256": "a38cd59479c5b1deaa3033f2b6bfd5d6a9588658d8b73e9fa8839b0190f2901f"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/PdfSaveRecreationTest.kt",
+      "sizeBytes": 4818,
+      "sha256": "7c79742904fa2cca17604f7cd2a904ac754b256938f582f3c5bc46843b97fdf8"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/RecreationDraftTest.kt",
+      "sizeBytes": 2594,
+      "sha256": "b7f8e4aeb6beb6277c2a202b8f585e3ae13e5bcc9b525b9971ab37282e4634ab"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/ReportOptionSemanticsTest.kt",
+      "sizeBytes": 943,
+      "sha256": "795cc0413f0e2632b95442e3907c9461b0e252bf49d1a08620859b5720925466"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/RepositoryIntegrityTest.kt",
+      "sizeBytes": 5867,
+      "sha256": "b2346c40e4ac379d67f1b6939b795b67ca9202e8ea0d98c953ca287a1d7c8dd0"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/SyntheticJourneyTest.kt",
+      "sizeBytes": 6329,
+      "sha256": "aca4762b32861efe80106444fbbe5a2b3a77dcfe95d327ffa71fcba676445ff0"
+    },
+    {
+      "path": "app/src/androidTest/java/com/example/scoreledger/UpgradeRetentionTest.kt",
+      "sizeBytes": 5458,
+      "sha256": "8519f88cd680b4abd19bf4b95404726602b8e449a90305f64a31069eb4acfaec"
+    },
+    {
+      "path": "app/src/debug/AndroidManifest.xml",
+      "sizeBytes": 243,
+      "sha256": "4acc80a61e2162fb5fff7effe385420c08431f593de9ace1b934807a4cb0cf08"
+    },
+    {
+      "path": "app/src/debug/java/com/example/scoreledger/RecreationHostActivity.kt",
+      "sizeBytes": 1568,
+      "sha256": "be9d69b2abaa52076ff8884445d5385e33387da596366a0f5cb8ea95c68ee938"
+    },
+    {
       "path": "app/src/main/AndroidManifest.xml",
-      "sizeBytes": 1324,
-      "sha256": "3620eeec501c7615ff5e43acd0c49092af6f0893c554fbaf796ded8f4315055d"
+      "sizeBytes": 1399,
+      "sha256": "13bc2334c15c24cba9aeb2329ad5c175588146e793dd8eac1fb6361ed83d70a8"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/MainActivity.kt",
@@ -90,38 +200,98 @@
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/ScoreLedgerApplication.kt",
-      "sizeBytes": 345,
-      "sha256": "46fa6fee8269ec4f64bb47beea8389835d4c6fba23f5a401e9d01ecad081f7ae"
+      "sizeBytes": 537,
+      "sha256": "c1d674a9b4370846c0d6557f5ade3276aef20921161c53012c655f7a8d6daccb"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/backup/BackupCodec.kt",
+      "sizeBytes": 11596,
+      "sha256": "bc42c9d4b335e7db6dd5bb62b83b4872d1ab22fdf193d500a135cd17cae29eb7"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/backup/BackupManager.kt",
+      "sizeBytes": 4978,
+      "sha256": "551e43b7e197608e84837feb3251446cd7cef1a9c1da9a6d6e4a9b39cf2fe328"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/data/Entities.kt",
-      "sizeBytes": 1693,
-      "sha256": "bb769cc50ea6f220f42c6323f7667a0951019cb9749cdfd4bc912d71635159db"
+      "sizeBytes": 2091,
+      "sha256": "f701eb914d8a160b26378e7bc815d8925255a221fb6b8a8e2c95246df4ad9ed5"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/data/EntryDraft.kt",
+      "sizeBytes": 3788,
+      "sha256": "79b6ea593368711294b800a4fe796932ef3ef49ad508b2979858d11715e5ad32"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/data/ScoreDao.kt",
-      "sizeBytes": 1728,
-      "sha256": "05c36f8b0066a6c97656685a5a3c6a445aa5d14218ecf4626657ddacac4c07ee"
+      "sizeBytes": 3881,
+      "sha256": "36f61262c5708d4a98b451a5a2feae75b2cf223dfba6a90bd36f7e98b45d0540"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/data/ScoreDatabase.kt",
-      "sizeBytes": 693,
-      "sha256": "e1beebdcb2e78331fcd2e2e8aefc16d614e8841cac3e4cbddb272de50b0ccd2a"
+      "sizeBytes": 1451,
+      "sha256": "00ecad16f27fbde6b76b9201db8fec0d124bca668906cc9812336c51b0272f4e"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/data/ScoreRepository.kt",
-      "sizeBytes": 3012,
-      "sha256": "27a4a026e366cf42ae94ee443c8d606798d07bf944cdf284cff5e87269035f4a"
+      "sizeBytes": 13699,
+      "sha256": "7be8d59c88c2271ac79f1a45973c0f2a22776e3486bea4d9119af8c0a1b2bd3f"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/export/PdfReport.kt",
+      "sizeBytes": 11302,
+      "sha256": "50b0f14407a7449b7814749285b72b63e43d4648895a2ed6c8565e4a2ffcdc29"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/export/ReportManager.kt",
+      "sizeBytes": 6634,
+      "sha256": "4a0347ce35c082e0e157b9f817160f948c8eda77ef742a950cf63abbe361efba"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/BackupSettings.kt",
+      "sizeBytes": 6565,
+      "sha256": "d5d1207be42eb73b9cef95035242d3c632b321c6cfd6b676ec7e71d1aaf87609"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/EntryScreen.kt",
+      "sizeBytes": 9133,
+      "sha256": "ef719e55cb2af836600bd030f1a46c54d27b64d8937e2944ed7015183ad7c109"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/HistoryScreen.kt",
+      "sizeBytes": 6129,
+      "sha256": "1dbb411d82cc26e9603d277bbfbcd4ee7104a0caee132c8999638355887a7b17"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/ManagementScreens.kt",
+      "sizeBytes": 7648,
+      "sha256": "d42833bfbbe37e7247945055df293d535acaab5b569e72a7d2d3dc000e3aeddc"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/NativeReportPreview.kt",
+      "sizeBytes": 3301,
+      "sha256": "161114e1bdf33fc7c96d3faf617a42b1745bbafd25c8e1043b5a35e414ecea6f"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/ReportControls.kt",
+      "sizeBytes": 4973,
+      "sha256": "c0ad1fd143d1cd812d6e445905344a56eef2b39596aca8809cdab57882af0908"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/ReportSaveState.kt",
+      "sizeBytes": 1993,
+      "sha256": "881aac52b831ac7022d6adc5f489a75728ad7522e9f8b08e58d0739dbaa32550"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/ui/ScoreViewModel.kt",
-      "sizeBytes": 2449,
-      "sha256": "07de7123788c163a5751f01708d2fabd947f8fbc2a9976c68d38d3bb39f80dcf"
+      "sizeBytes": 7779,
+      "sha256": "249aef91792ab888f42bbaf99cae303a18b99bee81407d50ac14149f09d4a3c3"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/ui/StarterScreen.kt",
-      "sizeBytes": 9454,
-      "sha256": "b43bc5a383c0ac18628a0df9b84628be665d96f4b86253d2982bd51bc518b411"
+      "sizeBytes": 4912,
+      "sha256": "071dfd4e24fc71c32597ba1fad22b6e749e5435e7826844d70cd12d16fb2050c"
     },
     {
       "path": "app/src/main/java/com/example/scoreledger/ui/Theme.kt",
@@ -129,9 +299,34 @@
       "sha256": "c3c0968ee018a23f06efb002cc93c287e8786ad3fdfafd8d3f62a3166138fac6"
     },
     {
+      "path": "app/src/main/java/com/example/scoreledger/ui/TrendScreen.kt",
+      "sizeBytes": 8102,
+      "sha256": "b24c879abf826852d0302e0478194b1134704d2b66a26e23da7a1441b4fbfba0"
+    },
+    {
+      "path": "app/src/main/java/com/example/scoreledger/ui/UiServices.kt",
+      "sizeBytes": 468,
+      "sha256": "fa24baf4aaba50b92aae896c398e30382f17f9c261ce1d9a66de3b6b0f44bfea"
+    },
+    {
+      "path": "app/src/main/res/drawable/launcher_foreground.xml",
+      "sizeBytes": 581,
+      "sha256": "dc0d7b7e898a9db33c09fea29839fda7eb409c28a52944cc67a5b7ab223ed392"
+    },
+    {
+      "path": "app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "sizeBytes": 223,
+      "sha256": "d63b551aa6645cb086b6e9fd8332250f2ba3fe5648868fd32f0eee6371db9577"
+    },
+    {
+      "path": "app/src/main/res/values/colors.xml",
+      "sizeBytes": 73,
+      "sha256": "b2e66516e2ecc35cb8cade1dee9d5fbfaef589047b0e544e12329d6c0694bffe"
+    },
+    {
       "path": "app/src/main/res/values/strings.xml",
-      "sizeBytes": 263,
-      "sha256": "bb3c52cae0d19d05e0adaac2b0ea2d541b3e8ca7f2d10607658d82765021ad33"
+      "sizeBytes": 8801,
+      "sha256": "ba0e549e904872be91c52fbb06b4ee4f4280103a785fb91edefd46ea94efefe8"
     },
     {
       "path": "app/src/main/res/values/themes.xml",
@@ -159,6 +354,16 @@
       "sha256": "d55a5b8f4944f6874c6b94da89a35041e8594317bd692de5a3923bbdd41bc68f"
     },
     {
+      "path": "app/src/test/java/com/example/scoreledger/backup/BackupCodecTest.kt",
+      "sizeBytes": 3836,
+      "sha256": "5cf9c3664c23052a6f28342c364a76fb29d4c6b0d1a71f15e8816a608c7bb782"
+    },
+    {
+      "path": "app/src/test/java/com/example/scoreledger/backup/RollbackRetentionTest.kt",
+      "sizeBytes": 899,
+      "sha256": "3782e44fc94dbd942a64a922306d6c879d9bab465b95a67dcc372c8d41d01a9c"
+    },
+    {
       "path": "build.gradle.kts",
       "sizeBytes": 296,
       "sha256": "12f4bc824a8ede89a12060248106d9af1c1f4f7a4e26c899289fa283fbebd05e"
@@ -175,13 +380,18 @@
     },
     {
       "path": "core/src/main/kotlin/com/example/scoreledger/core/ScoreRules.kt",
-      "sizeBytes": 6694,
-      "sha256": "5140b3bf8d3af4becfe9869285573da6763a75251fdf31b3b1012d13becf29f0"
+      "sizeBytes": 8315,
+      "sha256": "51470456eaaa9c3b575cbd7bad129126a4c281e02047a731b5622d316951f923"
+    },
+    {
+      "path": "core/src/main/kotlin/com/example/scoreledger/core/TrendRules.kt",
+      "sizeBytes": 1324,
+      "sha256": "18505e1875246810919e69888154fcbc9c184cc76e9c850eb6050159c7893ac7"
     },
     {
       "path": "core/src/test/kotlin/com/example/scoreledger/core/ContractChecks.kt",
-      "sizeBytes": 7729,
-      "sha256": "ef162465d328b04bb1803dfe986496ad0db017489fadc2fbdb094a205eb46310"
+      "sizeBytes": 10010,
+      "sha256": "b9ff1592686cc1be6b3b827636a96939de2cfa8d717f1b79d8e6a856f266f427"
     },
     {
       "path": "core/src/test/kotlin/com/example/scoreledger/core/CoreRulesTest.kt",
@@ -195,13 +405,13 @@
     },
     {
       "path": "docs/BACKUP_RESTORE.md",
-      "sizeBytes": 2312,
-      "sha256": "42302749be3c4e19969351621fbd797c76a40d2c88b76965411f3d16ba73ff38"
+      "sizeBytes": 2806,
+      "sha256": "fcedcb19f930301aee596d87d4ce186382ccbfd0939887da1263b034ee3764f1"
     },
     {
       "path": "docs/BUILD_RELEASE.md",
-      "sizeBytes": 2904,
-      "sha256": "78772535c1501f03cfcc1ca5468cd4b5b19cc05a3a6588891c9230df973cbb6d"
+      "sizeBytes": 2994,
+      "sha256": "4e9abb6e0eb74ebb83565275d837426bdf0e1c8511d7440336b91feb44488a57"
     },
     {
       "path": "docs/COPY_ZH_CN.md",
@@ -220,8 +430,8 @@
     },
     {
       "path": "docs/IMPLEMENTATION_STATUS.md",
-      "sizeBytes": 1566,
-      "sha256": "0450a4f30055f4a9188138935967657d5936f98e5197cc7d02a2314458076258"
+      "sizeBytes": 4750,
+      "sha256": "b56e0654386a5d2e5aee2284d53772c086aaa6613ab5e65c3d3c5e83d704e854"
     },
     {
       "path": "docs/IMPORT_INSTRUCTIONS.md",
@@ -240,8 +450,8 @@
     },
     {
       "path": "docs/PDF_EXPORT_SPEC.md",
-      "sizeBytes": 2354,
-      "sha256": "792f780bc2d9f49d4fd7e3e0d7565a0f71e26bc505b3dd2a4764144d8bd3a4c3"
+      "sizeBytes": 4016,
+      "sha256": "11540fc7eda06cb54ab263376ad8730e2504332e6fd0dc5c211298c6357428e4"
     },
     {
       "path": "docs/PRD.md",
@@ -304,49 +514,239 @@
       "sha256": "8afd4c451c4cad31a0fbcfa2a837dd1566b68db78eee16c345046a88546416aa"
     },
     {
-      "path": "evidence/kit_bootstrap_help.log",
-      "sizeBytes": 117,
-      "sha256": "27d0a05e561176268e7eb8688529c436de7825cb88f569fb8b097c740dccd2b9"
+      "path": "evidence/d00-android-build.json",
+      "sizeBytes": 792,
+      "sha256": "622471ac55584925141382cf880a79a646873279f0bffbcb39528384c32469da"
     },
     {
-      "path": "evidence/kit_environment.json",
-      "sizeBytes": 1102,
-      "sha256": "06b64bdfff7efc29ee688fb90383212eff48b01f03374d2e37bf10a6de9b04e9"
+      "path": "evidence/d00-android-build.log",
+      "sizeBytes": 7286,
+      "sha256": "88e254789c202388f5ee47c96f5c82f9db17f7d91ecdb8f58d6442f3fe43c1b1"
     },
     {
-      "path": "evidence/kit_kotlin_contracts.log",
+      "path": "evidence/d00-android-offline.log",
+      "sizeBytes": 5263,
+      "sha256": "cb00deeeb0dfca1be36821b43c77c3839a719cf7818c0cd6f0ec6f4191a53d85"
+    },
+    {
+      "path": "evidence/d00-apk-permissions.txt",
+      "sizeBytes": 232,
+      "sha256": "a427b4da0b3ebe87e72e81e3e5b6c7bc7194c3da6044edf112516ce22861ab05"
+    },
+    {
+      "path": "evidence/d00-apk-signature.txt",
+      "sizeBytes": 955,
+      "sha256": "9f1e2137630a9ec2d37cf6f83f2491bbfdec1990a5e1d2416627e514c6df69df"
+    },
+    {
+      "path": "evidence/d00-checksums.log",
+      "sizeBytes": 89,
+      "sha256": "07a8f23ddccfd5f4d20a9d1ce600dea73a18e128c8807287f67b5c8a2b8738ac"
+    },
+    {
+      "path": "evidence/d00-kotlin.log",
       "sizeBytes": 1664,
       "sha256": "2d250d426b419a502d017e050908d84f36a0ea2e79af341a6eb108edad5919d8"
     },
     {
-      "path": "evidence/kit_preflight.log",
-      "sizeBytes": 1102,
-      "sha256": "06b64bdfff7efc29ee688fb90383212eff48b01f03374d2e37bf10a6de9b04e9"
+      "path": "evidence/d00-progress.json",
+      "sizeBytes": 2083,
+      "sha256": "5c891f62fb18ee3b44de57e43f001fc01e43658a08e41b5ff6bf5e3c1a7dbde5"
     },
     {
-      "path": "evidence/kit_python_contracts.log",
+      "path": "evidence/d00-python.log",
       "sizeBytes": 3199,
-      "sha256": "d004ca6e11f371ffe4f56adb294cb0bbf0a7218bc394dfe13a933f8e2ef9f657"
+      "sha256": "364d2ae05528d32f1e26f137ca6061c81aff5ddff7935317096b927e57b035d4"
     },
     {
-      "path": "evidence/kit_reject_missing_apk.log",
-      "sizeBytes": 39,
-      "sha256": "69e21eb843135a7201f2f0ba70e453bfebd7b16434e2bba6036cc8196c68e285"
-    },
-    {
-      "path": "evidence/kit_release_block.log",
-      "sizeBytes": 732,
-      "sha256": "338919077a2815dc15870d427eb4980b2efdfcdbae006a35bab277f9c2ca5fc5"
-    },
-    {
-      "path": "evidence/kit_static_check.log",
+      "path": "evidence/d00-static.log",
       "sizeBytes": 148,
       "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d00-wrapper.log",
+      "sizeBytes": 351,
+      "sha256": "ac68a9be7fcd324dc9807ce188d22cc4a65294f55e23daa57d14078e78cda803"
+    },
+    {
+      "path": "evidence/d01-kotlin.log",
+      "sizeBytes": 1686,
+      "sha256": "7bec65324f9522e8c8e8a6a2881a3e0d49970c25a217032c46e39fc867b9ebf6"
+    },
+    {
+      "path": "evidence/d02-d04-core.log",
+      "sizeBytes": 1686,
+      "sha256": "7bec65324f9522e8c8e8a6a2881a3e0d49970c25a217032c46e39fc867b9ebf6"
+    },
+    {
+      "path": "evidence/d02-d04-python.log",
+      "sizeBytes": 98,
+      "sha256": "1bdacb91ab4a669431dcbd41affa13fd85b52365d33fb63fc9eeec80dbda3326"
+    },
+    {
+      "path": "evidence/d02-d04-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d05-core.log",
+      "sizeBytes": 1827,
+      "sha256": "3d06550bbccfa7358fb249d89dcc809b44f377e97ebc6bd18d530276bc4d8cb3"
+    },
+    {
+      "path": "evidence/d05-preflight.log",
+      "sizeBytes": 968,
+      "sha256": "ef7f7d6e0db3cb73425a82b5978b04da561dea790db0e257e550f0dc8f4a314b"
+    },
+    {
+      "path": "evidence/d05-python.log",
+      "sizeBytes": 3199,
+      "sha256": "8362e9ae1e89fa9321fed1db58ada26c923bed80c16e68810e411ca96d41ddf8"
+    },
+    {
+      "path": "evidence/d05-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d06-core.log",
+      "sizeBytes": 1875,
+      "sha256": "777334469be8f1071f9ebf105742c11cda6ce21a45cda95617717148020cc1e3"
+    },
+    {
+      "path": "evidence/d06-python.log",
+      "sizeBytes": 3547,
+      "sha256": "9e92d366739486202765a00cccaef158314c3b5e6655dcbb556f3fd2ca5a34dc"
+    },
+    {
+      "path": "evidence/d06-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d07-core.log",
+      "sizeBytes": 1928,
+      "sha256": "324731f4c1bb010673d270c3c12f9943074946707977813497c7ebbebb0503e4"
+    },
+    {
+      "path": "evidence/d07-python.log",
+      "sizeBytes": 145,
+      "sha256": "44b0af816be966b4b925b7e396f7208317eaf02f1b59dc0c114027a78d63a050"
+    },
+    {
+      "path": "evidence/d07-repair-core.log",
+      "sizeBytes": 1928,
+      "sha256": "324731f4c1bb010673d270c3c12f9943074946707977813497c7ebbebb0503e4"
+    },
+    {
+      "path": "evidence/d07-repair-python.log",
+      "sizeBytes": 3547,
+      "sha256": "62c2c75c32e37424e1047fd72d65c1f8fc64ae7bc9ed4c0f6ddd5eb6837aa4cb"
+    },
+    {
+      "path": "evidence/d07-repair-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d07-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d09-core.log",
+      "sizeBytes": 1928,
+      "sha256": "324731f4c1bb010673d270c3c12f9943074946707977813497c7ebbebb0503e4"
+    },
+    {
+      "path": "evidence/d09-lint-repair-core.log",
+      "sizeBytes": 1928,
+      "sha256": "324731f4c1bb010673d270c3c12f9943074946707977813497c7ebbebb0503e4"
+    },
+    {
+      "path": "evidence/d09-lint-repair-python.log",
+      "sizeBytes": 3547,
+      "sha256": "6d5f16cbf3a282fdfc604311f2bd58127e2193112fa656f881e35c985743189d"
+    },
+    {
+      "path": "evidence/d09-lint-repair-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d09-migration-repair-core.log",
+      "sizeBytes": 1928,
+      "sha256": "324731f4c1bb010673d270c3c12f9943074946707977813497c7ebbebb0503e4"
+    },
+    {
+      "path": "evidence/d09-migration-repair-python.log",
+      "sizeBytes": 3547,
+      "sha256": "f427627fde38625953f28ea75c908fad2ed0be66964f6f380b62b6da6211f2d4"
+    },
+    {
+      "path": "evidence/d09-migration-repair-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d09-p1-core.log",
+      "sizeBytes": 1928,
+      "sha256": "324731f4c1bb010673d270c3c12f9943074946707977813497c7ebbebb0503e4"
+    },
+    {
+      "path": "evidence/d09-p1-python.log",
+      "sizeBytes": 3547,
+      "sha256": "75c862ad63a97e39a66aa766a0bd7bf3c53208d9f360f3c43f40cfa99ed1ba83"
+    },
+    {
+      "path": "evidence/d09-p1-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/d09-python.log",
+      "sizeBytes": 3547,
+      "sha256": "dd4e8b76a9a26c1ccba7f02e3b638b46effb24deac3ad060516576e9b41d9414"
+    },
+    {
+      "path": "evidence/d09-static.log",
+      "sizeBytes": 148,
+      "sha256": "888354a4a81baeb49c0527357b4af351aef58e5757762ef2fe2e82b1af747325"
+    },
+    {
+      "path": "evidence/final-acceptance-mapping.json",
+      "sizeBytes": 67306,
+      "sha256": "223dd459db524095735360b0b417b065e5344c20f4aa54f968d6ace21497f467"
+    },
+    {
+      "path": "evidence/final-validation.json",
+      "sizeBytes": 1248,
+      "sha256": "27185ce3e36dd09da8a045a5cbbab2f8627917f3b268ccbae5eea2c6f82c4b44"
+    },
+    {
+      "path": "evidence/input-kit-SHA256SUMS.txt",
+      "sizeBytes": 9111,
+      "sha256": "ee713ed1012f975a5cd8d9c8567db8f860b0d82b13588994cd765527dea7b936"
+    },
+    {
+      "path": "evidence/input-kit-manifest.json",
+      "sizeBytes": 16118,
+      "sha256": "82886ded3dd46ef7b67565a3f21e4cb9d17ce44f5602b82d8958b991b32bfc6a"
+    },
+    {
+      "path": "evidence/production-source-equivalence.json",
+      "sizeBytes": 795,
+      "sha256": "58e7687bc83a65988edb50d4b8dc463326a732aa699c0883bfbfdcff97ea4a15"
     },
     {
       "path": "evidence/validation_summary.json",
       "sizeBytes": 3012,
       "sha256": "f8d22d0aa55159ee1c3992585e866ec5bb466c790d00d64a23e24bb1db21b841"
+    },
+    {
+      "path": "evidence/visual-review.txt",
+      "sizeBytes": 733,
+      "sha256": "42aef7f9f09c1950ab07d76db720bc83e7c9d5da916d989933cf67151324f6f7"
     },
     {
       "path": "fixtures/README.md",
@@ -369,24 +769,34 @@
       "sha256": "30ff09f8a4d8f0e1d13bcaf327c31702aadaa71ee28c5f6206822a84d5e4eea0"
     },
     {
+      "path": "gradle/wrapper/gradle-wrapper.jar",
+      "sizeBytes": 43705,
+      "sha256": "81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f"
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "sizeBytes": 338,
+      "sha256": "c040b6ef2fb893ff5beea5a281614f2848f1c3996a7886f650b713f8240656a2"
+    },
+    {
       "path": "gradlew",
-      "sizeBytes": 170,
-      "sha256": "b411a6082981bbbb8ce83f333227db8451af6bcb2d4c4304ee8405d0054e0e71"
+      "sizeBytes": 8752,
+      "sha256": "734b3879d3501dce471cf0522d3bcbafe76873d9fc5129345b67fb43bd15e933"
     },
     {
       "path": "gradlew.bat",
-      "sizeBytes": 259,
-      "sha256": "4afead4f305a42585cebbb79ac31eb095e9a0e5a32d2da43750d00dc64ffc7ea"
+      "sizeBytes": 2966,
+      "sha256": "57931b17dd228e5c24dac90e815d0bf82477e831a4618dfab4136f5446b42a9f"
     },
     {
       "path": "reference/backup_validator.py",
-      "sizeBytes": 5716,
-      "sha256": "be2bccffc17209c22e62f64a483294a859f37e39c958962aadf4924c46b1d6d4"
+      "sizeBytes": 5859,
+      "sha256": "c934ab24982105138807742917580f09bbc19b9c630857a0698751d56558bfea"
     },
     {
       "path": "reference/test_contracts.py",
-      "sizeBytes": 4589,
-      "sha256": "f80bb07698ad236cbef5244610247623ea5f542e1a8361e7b2f43e2141583402"
+      "sizeBytes": 5359,
+      "sha256": "96df666fcd964bab1eff7a60c569abb1babaf364965723b3338a851bf2757633"
     },
     {
       "path": "release/PRIVACY_POLICY_TEMPLATE.md",
@@ -410,38 +820,43 @@
     },
     {
       "path": "tasks/ACCEPTANCE.csv",
-      "sizeBytes": 8629,
-      "sha256": "0b9f768f9f10e79973bc1e68eb11a490ab751380484732d3bd26a5a4c17dbde9"
+      "sizeBytes": 24900,
+      "sha256": "bf8aaf31d30ee31f0b2a08268e89cbc86dd21a4fbf7e73062dacd537881a271b"
     },
     {
       "path": "tasks/ACCEPTANCE.json",
-      "sizeBytes": 21713,
-      "sha256": "b5b48e1a67d4c95565d4dea811b4c32cefc8852ec6009d60918cdbcd57220c67"
+      "sizeBytes": 38053,
+      "sha256": "104f2a70527217d4064a98061a184b1018add4ebccc00f5f48482799b6ed23a2"
     },
     {
       "path": "tasks/BACKLOG.json",
-      "sizeBytes": 11750,
-      "sha256": "09520267c8d184dacf75b6e9d5df20c9271b56f5e8bb9e725508a15faef71500"
+      "sizeBytes": 14380,
+      "sha256": "8002bb2b4100c1af3705c609582d93c0cad838011129eeb664e2fe209c24909a"
     },
     {
       "path": "tasks/CHANGELOG.md",
-      "sizeBytes": 275,
-      "sha256": "656d04fb4ea8f985077e41de19184fe6b05ec548957a76e06d0a7b2c5f344c98"
+      "sizeBytes": 5821,
+      "sha256": "b6716f20e4b0545587b15e22711b71715e884e22884639d92cc45825358d8979"
     },
     {
       "path": "tasks/DECISIONS.md",
-      "sizeBytes": 962,
-      "sha256": "a784e81fdf2190a740b908ef3374a0aced34066384e55cec174ba09cccf8049d"
+      "sizeBytes": 5692,
+      "sha256": "5e236a58475e06456830af9186a72b7e6c21e63039541093c32eda3b250ac442"
     },
     {
       "path": "tasks/HANDOFF.md",
-      "sizeBytes": 735,
-      "sha256": "4542955125cd235c8f00c0b2879a0ad0600fd30e9ef6c9ccd004d5fd0f8f65ac"
+      "sizeBytes": 22245,
+      "sha256": "0902daf4065e2a496464809f7384fb910f33973818f360d8e7cd303c55b54b30"
     },
     {
       "path": "tools/collect_artifacts.py",
       "sizeBytes": 1604,
       "sha256": "f9af746b60d51e9713d658887bdf05ff6a115ab0cf109c06aacd25a574eeb4b6"
+    },
+    {
+      "path": "tools/emulator_smoke.sh",
+      "sizeBytes": 3597,
+      "sha256": "153556d372cd42bb1532e932a8f935763bf5969cf1fa930b329558d16c94addf"
     },
     {
       "path": "tools/gradle_bootstrap.py",
@@ -457,6 +872,11 @@
       "path": "tools/release_guard.py",
       "sizeBytes": 2405,
       "sha256": "8e2e59e3610ee6263ce44740d57c99c98cbc2adadf90cddd4b09bdc08aec7a5b"
+    },
+    {
+      "path": "tools/signed_emulator_acceptance.sh",
+      "sizeBytes": 14640,
+      "sha256": "6f2e80b8f1b5fec2bb4d29f7f9ce654e2482bde16ea336b92a3ac7e10ac4669b"
     },
     {
       "path": "tools/test_core.py",
@@ -475,8 +895,8 @@
     },
     {
       "path": "tools/verify_package.py",
-      "sizeBytes": 2707,
-      "sha256": "9ecb6c23f9de79881fee870a3da5d1d75805c8c318d6f0bb9333013b8f496882"
+      "sizeBytes": 2894,
+      "sha256": "867d24afb711fc3c319f715130f5902d52a4bba84ad39bd48464a0c4a965acb7"
     }
   ]
 }

@@ -1,3 +1,9 @@
+# Current status: first internal beta candidate
+
+See PROJECT_STATE.json and evidence/final-acceptance-mapping.json for authoritative current evidence. Exact business58 signed APK passed AOSP API26/30/36,34 ordinary tests and2 separately executed guarded retention checks per API. No claim of full70-case or commercial acceptance. Supplemental visual capture passed and sample UI/PDF were inspected. First internal beta is ready for delivery; full product/commercial acceptance remains incomplete.
+
+## Historical implementation checkpoints
+
 # 实现状态与交付边界
 
 截至2026-10-17：D00已有真实debug APK，但不能把起步APK说成新功能完整成品。

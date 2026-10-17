@@ -1,5 +1,5 @@
 {
-  "note": "初始所有端到端验收NOT_RUN；已有core/Python测试不等于这些全链路case全部通过。",
+  "note": "Conservative broad acceptance mapping, not a count of individual automated tests. PASS4/PARTIAL52/NOT_RUN14. Device matrix passes do not imply full commercial acceptance. See evidence/final-acceptance-mapping.json.",
   "cases": [
     {
       "id": "AC001",
@@ -9,8 +9,8 @@
       "steps": "断网冷启动新安装",
       "expected": "不注册不登录无权限弹窗，能创建孩子",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Isolated empty repository UI creates child. | Pending: Real fresh install, network disabled cold start and absence of login/permission dialogs."
     },
     {
       "id": "AC002",
@@ -21,7 +21,7 @@
       "expected": "本地/明文导出/卸载丢失说明准确可见",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 打开帮助和隐私；本地/明文导出/卸载丢失说明准确可见"
     },
     {
       "id": "AC003",
@@ -31,8 +31,8 @@
       "steps": "输入空白、24字、25字和控制字符",
       "expected": "空白/超长/控制字符拒绝；合法昵称保留",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Blank/control/25-character rejection and trim verified. | Pending: 24-character boundary and all invalid cases through actual nickname UI."
     },
     {
       "id": "AC004",
@@ -42,8 +42,8 @@
       "steps": "A/B各录考试后快速切换",
       "expected": "列表趋势导出仅当前孩子，无上一人短暂闪现",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | UI history child switch and repository query isolation. | Pending: A/B both populated; rapid switching, transient-frame leakage, trends and export isolation."
     },
     {
       "id": "AC005",
@@ -53,8 +53,8 @@
       "steps": "归档孩子再进入已归档列表",
       "expected": "仍可查看导出，归档不变删除",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Archiving child retains existing rows during edit. | Pending: Archived-list navigation, viewing and export."
     },
     {
       "id": "AC006",
@@ -64,8 +64,8 @@
       "steps": "取消一次再确认删除A",
       "expected": "取消无影响；确认只删除A关联数据，B不变",
       "layer": "room+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Repository cascade deletes A exams/scores and retains B. | Pending: UI cancel then confirm; B populated data unchanged."
     },
     {
       "id": "AC007",
@@ -75,8 +75,8 @@
       "steps": "历史数学满分150，修改默认满分100并更名",
       "expected": "旧考试保留旧名称和150，新记录才用新默认",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Historical name/max snapshot survives default/name update and history edit. | Pending: Exact 150-to-100 fixture and new unarchived record adopting updated default."
     },
     {
       "id": "AC008",
@@ -86,8 +86,8 @@
       "steps": "归档有历史引用的科目",
       "expected": "历史可读，不产生孤儿记录",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Archived subject remains with readable referenced score; templates do not unarchive. | Pending: Explicit full reference-integrity assertion after archive."
     },
     {
       "id": "AC009",
@@ -97,8 +97,8 @@
       "steps": "输入0/100",
       "expected": "保存为SCORED且图点为0，不变未录入",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | UI zero stored as 0 and core zero rate. | Pending: Device chart point renders zero rather than missing."
     },
     {
       "id": "AC010",
@@ -108,8 +108,8 @@
       "steps": "标记缺考后保存",
       "expected": "scoreMinor为空，图表断点，不进分母",
       "layer": "core+room+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | UI ABSENT status and core null/excluded values. | Pending: Assert persisted null and actual chart break/denominator."
     },
     {
       "id": "AC011",
@@ -119,8 +119,8 @@
       "steps": "留分数空白保存",
       "expected": "明确MISSING，不能自动0",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Explicit MISSING selection persists and core forbids missing-as-zero. | Pending: Leave blank without explicit status selection and verify UI/persisted null."
     },
     {
       "id": "AC012",
@@ -130,8 +130,8 @@
       "steps": "输入全角８７．５及非法1e2/1,000/负数/三位小数",
       "expected": "全角规范为87.5；非法明确拒绝",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Fullwidth UI 85.5 and core exact 87.5 plus invalid-format rejection. | Pending: All requested invalid formats through UI with no write."
     },
     {
       "id": "AC013",
@@ -141,8 +141,8 @@
       "steps": "输入0满分、超10000满分、分数超过满分",
       "expected": "均拒绝且不写入",
       "layer": "core+room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Core zero denominator, over-limit parse and above-maximum score reject. | Pending: Room snapshot invariant for every invalid maximum/score fixture."
     },
     {
       "id": "AC014",
@@ -152,8 +152,8 @@
       "steps": "测试闰日/短格式/未来日期",
       "expected": "合法闰日通过，其余按规则拒绝",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Leap day, invalid leap day, short and future dates checked. | Pending: Actual entry UI rejection/acceptance."
     },
     {
       "id": "AC015",
@@ -163,8 +163,8 @@
       "steps": "两科均缺考/未录入",
       "expected": "允许记录，汇总暂无，计一次考试",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Core all-absent/no-rate and grouped missing summary. | Pending: Mixed two-row absent/missing UI save, no-summary display and count increment."
     },
     {
       "id": "AC016",
@@ -174,8 +174,8 @@
       "steps": "同日同名录两次不同UUID",
       "expected": "可保存两次；不武断合并",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Three same-day/same-name different UUIDs save at repository. | Pending: Assert the exact two-row identity/content fixture explicitly; current check focuses quota."
     },
     {
       "id": "AC017",
@@ -185,8 +185,8 @@
       "steps": "连点保存10次",
       "expected": "一个UUID一条考试及完整成绩",
       "layer": "room+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Two repository submissions remain one exam with scores. | Pending: Actual 10 rapid save taps and complete row set."
     },
     {
       "id": "AC018",
@@ -196,8 +196,8 @@
       "steps": "录一半旋转屏幕",
       "expected": "字段与状态保留",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | ActivityScenario.recreate preserves edited title and draft ID. | Pending: Physical orientation change with partially filled score/date/status fields; no process-death inference."
     },
     {
       "id": "AC019",
@@ -207,8 +207,8 @@
       "steps": "草稿落盘后杀进程重启",
       "expected": "正确孩子的草稿可恢复",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/api30-pass/retention-seed.txt; evidence/api30-pass/reinstall.txt; evidence/api30-pass/retention-verify.txt | On-disk Room close/reopen retains child-bound draft. Separate guarded seed/install-r/verify retains persistent draft and data digest. This is not a kill-process/relaunch UI draft-recovery test. | Pending: Kill app process, relaunch actual activity and restore the right child draft."
     },
     {
       "id": "AC020",
@@ -218,8 +218,8 @@
       "steps": "A写一半切B再回A",
       "expected": "不会把A草稿记给B，明确继续/保存/丢弃流程",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Seeded draft hidden for B, resumed for A, retain-and-return UI works. | Pending: Create partial draft through UI, switch workflow, save/discard branches and wrong-child submit prevention."
     },
     {
       "id": "AC021",
@@ -229,8 +229,8 @@
       "steps": "在免费上限时纠正一条分数",
       "expected": "编辑允许、不新计数、统计同步改变",
       "layer": "room+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Edit title preserves UUID/count; quota retry does not add record. | Pending: Change score through UI at free quota and verify changed statistics."
     },
     {
       "id": "AC022",
@@ -240,8 +240,8 @@
       "steps": "保存中注入数据库异常",
       "expected": "旧状态不变，无半条考试，草稿保留",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PASS",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Injected SQLite score/cleanup failures roll back new/edit rows and preserve draft; later retry succeeds."
     },
     {
       "id": "AC023",
@@ -251,8 +251,8 @@
       "steps": "筛出空结果后清空筛选",
       "expected": "可恢复列表，不误称数据丢失",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Repository filter can return empty and unfiltered query returns record. | Pending: Actual UI filter/clear recovery and empty-state messaging."
     },
     {
       "id": "AC024",
@@ -262,8 +262,8 @@
       "steps": "同日多条、过去日期、切筛选",
       "expected": "日期倒序、同日次序稳定且清晰",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Core same-date deterministic trend order. | Pending: History descending-date UI order, same-day clarity and filter transitions."
     },
     {
       "id": "AC025",
@@ -273,8 +273,8 @@
       "steps": "80/100到90/120",
       "expected": "80%到75%，不声称能力提高",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | 80/100 to 90/120 produces -5 percentage points. | Pending: Device chart/text 80% to 75% and no improvement claim."
     },
     {
       "id": "AC026",
@@ -284,8 +284,8 @@
       "steps": "分数/缺考/分数连续三次",
       "expected": "缺考为空隙，不画0、不跨缺失平滑连线",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | MISSING interrupts core trend connections. | Pending: ABSENT middle point fixture and rendered chart gaps."
     },
     {
       "id": "AC027",
@@ -296,7 +296,7 @@
       "expected": "有等价数据表和原值，不只读图片",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: TalkBack读取趋势页；有等价数据表和原值，不只读图片"
     },
     {
       "id": "AC028",
@@ -307,7 +307,7 @@
       "expected": "默认0–100，不截轴夸大变化",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 小波动样本和0/100；默认0–100，不截轴夸大变化"
     },
     {
       "id": "AC029",
@@ -317,8 +317,8 @@
       "steps": "80/100与90/150",
       "expected": "170/250=68.00%，不是70%",
       "layer": "core",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PASS",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Exact weighted summary 17000/25000 yields 68.00%; core-only acceptance."
     },
     {
       "id": "AC030",
@@ -328,8 +328,8 @@
       "steps": "上述两科加一科MISSING",
       "expected": "仍68%，明确已录2/3科",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Grouped 80/100 + 90/150 + MISSING yields 68%, count 2/3. | Pending: Device displays same rate and coverage."
     },
     {
       "id": "AC031",
@@ -339,8 +339,8 @@
       "steps": "跨孩子/学期/年级/类型/科目/满分/缺失",
       "expected": "均不展示总分进退步箭头",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | All listed scope mismatches reject total comparison. | Pending: Device suppresses arrows for every mismatch."
     },
     {
       "id": "AC032",
@@ -350,8 +350,8 @@
       "steps": "用非整百分比比较",
       "expected": "先精确有理计算再最终舍入",
       "layer": "core",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | 1/3 rounds to 33.33 and weighted summary tested. | Pending: Adversarial noninteger comparison proving no premature intermediate rounding."
     },
     {
       "id": "AC033",
@@ -361,8 +361,8 @@
       "steps": "免费或退款后导出已有记录",
       "expected": "完整基础明细可导，不锁数据",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml; evidence/api30-pass/full-instrumentation.txt | Core basic-export entitlement is unconditional; PDF renderer opens file. Controlled PDF output callback survives activity recreation and saved bytes equal cached report; test uses beta-enabled repository, not free/refund state. | Pending: Free/refunded actual export full details through SAF; actual external-reader checks if release criteria require."
     },
     {
       "id": "AC034",
@@ -372,8 +372,8 @@
       "steps": "长标题昵称备注、超过一页数据",
       "expected": "字可读，不裁切，每页编号正确",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Plans paginate within bounds, preserve long notes, renderer opens A4 first page. 200-page boundary writes; 201-page direct plan and over-limit planning reject rather than truncate. Current UI/PDF screenshots are not collected visual evidence. | Pending: Visual all-page Chinese legibility/clipping/page numbering, long nickname; two independent external readers are not covered."
     },
     {
       "id": "AC035",
@@ -383,8 +383,8 @@
       "steps": "含0/缺考/未录入/满分变动样本",
       "expected": "PDF和屏幕同口径，原始数值可查",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | PDF plan contains zero/absent/missing/changed-max values; UI stores corresponding categories. | Pending: Direct screen-to-export field/rate comparison for identical fixture."
     },
     {
       "id": "AC036",
@@ -394,8 +394,8 @@
       "steps": "关闭昵称/备注输出",
       "expected": "文档和文件名不泄露隐藏信息",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Anonymous/no-notes report plan omits nickname and note. | Pending: Written PDF text/metadata plus actual exported filename leakage checks."
     },
     {
       "id": "AC037",
@@ -405,8 +405,8 @@
       "steps": "取消选择器或存储写满",
       "expected": "不报成功、原库不变、错误可重试",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Previously failing controlled PDF-save recreation now PASSES on FINAL-business58. Injected coroutine cancellation stops planning and removes partial cached publication. This is not actual DocumentsUI cancel or storage-full testing. | Pending: Actual DocumentsUI cancel, provider write-full/close failure, no false success, DB unchanged and retry. Controlled file-URI callback is not DocumentsUI."
     },
     {
       "id": "AC038",
@@ -417,7 +417,7 @@
       "expected": "content URI短期只读，不file://或暴露整个cache",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 分享文件给阅读器；content URI短期只读，不file://或暴露整个cache"
     },
     {
       "id": "AC039",
@@ -427,8 +427,8 @@
       "steps": "导出后新安装导入",
       "expected": "逐表与ID/时间/统计相等",
       "layer": "contract+room+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml | Codec roundtrip and Room replacement retain fixture rows, IDs/times included in entity equality. Controlled backup export after recreation produces parseable matching child; controlled import callback after recreation opens preview only, without confirming replacement. | Pending: Real export, fresh installation, actual provider import; all tables including subjects and computed statistics equality."
     },
     {
       "id": "AC040",
@@ -438,8 +438,8 @@
       "steps": "截断JSON/重复键/NaN/非法编码",
       "expected": "拒绝且原库不变",
       "layer": "contract+room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml; evidence/d09-python.log | Kotlin duplicate-key/NaN/UTF-8 rejection; Python truncated contract. | Pending: Kotlin truncation plus actual restore rejection and unchanged Room for each hostile fixture."
     },
     {
       "id": "AC041",
@@ -449,8 +449,8 @@
       "steps": "version2或夹带VIP/token/path",
       "expected": "拒绝不静默丢弃/启用权益",
       "layer": "contract+room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml; evidence/d09-python.log | Kotlin schemaVersion2/unknown field and Python entitlement-injection rejection. | Pending: Actual Kotlin VIP/token/path injections with unchanged Room and entitlement."
     },
     {
       "id": "AC042",
@@ -460,19 +460,19 @@
       "steps": "孤儿child/subject/exam和重复ID",
       "expected": "拒绝不触碰原库",
       "layer": "contract+room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-python.log | Python contract rejects orphan/duplicate fixtures. | Pending: Actual Kotlin codec/Room same corpus and unchanged database; Python model is not Android proof."
     },
     {
       "id": "AC043",
       "requirement": "FR10",
       "priority": "P0",
       "title": "文件大小",
-      "steps": "超过20MiB或超实体数量",
+      "steps": "超过96MiB或超实体数量",
       "expected": "读取中止有说明，无内存爆峰/无写库",
       "layer": "contract+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml; evidence/d09-python.log; tasks/DECISIONS.md | Kotlin bounded scalar consumption and 96MiB constant; Python caps. | Pending: Update stale 20MiB acceptance per D06 documented 96MiB decision; exercise exact bytes/entity caps, device peak memory, message and no-write."
     },
     {
       "id": "AC044",
@@ -482,8 +482,8 @@
       "steps": "预览有效备份后点取消",
       "expected": "数据库零变化",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Controlled file-URI callback opens preview and verifies child snapshot unchanged before confirmation. | Pending: Click actual preview Cancel and verify whole database/drafts unchanged; use real provider/DocumentsUI separately."
     },
     {
       "id": "AC045",
@@ -493,8 +493,8 @@
       "steps": "预确认后写一半注入失败",
       "expected": "全旧库或全新库，不混合",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PASS",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Injected scores INSERT abort after replacement clear preserves entire old snapshot and drafts."
     },
     {
       "id": "AC046",
@@ -504,8 +504,8 @@
       "steps": "同备份连续恢复两次",
       "expected": "计数不翻倍，UUID一致",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Repeated repository replacement retains exam count. | Pending: Assert all UUID sets unchanged after second replacement; not actual UI import evidence."
     },
     {
       "id": "AC047",
@@ -516,7 +516,7 @@
       "expected": "预览明确清空数量，二次确认后才执行",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 合法空备份导入；预览明确清空数量，二次确认后才执行"
     },
     {
       "id": "AC048",
@@ -526,8 +526,8 @@
       "steps": "免费版恢复100次考试多孩子",
       "expected": "恢复/查看/编辑/导出正常，只限制新增",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | 100-exam free policy blocks additions only; access/basic export/restore policies remain true. | Pending: Real free repository/UI restore 100 exams across children, view/edit/export and addition rejection."
     },
     {
       "id": "AC049",
@@ -537,8 +537,8 @@
       "steps": "恢复前快照创建失败",
       "expected": "中止恢复，不覆盖当前数据",
       "layer": "room",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PASS",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Injected snapshot writer failure preserves old database/drafts; UI error dismisses restore."
     },
     {
       "id": "AC050",
@@ -548,8 +548,8 @@
       "steps": "检查manifest/提取规则并测试OEM迁移",
       "expected": "配置不自动云备份；未验证行为不宣传保证",
       "layer": "static+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-static.log | Static checker reports offline manifest checks. | Pending: Inspect extraction rules and actual OEM migration; no universal backup-behavior guarantee."
     },
     {
       "id": "AC051",
@@ -559,8 +559,8 @@
       "steps": "生成和删除报告/检查日志",
       "expected": "日志无成绩昵称，cache仅限报告目录并清理",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | Injected cancellation removes partial publication and reports cache directory is empty. | Pending: Generate/delete successful reports, verify directory restriction/retention and inspect logs for nickname/score leakage; cancellation cleanup alone is insufficient."
     },
     {
       "id": "AC052",
@@ -571,7 +571,7 @@
       "expected": "显著说明先导出并验证，内部快照不是换机备份",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 设置和备份页查看；显著说明先导出并验证，内部快照不是换机备份"
     },
     {
       "id": "AC053",
@@ -581,8 +581,8 @@
       "steps": "A/B总和3次考试免费新增",
       "expected": "第四次新增受限，不按孩子分别送3次",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml; evidence/api30-pass/full-instrumentation.txt | Core 3-exam rule and repository fourth-add rejection for one child. | Pending: A/B combined quota and actual UI fourth-add rejection."
     },
     {
       "id": "AC054",
@@ -592,8 +592,8 @@
       "steps": "3次删除1次后新建",
       "expected": "允许，刻意的产品规则",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Policy permits addition at count 2. | Pending: Actual delete from 3 then create through UI with correct count."
     },
     {
       "id": "AC055",
@@ -603,8 +603,8 @@
       "steps": "模拟退款/无权益/离线",
       "expected": "历史读改删与基础导出/备份始终可用",
       "layer": "core+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Existing-data/basic-export/restore policy independent of entitlement. | Pending: Refund/no-entitlement/offline UI read/edit/delete/basic-export/backup with data retained."
     },
     {
       "id": "AC056",
@@ -614,8 +614,8 @@
       "steps": "打开localBeta并导出备份",
       "expected": "显示内测，不说已购买，备份无VIP",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/app-badging.txt; evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml | Signed package label visibly says 内测; strict backup format contract. | Pending: UI no purchased claim and actual exported backup contains no VIP."
     },
     {
       "id": "AC057",
@@ -626,7 +626,7 @@
       "expected": "真实PURCHASED+校验/确认后解锁",
       "layer": "channel",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 渠道测试账号完成购买；真实PURCHASED+校验/确认后解锁"
     },
     {
       "id": "AC058",
@@ -637,7 +637,7 @@
       "expected": "不误解锁、不重复扣费；显示正确状态",
       "layer": "channel",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: PENDING/取消/断网/错误回调；不误解锁、不重复扣费；显示正确状态"
     },
     {
       "id": "AC059",
@@ -648,7 +648,7 @@
       "expected": "不用聊天人工改VIP，不靠备份解锁",
       "layer": "channel",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 同账号重装再恢复；不用聊天人工改VIP，不靠备份解锁"
     },
     {
       "id": "AC060",
@@ -659,7 +659,7 @@
       "expected": "新增/高级模板按规则变化，历史数据仍在",
       "layer": "channel",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 渠道退款撤销后刷新；新增/高级模板按规则变化，历史数据仍在"
     },
     {
       "id": "AC061",
@@ -669,8 +669,8 @@
       "steps": "无GMS装localBeta、Play装正式测试版",
       "expected": "本地完整可用；渠道SDK不串包",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/aosp-verification.txt; evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.ChannelIsolationTest.xml | API30 no-GMS image verified, internal beta package separate and local smoke passes. | Pending: Complete no-GMS flow plus genuine Play test build/channel SDK isolation; passing controlled SAF tests do not cover real DocumentsUI."
     },
     {
       "id": "AC062",
@@ -680,8 +680,8 @@
       "steps": "占位配置运行release_guard",
       "expected": "非零退出；没有APK就不能收集假产物",
       "layer": "static",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/kit_release_block.log; evidence/kit_reject_missing_apk.log | Recorded commercial guard rejects placeholder configuration and collector rejects missing APK. | Pending: Persist explicit exit status for both negative checks; signed internal artifact is not production release approval."
     },
     {
       "id": "AC063",
@@ -691,8 +691,8 @@
       "steps": "320dp/2倍字号/TalkBack",
       "expected": "保存可达、文字不挤掉、48dp目标",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | One report option has combined clickable checked semantics. | Pending: 320dp, 2x fonts, real TalkBack traversal and 48dp targets across screens."
     },
     {
       "id": "AC064",
@@ -703,7 +703,7 @@
       "expected": "文字对比足够、不只靠红绿表达",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 系统主题切换所有页面；文字对比足够、不只靠红绿表达"
     },
     {
       "id": "AC065",
@@ -713,8 +713,8 @@
       "steps": "中文输入法展开/收起/系统返回",
       "expected": "不遮底部保存、不意外丢草稿",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt | In-app back plus retain-draft navigation succeeds. | Pending: Chinese IME open/close, system back, bottom-save reachability and no accidental draft loss."
     },
     {
       "id": "AC066",
@@ -725,7 +725,7 @@
       "expected": "无不受支持API崩溃",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: API26模拟器完整闭环；无不受支持API崩溃"
     },
     {
       "id": "AC067",
@@ -736,7 +736,7 @@
       "expected": "无系统栏遮挡、权限逻辑正确",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: API36手势导航和边到边；无系统栏遮挡、权限逻辑正确"
     },
     {
       "id": "AC068",
@@ -747,7 +747,7 @@
       "expected": "测量真实耗时内存，无主线程I/O卡顿",
       "layer": "device",
       "status": "NOT_RUN",
-      "evidence": ""
+      "evidence": " |  | Pending: 500考试5000成绩滚动/保存/报告；测量真实耗时内存，无主线程I/O卡顿"
     },
     {
       "id": "AC069",
@@ -757,8 +757,8 @@
       "steps": "断网和检查安装权限清单",
       "expected": "离线主流程可用，无广告/位置/通讯录/全盘权限",
       "layer": "device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/app-badging.txt; evidence/api30-pass/full-instrumentation.txt | Signed APK badging has no requested ad/location/contact/storage/Internet permissions; local isolated UI smoke. | Pending: Explicit network-disabled real main flow; installation permission prompts and complete export/import."
     },
     {
       "id": "AC070",
@@ -768,8 +768,8 @@
       "steps": "旧DB升级到有显式迁移的新schema",
       "expected": "计数/ID/分值完整，迁移失败不清空",
       "layer": "room+device",
-      "status": "NOT_RUN",
-      "evidence": ""
+      "status": "PARTIAL",
+      "evidence": "evidence/api30-pass/full-instrumentation.txt; evidence/api30-pass/version-upgrade.txt; evidence/api30-pass/reinstall-retention.txt; evidence/api30-pass/retention-seed.txt; evidence/api30-pass/reinstall.txt; evidence/api30-pass/retention-verify.txt | Generated schema v1-to-v2 migration passes, retaining sample data and indices/drafts. Separate guarded seed, same fixed-signed APK install -r, and verification PASS with matching data markers. Historical 2c9 migration fixture failure was corrected. Normal suite skips opt-in seed/verify as expected; their separate explicit runs each pass. | Pending: Distinct older signed APK version upgrade, full count/ID/value comparison and injected migration failure without destructive reset. Same-APK reinstall is not version upgrade."
     }
   ]
 }

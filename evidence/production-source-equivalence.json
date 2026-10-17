@@ -1,0 +1,16 @@
+{
+  "appSource": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+  "testSource": "e0c971eaf125c133bc110f5d714f82854085c27c",
+  "comparison": "All repository blob IDs compared; differences limited to test diagnostics, docs and acceptance workflow/scripts",
+  "changedPaths": [
+    ".github/workflows/android-signed-device-tests.yml",
+    "app/src/androidTest/java/com/example/scoreledger/PdfReportTest.kt",
+    "app/src/androidTest/java/com/example/scoreledger/PdfSaveRecreationTest.kt",
+    "app/src/androidTest/java/com/example/scoreledger/SyntheticJourneyTest.kt",
+    "tasks/CHANGELOG.md",
+    "tasks/HANDOFF.md",
+    "tools/signed_emulator_acceptance.sh"
+  ],
+  "productionAndBuildConfigurationUnchanged": true,
+  "appSha256": "d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92"
+}

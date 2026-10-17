@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T01:19:51.738952+00:00",
-  "stage": "Device_2c9_partial_pass_migration_fixture_fix_pending",
-  "androidBuild": "IMPLEMENTED_UNVERIFIED",
-  "deviceTests": "PARTIAL_PASS_25_OF_26",
-  "billing": "NOT_IMPLEMENTED",
+  "asOf": "2026-10-17T02:07:18.246395+00:00",
+  "stage": "FIRST_INTERNAL_BETA_READY_FOR_DELIVERY",
+  "androidBuild": "VERIFIED_EXACT_BUSINESS58",
+  "deviceTests": "AOSP_API26_30_36_PASSED",
+  "billing": "NOT_IMPLEMENTED_NOT_TESTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "Build_migration_fix_then_rerun_devices_and_opt_in_signed_reinstall",
+  "nextTask": "Deliver verified APK and complete evidence bundle; retain full-acceptance gaps separately",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -30,9 +30,87 @@
   },
   "productAcceptance": {
     "total": 70,
-    "executed": 0
+    "fullyPassed": 4,
+    "partial": 52,
+    "notRun": 14,
+    "fullAcceptance": "INCOMPLETE",
+    "note": "Automated34 normal+2 explicit retention methods pass on each API26/30/36; broad cases contain additional real-device/provider/accessibility/performance steps."
   },
-  "currentEvidence": {
+  "blockers": [
+    {
+      "id": "FULL_ACCEPTANCE",
+      "status": "PARTIAL_NOT_BLOCKING_FIRST_INTERNAL_BETA",
+      "detail": "Physical/OEM, full-scale performance, real external providers and commercial acceptance remain separate; see currentLimitations."
+    }
+  ],
+  "ci": {
+    "commit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+    "runId": 38991766567,
+    "status": "SUCCESS",
+    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38991766567"
+  },
+  "baselineKitValidation": {
+    "kotlinCoreChecksPassed": 58,
+    "pythonContractTestsPassed": 42,
+    "evidence": "evidence/validation_summary.json"
+  },
+  "historicalBaselineCI": {
+    "commit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
+    "runId": 38985168690,
+    "status": "SUCCESS",
+    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38985168690"
+  },
+  "deliveryCandidate": {
+    "businessCommit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+    "testDiagnosticsCommit": "e0c971eaf125c133bc110f5d714f82854085c27c",
+    "buildRunId": 38991766567,
+    "package": "com.example.scoreledger.beta.debug",
+    "versionName": "0.1.0-beta",
+    "apkSha256": "d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92",
+    "certificateSha256": "bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c",
+    "networkPermission": "ABSENT_VERIFIED_BY_AAPT",
+    "googleServices": "ABSENT_IN_TESTED_AOSP_IMAGES",
+    "deviceMatrix": [
+      {
+        "api": 26,
+        "runId": 38992438499,
+        "normalPassed": 34,
+        "normalExpectedSkips": 2,
+        "retentionSeedPassed": 1,
+        "retentionVerifyPassed": 1,
+        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992438499"
+      },
+      {
+        "api": 30,
+        "runId": 38992023617,
+        "normalPassed": 34,
+        "normalExpectedSkips": 2,
+        "retentionSeedPassed": 1,
+        "retentionVerifyPassed": 1,
+        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992023617"
+      },
+      {
+        "api": 36,
+        "runId": 38992477045,
+        "normalPassed": 34,
+        "normalExpectedSkips": 2,
+        "retentionSeedPassed": 1,
+        "retentionVerifyPassed": 1,
+        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992477045"
+      }
+    ],
+    "delivered": false,
+    "visualCaptureRunId": 38993300734,
+    "visualReview": "SAMPLE_PASSED_NOT_EXHAUSTIVE"
+  },
+  "currentLimitations": [
+    "Physical phones/OEM keyboards/TalkBack not verified",
+    "Real DocumentsUI and external document providers not end-to-end verified",
+    "Full supported-scale100000-score performance not measured",
+    "PDF maximum200 measured pages; larger scope explicitly rejected without truncation; full JSON backup remains available",
+    "Same-APK reinstall retention is verified; distinct-version update and production signing/payment/publication are not"
+  ],
+  "historicalMilestoneEvidence": {
     "archiveSha256": "50f7ae72d08a64dc13ed592a45733fd615ead83be20099c47cede35b170981ff",
     "integrityFiles": 95,
     "pythonTestsPassed": 46,
@@ -94,37 +172,5 @@
       "repair": "Test reads absent index array as empty, retains all actual declared indexes and adds exam/score preservation + index-name assertions. NOT_RUN after repair."
     },
     "upgradeRetention": "Opt-in seed/verify instrumentation source added, DEBUG/localBeta/exact package/emulator hardware/nonce/explicit flag guards, empty DB prerequisite, no cleanup. Requires separate signed APK install -r run; NOT_RUN."
-  },
-  "blockers": [
-    {
-      "id": "BUILD_NETWORK",
-      "status": "BLOCKED_ENVIRONMENT",
-      "detail": "repo.maven.apache.org dependency download denied by policy; escalation executor failed before command execution; offline Gradle lacks junit 4.13.2 jar"
-    }
-  ],
-  "ci": {
-    "commit": "2c9b199e4160497f5d2e72f05a3dc64c96845b25",
-    "runId": 38989323329,
-    "status": "SUCCESS",
-    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38989323329",
-    "androidCompile": "PASSED",
-    "instrumentationAssembly": "PASSED",
-    "coreJvm": "PASSED",
-    "appJvm": "PASSED",
-    "lint": "0 errors,30 warnings",
-    "deviceRunId": 38989862766,
-    "deviceStatus": "COMPLETED_25_PASS_1_FAIL_0_SKIP",
-    "newSource": "Signing-only148af79 and current P1 fixes are separate, not certified by2c9 success"
-  },
-  "baselineKitValidation": {
-    "kotlinCoreChecksPassed": 58,
-    "pythonContractTestsPassed": 42,
-    "evidence": "evidence/validation_summary.json"
-  },
-  "historicalBaselineCI": {
-    "commit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
-    "runId": 38985168690,
-    "status": "SUCCESS",
-    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38985168690"
   }
 }

@@ -1,0 +1,32 @@
+{
+  "appSourceCommit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+  "diagnosticTestCommit": "e0c971eaf125c133bc110f5d714f82854085c27c",
+  "appSha256": "d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92",
+  "certificateSha256": "bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c",
+  "buildRunId": 38991766567,
+  "deviceRuns": {
+    "API26": 38992438499,
+    "API30": 38992023617,
+    "API36": 38992477045
+  },
+  "visualCaptureRunId": 38993300734,
+  "perApi": {
+    "normalPassed": 34,
+    "normalGuardedSkips": 2,
+    "explicitSeedPassed": 1,
+    "explicitRetentionVerifyPassed": 1,
+    "failures": 0
+  },
+  "jvmTestMethodsPassed": 8,
+  "coreSubchecksPassed": 64,
+  "pythonContractTestsPassed": 46,
+  "internetPermission": false,
+  "googlePlayServicesOnTestDevices": false,
+  "physicalDeviceTested": false,
+  "distinctVersionUpgradeTested": false,
+  "billingTested": false,
+  "commercialReleaseAuthorized": false,
+  "visualReview": "Inspected3 actual synthetic UI PNGs and both pages of native A4 PDF rendered independently with Poppler. Chinese text, zero/missing/absent rows, pagination and boundaries readable. Not exhaustive visual/accessibility acceptance.",
+  "monidResearchUsd": 0.00135,
+  "pdfMaxPages": 200
+}

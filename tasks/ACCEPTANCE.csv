@@ -1,71 +1,71 @@
 ﻿id,requirement,priority,title,steps,expected,layer,status,evidence
-AC001,FR01,P0,首次离线启动,断网冷启动新安装,不注册不登录无权限弹窗，能创建孩子,device,NOT_RUN,
-AC002,FR01,P0,隐私介绍,打开帮助和隐私,本地/明文导出/卸载丢失说明准确可见,device,NOT_RUN,
-AC003,FR02,P0,昵称校验,输入空白、24字、25字和控制字符,空白/超长/控制字符拒绝；合法昵称保留,core+device,NOT_RUN,
-AC004,FR02,P0,孩子切换隔离,A/B各录考试后快速切换,列表趋势导出仅当前孩子，无上一人短暂闪现,device,NOT_RUN,
-AC005,FR02,P0,归档不删数据,归档孩子再进入已归档列表,仍可查看导出，归档不变删除,device,NOT_RUN,
-AC006,FR02,P0,删除孩子,取消一次再确认删除A,取消无影响；确认只删除A关联数据，B不变,room+device,NOT_RUN,
-AC007,FR03,P0,科目快照,历史数学满分150，修改默认满分100并更名,旧考试保留旧名称和150，新记录才用新默认,room,NOT_RUN,
-AC008,FR03,P0,科目删除约束,归档有历史引用的科目,历史可读，不产生孤儿记录,room,NOT_RUN,
-AC009,FR04,P0,0分,输入0/100,保存为SCORED且图点为0，不变未录入,core+device,NOT_RUN,
-AC010,FR04,P0,缺考,标记缺考后保存,scoreMinor为空，图表断点，不进分母,core+room+device,NOT_RUN,
-AC011,FR04,P0,未录入,留分数空白保存,明确MISSING，不能自动0,core+device,NOT_RUN,
-AC012,FR04,P0,分数格式,"输入全角８７．５及非法1e2/1,000/负数/三位小数",全角规范为87.5；非法明确拒绝,core+device,NOT_RUN,
-AC013,FR04,P0,满分范围,输入0满分、超10000满分、分数超过满分,均拒绝且不写入,core+room,NOT_RUN,
-AC014,FR04,P0,日期,测试闰日/短格式/未来日期,合法闰日通过，其余按规则拒绝,core+device,NOT_RUN,
-AC015,FR04,P0,全部缺失,两科均缺考/未录入,允许记录，汇总暂无，计一次考试,core+device,NOT_RUN,
-AC016,FR04,P0,同日多考,同日同名录两次不同UUID,可保存两次；不武断合并,room,NOT_RUN,
-AC017,FR05,P0,重复提交,连点保存10次,一个UUID一条考试及完整成绩,room+device,NOT_RUN,
-AC018,FR05,P0,草稿旋转,录一半旋转屏幕,字段与状态保留,device,NOT_RUN,
-AC019,FR05,P0,草稿进程死亡,草稿落盘后杀进程重启,正确孩子的草稿可恢复,device,NOT_RUN,
-AC020,FR05,P0,跨孩子草稿,A写一半切B再回A,不会把A草稿记给B，明确继续/保存/丢弃流程,device,NOT_RUN,
-AC021,FR05,P0,编辑历史,在免费上限时纠正一条分数,编辑允许、不新计数、统计同步改变,room+device,NOT_RUN,
-AC022,FR05,P0,事务故障,保存中注入数据库异常,旧状态不变，无半条考试，草稿保留,room,NOT_RUN,
-AC023,FR06,P0,筛选恢复,筛出空结果后清空筛选,可恢复列表，不误称数据丢失,device,NOT_RUN,
-AC024,FR06,P0,排序稳定,同日多条、过去日期、切筛选,日期倒序、同日次序稳定且清晰,device,NOT_RUN,
-AC025,FR07,P0,分母变化,80/100到90/120,80%到75%，不声称能力提高,core+device,NOT_RUN,
-AC026,FR07,P0,断点,分数/缺考/分数连续三次,缺考为空隙，不画0、不跨缺失平滑连线,device,NOT_RUN,
-AC027,FR07,P0,可访问数据,TalkBack读取趋势页,有等价数据表和原值，不只读图片,device,NOT_RUN,
-AC028,FR07,P0,图轴,小波动样本和0/100,默认0–100，不截轴夸大变化,device,NOT_RUN,
-AC029,FR08,P0,加权汇总,80/100与90/150,170/250=68.00%，不是70%,core,NOT_RUN,
-AC030,FR08,P0,覆盖数,上述两科加一科MISSING,仍68%，明确已录2/3科,core+device,NOT_RUN,
-AC031,FR08,P0,不可比总分,跨孩子/学期/年级/类型/科目/满分/缺失,均不展示总分进退步箭头,core+device,NOT_RUN,
-AC032,FR08,P0,舍入一次,用非整百分比比较,先精确有理计算再最终舍入,core,NOT_RUN,
-AC033,FR09,P0,基础PDF免费,免费或退款后导出已有记录,完整基础明细可导，不锁数据,device,NOT_RUN,
-AC034,FR09,P0,中文分页,长标题昵称备注、超过一页数据,字可读，不裁切，每页编号正确,device,NOT_RUN,
-AC035,FR09,P0,字段完整,含0/缺考/未录入/满分变动样本,PDF和屏幕同口径，原始数值可查,device,NOT_RUN,
-AC036,FR09,P0,匿名导出,关闭昵称/备注输出,文档和文件名不泄露隐藏信息,device,NOT_RUN,
-AC037,FR09,P0,PDF取消/写满,取消选择器或存储写满,不报成功、原库不变、错误可重试,device,NOT_RUN,
-AC038,FR09,P0,分享权限,分享文件给阅读器,content URI短期只读，不file://或暴露整个cache,device,NOT_RUN,
-AC039,FR10,P0,有效备份,导出后新安装导入,逐表与ID/时间/统计相等,contract+room+device,NOT_RUN,
-AC040,FR10,P0,坏文件拒绝,截断JSON/重复键/NaN/非法编码,拒绝且原库不变,contract+room,NOT_RUN,
-AC041,FR10,P0,版本与额外键,version2或夹带VIP/token/path,拒绝不静默丢弃/启用权益,contract+room,NOT_RUN,
-AC042,FR10,P0,引用完整性,孤儿child/subject/exam和重复ID,拒绝不触碰原库,contract+room,NOT_RUN,
-AC043,FR10,P0,文件大小,超过20MiB或超实体数量,读取中止有说明，无内存爆峰/无写库,contract+device,NOT_RUN,
-AC044,FR10,P0,取消替换,预览有效备份后点取消,数据库零变化,device,NOT_RUN,
-AC045,FR10,P0,替换事务回滚,预确认后写一半注入失败,全旧库或全新库，不混合,room,NOT_RUN,
-AC046,FR10,P0,重复恢复,同备份连续恢复两次,计数不翻倍，UUID一致,room,NOT_RUN,
-AC047,FR10,P0,空备份,合法空备份导入,预览明确清空数量，二次确认后才执行,device,NOT_RUN,
-AC048,FR10,P0,付费限制下恢复,免费版恢复100次考试多孩子,恢复/查看/编辑/导出正常，只限制新增,device,NOT_RUN,
-AC049,FR10,P0,安全快照,恢复前快照创建失败,中止恢复，不覆盖当前数据,room,NOT_RUN,
-AC050,FR11,P0,系统备份边界,检查manifest/提取规则并测试OEM迁移,配置不自动云备份；未验证行为不宣传保证,static+device,NOT_RUN,
-AC051,FR11,P0,日志与临时文件,生成和删除报告/检查日志,日志无成绩昵称，cache仅限报告目录并清理,device,NOT_RUN,
-AC052,FR11,P0,卸载提醒,设置和备份页查看,显著说明先导出并验证，内部快照不是换机备份,device,NOT_RUN,
-AC053,FR12,P0,3次全局额度,A/B总和3次考试免费新增,第四次新增受限，不按孩子分别送3次,core+device,NOT_RUN,
-AC054,FR12,P0,删除释放名额,3次删除1次后新建,允许，刻意的产品规则,core+device,NOT_RUN,
-AC055,FR12,P0,已有数据不锁,模拟退款/无权益/离线,历史读改删与基础导出/备份始终可用,core+device,NOT_RUN,
-AC056,FR12,P0,内测标志,打开localBeta并导出备份,显示内测，不说已购买，备份无VIP,device,NOT_RUN,
-AC057,FR13,P0_COMMERCIAL,真实购买,渠道测试账号完成购买,真实PURCHASED+校验/确认后解锁,channel,NOT_RUN,
-AC058,FR13,P0_COMMERCIAL,待定取消失败,PENDING/取消/断网/错误回调,不误解锁、不重复扣费；显示正确状态,channel,NOT_RUN,
-AC059,FR13,P0_COMMERCIAL,恢复购买,同账号重装再恢复,不用聊天人工改VIP，不靠备份解锁,channel,NOT_RUN,
-AC060,FR13,P0_COMMERCIAL,退款撤销,渠道退款撤销后刷新,新增/高级模板按规则变化，历史数据仍在,channel,NOT_RUN,
-AC061,FR13,P0_COMMERCIAL,渠道隔离,无GMS装localBeta、Play装正式测试版,本地完整可用；渠道SDK不串包,device,NOT_RUN,
-AC062,FR13,P0_COMMERCIAL,签名及发布门禁,占位配置运行release_guard,非零退出；没有APK就不能收集假产物,static,NOT_RUN,
-AC063,FR14,P0,触区和字体,320dp/2倍字号/TalkBack,保存可达、文字不挤掉、48dp目标,device,NOT_RUN,
-AC064,FR14,P0,深浅色,系统主题切换所有页面,文字对比足够、不只靠红绿表达,device,NOT_RUN,
-AC065,FR14,P0,键盘与返回,中文输入法展开/收起/系统返回,不遮底部保存、不意外丢草稿,device,NOT_RUN,
-AC066,NFR,P0,低版本,API26模拟器完整闭环,无不受支持API崩溃,device,NOT_RUN,
-AC067,NFR,P0,新target,API36手势导航和边到边,无系统栏遮挡、权限逻辑正确,device,NOT_RUN,
-AC068,NFR,P0,规模,500考试5000成绩滚动/保存/报告,测量真实耗时内存，无主线程I/O卡顿,device,NOT_RUN,
-AC069,NFR,P0,离线/权限,断网和检查安装权限清单,离线主流程可用，无广告/位置/通讯录/全盘权限,device,NOT_RUN,
-AC070,NFR,P0,升级保留,旧DB升级到有显式迁移的新schema,计数/ID/分值完整，迁移失败不清空,room+device,NOT_RUN,
+AC001,FR01,P0,首次离线启动,断网冷启动新安装,不注册不登录无权限弹窗，能创建孩子,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | Isolated empty repository UI creates child. | Pending: Real fresh install, network disabled cold start and absence of login/permission dialogs."
+AC002,FR01,P0,隐私介绍,打开帮助和隐私,本地/明文导出/卸载丢失说明准确可见,device,NOT_RUN, |  | Pending: 打开帮助和隐私；本地/明文导出/卸载丢失说明准确可见
+AC003,FR02,P0,昵称校验,输入空白、24字、25字和控制字符,空白/超长/控制字符拒绝；合法昵称保留,core+device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Blank/control/25-character rejection and trim verified. | Pending: 24-character boundary and all invalid cases through actual nickname UI.
+AC004,FR02,P0,孩子切换隔离,A/B各录考试后快速切换,列表趋势导出仅当前孩子，无上一人短暂闪现,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | UI history child switch and repository query isolation. | Pending: A/B both populated; rapid switching, transient-frame leakage, trends and export isolation."
+AC005,FR02,P0,归档不删数据,归档孩子再进入已归档列表,仍可查看导出，归档不变删除,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | Archiving child retains existing rows during edit. | Pending: Archived-list navigation, viewing and export."
+AC006,FR02,P0,删除孩子,取消一次再确认删除A,取消无影响；确认只删除A关联数据，B不变,room+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Repository cascade deletes A exams/scores and retains B. | Pending: UI cancel then confirm; B populated data unchanged.
+AC007,FR03,P0,科目快照,历史数学满分150，修改默认满分100并更名,旧考试保留旧名称和150，新记录才用新默认,room,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Historical name/max snapshot survives default/name update and history edit. | Pending: Exact 150-to-100 fixture and new unarchived record adopting updated default.
+AC008,FR03,P0,科目删除约束,归档有历史引用的科目,历史可读，不产生孤儿记录,room,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Archived subject remains with readable referenced score; templates do not unarchive. | Pending: Explicit full reference-integrity assertion after archive.
+AC009,FR04,P0,0分,输入0/100,保存为SCORED且图点为0，不变未录入,core+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | UI zero stored as 0 and core zero rate. | Pending: Device chart point renders zero rather than missing.
+AC010,FR04,P0,缺考,标记缺考后保存,scoreMinor为空，图表断点，不进分母,core+room+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | UI ABSENT status and core null/excluded values. | Pending: Assert persisted null and actual chart break/denominator.
+AC011,FR04,P0,未录入,留分数空白保存,明确MISSING，不能自动0,core+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Explicit MISSING selection persists and core forbids missing-as-zero. | Pending: Leave blank without explicit status selection and verify UI/persisted null.
+AC012,FR04,P0,分数格式,"输入全角８７．５及非法1e2/1,000/负数/三位小数",全角规范为87.5；非法明确拒绝,core+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Fullwidth UI 85.5 and core exact 87.5 plus invalid-format rejection. | Pending: All requested invalid formats through UI with no write.
+AC013,FR04,P0,满分范围,输入0满分、超10000满分、分数超过满分,均拒绝且不写入,core+room,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Core zero denominator, over-limit parse and above-maximum score reject. | Pending: Room snapshot invariant for every invalid maximum/score fixture."
+AC014,FR04,P0,日期,测试闰日/短格式/未来日期,合法闰日通过，其余按规则拒绝,core+device,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Leap day, invalid leap day, short and future dates checked. | Pending: Actual entry UI rejection/acceptance."
+AC015,FR04,P0,全部缺失,两科均缺考/未录入,允许记录，汇总暂无，计一次考试,core+device,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Core all-absent/no-rate and grouped missing summary. | Pending: Mixed two-row absent/missing UI save, no-summary display and count increment."
+AC016,FR04,P0,同日多考,同日同名录两次不同UUID,可保存两次；不武断合并,room,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Three same-day/same-name different UUIDs save at repository. | Pending: Assert the exact two-row identity/content fixture explicitly; current check focuses quota.
+AC017,FR05,P0,重复提交,连点保存10次,一个UUID一条考试及完整成绩,room+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Two repository submissions remain one exam with scores. | Pending: Actual 10 rapid save taps and complete row set.
+AC018,FR05,P0,草稿旋转,录一半旋转屏幕,字段与状态保留,device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | ActivityScenario.recreate preserves edited title and draft ID. | Pending: Physical orientation change with partially filled score/date/status fields; no process-death inference.
+AC019,FR05,P0,草稿进程死亡,草稿落盘后杀进程重启,正确孩子的草稿可恢复,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt; evidence/api30-pass/retention-seed.txt; evidence/api30-pass/reinstall.txt; evidence/api30-pass/retention-verify.txt | On-disk Room close/reopen retains child-bound draft. Separate guarded seed/install-r/verify retains persistent draft and data digest. This is not a kill-process/relaunch UI draft-recovery test. | Pending: Kill app process, relaunch actual activity and restore the right child draft."
+AC020,FR05,P0,跨孩子草稿,A写一半切B再回A,不会把A草稿记给B，明确继续/保存/丢弃流程,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | Seeded draft hidden for B, resumed for A, retain-and-return UI works. | Pending: Create partial draft through UI, switch workflow, save/discard branches and wrong-child submit prevention."
+AC021,FR05,P0,编辑历史,在免费上限时纠正一条分数,编辑允许、不新计数、统计同步改变,room+device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Edit title preserves UUID/count; quota retry does not add record. | Pending: Change score through UI at free quota and verify changed statistics.
+AC022,FR05,P0,事务故障,保存中注入数据库异常,旧状态不变，无半条考试，草稿保留,room,PASS,evidence/api30-pass/full-instrumentation.txt | Injected SQLite score/cleanup failures roll back new/edit rows and preserve draft; later retry succeeds.
+AC023,FR06,P0,筛选恢复,筛出空结果后清空筛选,可恢复列表，不误称数据丢失,device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Repository filter can return empty and unfiltered query returns record. | Pending: Actual UI filter/clear recovery and empty-state messaging.
+AC024,FR06,P0,排序稳定,同日多条、过去日期、切筛选,日期倒序、同日次序稳定且清晰,device,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Core same-date deterministic trend order. | Pending: History descending-date UI order, same-day clarity and filter transitions."
+AC025,FR07,P0,分母变化,80/100到90/120,80%到75%，不声称能力提高,core+device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | 80/100 to 90/120 produces -5 percentage points. | Pending: Device chart/text 80% to 75% and no improvement claim.
+AC026,FR07,P0,断点,分数/缺考/分数连续三次,缺考为空隙，不画0、不跨缺失平滑连线,device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | MISSING interrupts core trend connections. | Pending: ABSENT middle point fixture and rendered chart gaps.
+AC027,FR07,P0,可访问数据,TalkBack读取趋势页,有等价数据表和原值，不只读图片,device,NOT_RUN, |  | Pending: TalkBack读取趋势页；有等价数据表和原值，不只读图片
+AC028,FR07,P0,图轴,小波动样本和0/100,默认0–100，不截轴夸大变化,device,NOT_RUN, |  | Pending: 小波动样本和0/100；默认0–100，不截轴夸大变化
+AC029,FR08,P0,加权汇总,80/100与90/150,170/250=68.00%，不是70%,core,PASS,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Exact weighted summary 17000/25000 yields 68.00%; core-only acceptance.
+AC030,FR08,P0,覆盖数,上述两科加一科MISSING,仍68%，明确已录2/3科,core+device,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Grouped 80/100 + 90/150 + MISSING yields 68%, count 2/3. | Pending: Device displays same rate and coverage."
+AC031,FR08,P0,不可比总分,跨孩子/学期/年级/类型/科目/满分/缺失,均不展示总分进退步箭头,core+device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | All listed scope mismatches reject total comparison. | Pending: Device suppresses arrows for every mismatch.
+AC032,FR08,P0,舍入一次,用非整百分比比较,先精确有理计算再最终舍入,core,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | 1/3 rounds to 33.33 and weighted summary tested. | Pending: Adversarial noninteger comparison proving no premature intermediate rounding.
+AC033,FR09,P0,基础PDF免费,免费或退款后导出已有记录,完整基础明细可导，不锁数据,device,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml; evidence/api30-pass/full-instrumentation.txt | Core basic-export entitlement is unconditional; PDF renderer opens file. Controlled PDF output callback survives activity recreation and saved bytes equal cached report; test uses beta-enabled repository, not free/refund state. | Pending: Free/refunded actual export full details through SAF; actual external-reader checks if release criteria require."
+AC034,FR09,P0,中文分页,长标题昵称备注、超过一页数据,字可读，不裁切，每页编号正确,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | Plans paginate within bounds, preserve long notes, renderer opens A4 first page. 200-page boundary writes; 201-page direct plan and over-limit planning reject rather than truncate. Current UI/PDF screenshots are not collected visual evidence. | Pending: Visual all-page Chinese legibility/clipping/page numbering, long nickname; two independent external readers are not covered."
+AC035,FR09,P0,字段完整,含0/缺考/未录入/满分变动样本,PDF和屏幕同口径，原始数值可查,device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | PDF plan contains zero/absent/missing/changed-max values; UI stores corresponding categories. | Pending: Direct screen-to-export field/rate comparison for identical fixture.
+AC036,FR09,P0,匿名导出,关闭昵称/备注输出,文档和文件名不泄露隐藏信息,device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Anonymous/no-notes report plan omits nickname and note. | Pending: Written PDF text/metadata plus actual exported filename leakage checks.
+AC037,FR09,P0,PDF取消/写满,取消选择器或存储写满,不报成功、原库不变、错误可重试,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | Previously failing controlled PDF-save recreation now PASSES on FINAL-business58. Injected coroutine cancellation stops planning and removes partial cached publication. This is not actual DocumentsUI cancel or storage-full testing. | Pending: Actual DocumentsUI cancel, provider write-full/close failure, no false success, DB unchanged and retry. Controlled file-URI callback is not DocumentsUI."
+AC038,FR09,P0,分享权限,分享文件给阅读器,content URI短期只读，不file://或暴露整个cache,device,NOT_RUN, |  | Pending: 分享文件给阅读器；content URI短期只读，不file://或暴露整个cache
+AC039,FR10,P0,有效备份,导出后新安装导入,逐表与ID/时间/统计相等,contract+room+device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml | Codec roundtrip and Room replacement retain fixture rows, IDs/times included in entity equality. Controlled backup export after recreation produces parseable matching child; controlled import callback after recreation opens preview only, without confirming replacement. | Pending: Real export, fresh installation, actual provider import; all tables including subjects and computed statistics equality."
+AC040,FR10,P0,坏文件拒绝,截断JSON/重复键/NaN/非法编码,拒绝且原库不变,contract+room,PARTIAL,evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml; evidence/d09-python.log | Kotlin duplicate-key/NaN/UTF-8 rejection; Python truncated contract. | Pending: Kotlin truncation plus actual restore rejection and unchanged Room for each hostile fixture.
+AC041,FR10,P0,版本与额外键,version2或夹带VIP/token/path,拒绝不静默丢弃/启用权益,contract+room,PARTIAL,evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml; evidence/d09-python.log | Kotlin schemaVersion2/unknown field and Python entitlement-injection rejection. | Pending: Actual Kotlin VIP/token/path injections with unchanged Room and entitlement.
+AC042,FR10,P0,引用完整性,孤儿child/subject/exam和重复ID,拒绝不触碰原库,contract+room,PARTIAL,evidence/d09-python.log | Python contract rejects orphan/duplicate fixtures. | Pending: Actual Kotlin codec/Room same corpus and unchanged database; Python model is not Android proof.
+AC043,FR10,P0,文件大小,超过96MiB或超实体数量,读取中止有说明，无内存爆峰/无写库,contract+device,PARTIAL,"evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml; evidence/d09-python.log; tasks/DECISIONS.md | Kotlin bounded scalar consumption and 96MiB constant; Python caps. | Pending: Update stale 20MiB acceptance per D06 documented 96MiB decision; exercise exact bytes/entity caps, device peak memory, message and no-write."
+AC044,FR10,P0,取消替换,预览有效备份后点取消,数据库零变化,device,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Controlled file-URI callback opens preview and verifies child snapshot unchanged before confirmation. | Pending: Click actual preview Cancel and verify whole database/drafts unchanged; use real provider/DocumentsUI separately.
+AC045,FR10,P0,替换事务回滚,预确认后写一半注入失败,全旧库或全新库，不混合,room,PASS,evidence/api30-pass/full-instrumentation.txt | Injected scores INSERT abort after replacement clear preserves entire old snapshot and drafts.
+AC046,FR10,P0,重复恢复,同备份连续恢复两次,计数不翻倍，UUID一致,room,PARTIAL,evidence/api30-pass/full-instrumentation.txt | Repeated repository replacement retains exam count. | Pending: Assert all UUID sets unchanged after second replacement; not actual UI import evidence.
+AC047,FR10,P0,空备份,合法空备份导入,预览明确清空数量，二次确认后才执行,device,NOT_RUN, |  | Pending: 合法空备份导入；预览明确清空数量，二次确认后才执行
+AC048,FR10,P0,付费限制下恢复,免费版恢复100次考试多孩子,恢复/查看/编辑/导出正常，只限制新增,device,PARTIAL,"evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | 100-exam free policy blocks additions only; access/basic export/restore policies remain true. | Pending: Real free repository/UI restore 100 exams across children, view/edit/export and addition rejection."
+AC049,FR10,P0,安全快照,恢复前快照创建失败,中止恢复，不覆盖当前数据,room,PASS,evidence/api30-pass/full-instrumentation.txt | Injected snapshot writer failure preserves old database/drafts; UI error dismisses restore.
+AC050,FR11,P0,系统备份边界,检查manifest/提取规则并测试OEM迁移,配置不自动云备份；未验证行为不宣传保证,static+device,PARTIAL,evidence/d09-static.log | Static checker reports offline manifest checks. | Pending: Inspect extraction rules and actual OEM migration; no universal backup-behavior guarantee.
+AC051,FR11,P0,日志与临时文件,生成和删除报告/检查日志,日志无成绩昵称，cache仅限报告目录并清理,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | Injected cancellation removes partial publication and reports cache directory is empty. | Pending: Generate/delete successful reports, verify directory restriction/retention and inspect logs for nickname/score leakage; cancellation cleanup alone is insufficient."
+AC052,FR11,P0,卸载提醒,设置和备份页查看,显著说明先导出并验证，内部快照不是换机备份,device,NOT_RUN, |  | Pending: 设置和备份页查看；显著说明先导出并验证，内部快照不是换机备份
+AC053,FR12,P0,3次全局额度,A/B总和3次考试免费新增,第四次新增受限，不按孩子分别送3次,core+device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml; evidence/api30-pass/full-instrumentation.txt | Core 3-exam rule and repository fourth-add rejection for one child. | Pending: A/B combined quota and actual UI fourth-add rejection.
+AC054,FR12,P0,删除释放名额,3次删除1次后新建,允许，刻意的产品规则,core+device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Policy permits addition at count 2. | Pending: Actual delete from 3 then create through UI with correct count.
+AC055,FR12,P0,已有数据不锁,模拟退款/无权益/离线,历史读改删与基础导出/备份始终可用,core+device,PARTIAL,evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml | Existing-data/basic-export/restore policy independent of entitlement. | Pending: Refund/no-entitlement/offline UI read/edit/delete/basic-export/backup with data retained.
+AC056,FR12,P0,内测标志,打开localBeta并导出备份,显示内测，不说已购买，备份无VIP,device,PARTIAL,evidence/api30-pass/app-badging.txt; evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.backup.BackupCodecTest.xml | Signed package label visibly says 内测; strict backup format contract. | Pending: UI no purchased claim and actual exported backup contains no VIP.
+AC057,FR13,P0_COMMERCIAL,真实购买,渠道测试账号完成购买,真实PURCHASED+校验/确认后解锁,channel,NOT_RUN, |  | Pending: 渠道测试账号完成购买；真实PURCHASED+校验/确认后解锁
+AC058,FR13,P0_COMMERCIAL,待定取消失败,PENDING/取消/断网/错误回调,不误解锁、不重复扣费；显示正确状态,channel,NOT_RUN, |  | Pending: PENDING/取消/断网/错误回调；不误解锁、不重复扣费；显示正确状态
+AC059,FR13,P0_COMMERCIAL,恢复购买,同账号重装再恢复,不用聊天人工改VIP，不靠备份解锁,channel,NOT_RUN, |  | Pending: 同账号重装再恢复；不用聊天人工改VIP，不靠备份解锁
+AC060,FR13,P0_COMMERCIAL,退款撤销,渠道退款撤销后刷新,新增/高级模板按规则变化，历史数据仍在,channel,NOT_RUN, |  | Pending: 渠道退款撤销后刷新；新增/高级模板按规则变化，历史数据仍在
+AC061,FR13,P0_COMMERCIAL,渠道隔离,无GMS装localBeta、Play装正式测试版,本地完整可用；渠道SDK不串包,device,PARTIAL,"evidence/api30-pass/aosp-verification.txt; evidence/api30-pass/full-instrumentation.txt; evidence/d09-ci-reports/app/build/test-results/testLocalBetaDebugUnitTest/TEST-com.example.scoreledger.ChannelIsolationTest.xml | API30 no-GMS image verified, internal beta package separate and local smoke passes. | Pending: Complete no-GMS flow plus genuine Play test build/channel SDK isolation; passing controlled SAF tests do not cover real DocumentsUI."
+AC062,FR13,P0_COMMERCIAL,签名及发布门禁,占位配置运行release_guard,非零退出；没有APK就不能收集假产物,static,PARTIAL,evidence/kit_release_block.log; evidence/kit_reject_missing_apk.log | Recorded commercial guard rejects placeholder configuration and collector rejects missing APK. | Pending: Persist explicit exit status for both negative checks; signed internal artifact is not production release approval.
+AC063,FR14,P0,触区和字体,320dp/2倍字号/TalkBack,保存可达、文字不挤掉、48dp目标,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | One report option has combined clickable checked semantics. | Pending: 320dp, 2x fonts, real TalkBack traversal and 48dp targets across screens."
+AC064,FR14,P0,深浅色,系统主题切换所有页面,文字对比足够、不只靠红绿表达,device,NOT_RUN, |  | Pending: 系统主题切换所有页面；文字对比足够、不只靠红绿表达
+AC065,FR14,P0,键盘与返回,中文输入法展开/收起/系统返回,不遮底部保存、不意外丢草稿,device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt | In-app back plus retain-draft navigation succeeds. | Pending: Chinese IME open/close, system back, bottom-save reachability and no accidental draft loss."
+AC066,NFR,P0,低版本,API26模拟器完整闭环,无不受支持API崩溃,device,NOT_RUN, |  | Pending: API26模拟器完整闭环；无不受支持API崩溃
+AC067,NFR,P0,新target,API36手势导航和边到边,无系统栏遮挡、权限逻辑正确,device,NOT_RUN, |  | Pending: API36手势导航和边到边；无系统栏遮挡、权限逻辑正确
+AC068,NFR,P0,规模,500考试5000成绩滚动/保存/报告,测量真实耗时内存，无主线程I/O卡顿,device,NOT_RUN, |  | Pending: 500考试5000成绩滚动/保存/报告；测量真实耗时内存，无主线程I/O卡顿
+AC069,NFR,P0,离线/权限,断网和检查安装权限清单,离线主流程可用，无广告/位置/通讯录/全盘权限,device,PARTIAL,evidence/api30-pass/app-badging.txt; evidence/api30-pass/full-instrumentation.txt | Signed APK badging has no requested ad/location/contact/storage/Internet permissions; local isolated UI smoke. | Pending: Explicit network-disabled real main flow; installation permission prompts and complete export/import.
+AC070,NFR,P0,升级保留,旧DB升级到有显式迁移的新schema,计数/ID/分值完整，迁移失败不清空,room+device,PARTIAL,"evidence/api30-pass/full-instrumentation.txt; evidence/api30-pass/version-upgrade.txt; evidence/api30-pass/reinstall-retention.txt; evidence/api30-pass/retention-seed.txt; evidence/api30-pass/reinstall.txt; evidence/api30-pass/retention-verify.txt | Generated schema v1-to-v2 migration passes, retaining sample data and indices/drafts. Separate guarded seed, same fixed-signed APK install -r, and verification PASS with matching data markers. Historical 2c9 migration fixture failure was corrected. Normal suite skips opt-in seed/verify as expected; their separate explicit runs each pass. | Pending: Distinct older signed APK version upgrade, full count/ID/value comparison and injected migration failure without destructive reset. Same-APK reinstall is not version upgrade."
