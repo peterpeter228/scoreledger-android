@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Separate test-APK UID. Same-signature callers only; never packaged in release. -->
+    <permission android:name="com.example.scoreledger.test.RECEIVE_SYNTHETIC_SHARE"
+        android:protectionLevel="signature" />
+    <application>
+        <activity android:name="com.example.scoreledger.ShareGrantReceiverActivity"
+            android:exported="true"
+            android:permission="com.example.scoreledger.test.RECEIVE_SYNTHETIC_SHARE"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.example.scoreledger.synthetic.share.receiver" />
+    </application>
+</manifest>

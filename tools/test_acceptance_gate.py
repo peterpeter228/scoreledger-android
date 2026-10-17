@@ -12,6 +12,22 @@ def log():
             'INSTRUMENTATION_STATUS: class=example.Test\nINSTRUMENTATION_STATUS: test=required\nINSTRUMENTATION_STATUS_CODE: 0\n'
             'OK (1 test)\nINSTRUMENTATION_CODE: -1\n')
 class GateTest(unittest.TestCase):
+    def test_manifest_exactly_matches_instrumented_source_methods(self):
+        import re
+        root=Path(__file__).resolve().parents[1]
+        manifest=json.loads((root/'tools/required_device_acceptance.json').read_text())
+        required=manifest['requiredMethods']
+        self.assertEqual(len(required),len(set(required)))
+        phases={entry['method'] for entry in manifest['requiredPhaseLogs']}
+        found=set()
+        for path in (root/'app/src/androidTest/java/com/example/scoreledger').glob('*.kt'):
+            if path.stem=='UpgradeRetentionTest':
+                continue # separately selected old/new artifact retention methods
+            for method in re.findall(r'@Test\s+fun\s+(\w+)\s*\(',path.read_text()):
+                found.add('com.example.scoreledger.'+path.stem+'#'+method)
+        self.assertEqual(found,set(required)|phases)
+        self.assertFalse(set(required)&phases,'Opt-in phase tests must not skip in the full suite')
+
     def test_success(self): self.assertEqual([METHOD], verify_methods(log(), [METHOD]))
     def test_missing_method(self):
         with self.assertRaises(AssertionError): verify_methods(log(), ['example.Test#other'])

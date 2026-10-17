@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Test-APK cross-UID receiver only; no release permission or component. -->
+    <uses-permission android:name="com.example.scoreledger.test.RECEIVE_SYNTHETIC_SHARE" />
     <application>
         <activity android:name=".RecreationHostActivity" android:exported="false" android:windowSoftInputMode="adjustResize" />
     </application>

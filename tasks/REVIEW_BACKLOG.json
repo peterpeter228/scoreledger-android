@@ -3,7 +3,7 @@
   "source": "Independent review2026-10-17",
   "sourceHead": "bbb48dd08691ded0cb2d872d876821752e101844",
   "implementationBase": "64d2e012ff195859581af82650066f77f8383cec",
-  "status": "LATEST_CANDIDATE_DEVICE_ACCEPTANCE_NOT_VERIFIED",
+  "status": "BOUND_APP_PLATFORM_GATES_PASS_LATEST_TEST_REVISION_PENDING",
   "tasks": [
     {
       "id": "T01",
@@ -27,10 +27,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -56,10 +55,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -87,10 +85,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -120,10 +117,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -152,10 +148,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -186,10 +181,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_KNOWN_FUNCTIONAL_DEVIATION",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -219,10 +213,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -251,10 +244,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -283,10 +275,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -316,10 +307,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -350,10 +340,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -383,10 +372,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -420,10 +408,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -452,10 +439,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -489,10 +475,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -528,10 +513,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -558,10 +542,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -593,10 +576,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -625,10 +607,9 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     },
     {
@@ -657,48 +638,88 @@
         "api36": "RUNNING"
       },
       "candidateAcceptance": {
-        "status": "NOT_VERIFIED",
-        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-        "runId": "39029750622",
-        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
+        "status": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
+        "bindingRef": "candidateBinding.platformBindings",
+        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
       }
     }
   ],
   "candidateBinding": {
-    "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
-    "runId": "39029750622",
-    "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39029750622",
-    "appSha256": "4951d5af947b56a5164e1e44dcaa5f376a964884e3a85be8ad2bb7bb4dbc0ff2",
+    "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
     "variant": "localBetaDebug",
     "package": "com.example.scoreledger.beta.debug",
     "versionCode": 2,
     "versionName": "0.2.0-beta",
-    "buildStatus": "PASS",
-    "requiredDeviceMethods": 58,
-    "externalDraftPhaseMethods": 2,
-    "acceptanceStatus": "NOT_VERIFIED",
-    "apiResults": {
+    "acceptanceStatus": "SAME_APP_BYTES_PLATFORM_GATES_PASS_WITH_EXPLICIT_DISTINCT_TEST_BINDINGS",
+    "platformBindings": {
       "26": {
-        "status": "SCRIPT_EXIT_255_UNDER_DIAGNOSIS",
-        "reportedStage": "after upgrade retention",
-        "evidenceBasis": "root run-status report; final artifacts not reviewed here"
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
+        "testSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
+        "appArtifactRunId": "39030983529",
+        "testArtifactRunId": "39030983529",
+        "acceptanceRunId": "39030983529",
+        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+        "testApkSha256": "0f6d666f121e01c1509174b13d9353d07fb73c048b1314b0b1d5d7bc3e9b5e77",
+        "requiredMethods": 58,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api26-twelfth/",
+        "gate": "../scoreledger-revision-evidence/api26-twelfth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api26-twelfth/artifact-provenance.json",
+        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
       },
       "30": {
-        "status": "RUNNING"
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "appArtifactRunId": "39031982184",
+        "testArtifactRunId": "39031982184",
+        "acceptanceRunId": "39031982184",
+        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
+        "requiredMethods": 58,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api30-thirteenth/",
+        "gate": "../scoreledger-revision-evidence/api30-thirteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api30-thirteenth/artifact-provenance.json",
+        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
       },
       "36": {
-        "status": "RUNNING"
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "appArtifactRunId": "39031982184",
+        "testArtifactRunId": "39031982184",
+        "acceptanceRunId": "39031982184",
+        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
+        "requiredMethods": 58,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api36-thirteenth/",
+        "gate": "../scoreledger-revision-evidence/api36-thirteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api36-thirteenth/artifact-provenance.json",
+        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
       }
+    },
+    "requiredDeviceMethods": 58,
+    "externalDraftPhaseMethods": 2,
+    "latestSourceValidation": {
+      "sourceSha": "d80d770879e172e45cc97c8e7ab3b1da4720a746",
+      "runId": null,
+      "status": "RUNNING_NOT_ACCEPTED",
+      "scope": "Stronger Synthetic filter-transition test; its new assertions are not imported into completed evidence. Run ID pending root binding."
     },
     "reviewDate": "2026-10-17",
     "evidencePathConvention": "Paths are relative to repository root and point to the adjacent retained evidence collection, not files embedded in this repository. Original artifact source files bind APK identity. This later docs-only review does not change tested APK/source identity.",
     "jvmEvidence": {
-      "evidenceRoot": "../scoreledger-revision-evidence/build-reports-eleventh/",
+      "sourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+      "runId": "39031982184",
+      "evidenceRoot": "../scoreledger-revision-evidence/build-reports-thirteenth/",
       "coreJUnitMethods": 1,
+      "coreInternalContractChecks": 71,
       "appJUnitMethods": 9,
       "failures": 0,
-      "errors": 0,
-      "interpretation": "Build/JVM success does not establish58device methods or70original cases."
+      "errors": 0
     }
   },
   "acceptanceMapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
@@ -713,7 +734,7 @@
     "otherMissingEvidence": [
       "Hostile-import complete UI rejection matrix and external process death during file I/O are not established by normal-path restore and transaction injection tests."
     ],
-    "environmentGate": "Latest candidate API26 exit255 under diagnosis; API30/API36 running. No latest gate pass.",
+    "environmentGate": "Same APK bytes pass strict gates on API26/30/36 with explicit per-platform sources/test hashes. Latestd80 test-only validation running, not passed.",
     "externalFutureStages": [
       "Eight-parent usability study",
       "Four-to-six-week real-exam retention study",
@@ -726,14 +747,8 @@
     "closedPriorCandidateGaps": "AC006 deletion and AC047 empty restore confirmation/recovery individually passed on7c API26/30; latest gate pending."
   },
   "jvmEvidenceReview": {
-    "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
-    "result": "Latest build-reports-eleventh XML reviewed:1core and9app JVM methods all pass. AC029 is core-only PASS. No latest device gate pass; prior assertions separately bound.",
-    "caseStatusSummary": {
-      "NOT_VERIFIED": 48,
-      "PARTIAL": 18,
-      "PASS": 1,
-      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3
-    }
+    "bindingRef": "candidateBinding.jvmEvidence",
+    "result": "1core+9app JVM methods pass;71internal core checks include adversarial delta. AC032 core-only PASS. No all70cases claim."
   },
   "priorCandidateBindings": [
     {
@@ -792,28 +807,67 @@
     }
   ],
   "currentEvidenceReconciliation": {
-    "newUiMethods": {
-      "EMPTY_RESTORE_UI": "com.example.scoreledger.EmptyRestoreUiTest#controlledPickerEmptyRestoreCancelPreservesDraftsAndConfirmProtectsOriginal",
-      "CHILD_MANAGEMENT_UI": "com.example.scoreledger.ChildManagementUiTest#archiveAndCancelThenConfirmChildDeletionPreservesOtherChildAndAllTheirRows",
-      "GENERATION_NOTICE": "com.example.scoreledger.GenerationNoticeTest#restoreNoticeOnlyReportsAnEditorThatWasActuallyClosed"
-    },
-    "priorMethodRun": {
-      "sourceSha": "7c6777dc2ca39fc2ab57386781a72f5b304dfc84",
-      "runId": "39028520352",
-      "appSha256": "4951d5af947b56a5164e1e44dcaa5f376a964884e3a85be8ad2bb7bb4dbc0ff2",
-      "testApkSha256": "5cdb0d419ce778d9ae8cd416fc03439f614ffb7751a7ccee29bd862402eeba60",
-      "apiResults": {
-        "26": "WHOLE_SUITE_FAILED_ONE_REAL_DOCUMENTS_UI_METHOD",
-        "30": "WHOLE_SUITE_FAILED_ONE_REAL_DOCUMENTS_UI_METHOD"
-      },
-      "scope": "Three added method completions individually verified, not an overall gate pass. App APK bytes match latest candidate, but latest source/test/run acceptance is not inherited."
-    },
-    "latestDeviceGate": "NOT_VERIFIED",
     "caseStatusSummary": {
-      "NOT_VERIFIED": 48,
-      "PARTIAL": 18,
-      "PASS": 1,
+      "PARTIAL": 40,
+      "NOT_RUN": 16,
+      "PASS": 11,
       "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3
+    },
+    "platformBindings": {
+      "26": {
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
+        "testSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
+        "appArtifactRunId": "39030983529",
+        "testArtifactRunId": "39030983529",
+        "acceptanceRunId": "39030983529",
+        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+        "testApkSha256": "0f6d666f121e01c1509174b13d9353d07fb73c048b1314b0b1d5d7bc3e9b5e77",
+        "requiredMethods": 58,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api26-twelfth/",
+        "gate": "../scoreledger-revision-evidence/api26-twelfth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api26-twelfth/artifact-provenance.json",
+        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
+      },
+      "30": {
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "appArtifactRunId": "39031982184",
+        "testArtifactRunId": "39031982184",
+        "acceptanceRunId": "39031982184",
+        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
+        "requiredMethods": 58,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api30-thirteenth/",
+        "gate": "../scoreledger-revision-evidence/api30-thirteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api30-thirteenth/artifact-provenance.json",
+        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
+      },
+      "36": {
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
+        "appArtifactRunId": "39031982184",
+        "testArtifactRunId": "39031982184",
+        "acceptanceRunId": "39031982184",
+        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
+        "requiredMethods": 58,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api36-thirteenth/",
+        "gate": "../scoreledger-revision-evidence/api36-thirteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api36-thirteenth/artifact-provenance.json",
+        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
+      }
+    },
+    "latestSourceValidation": {
+      "sourceSha": "d80d770879e172e45cc97c8e7ab3b1da4720a746",
+      "runId": null,
+      "status": "RUNNING_NOT_ACCEPTED",
+      "scope": "Stronger Synthetic filter-transition test; its new assertions are not imported into completed evidence. Run ID pending root binding."
     }
   }
 }

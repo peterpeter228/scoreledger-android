@@ -22,8 +22,10 @@ import com.example.scoreledger.ui.*
 /** Non-exported debug-only instrumentation host; never opens the user's persisted database. */
 class RecreationHostActivity:ComponentActivity() {
     data class LayoutOverride(val widthDp:Int,val fontScale:Float)
-    companion object { var testLayout:LayoutOverride?=null; var testRepository:ScoreRepository?=null; var testServices:UiServices?=null; var testRegistryOwner:androidx.activity.result.ActivityResultRegistryOwner?=null }
+    companion object { var testNightMode:Int?=null; var testLayout:LayoutOverride?=null; var testRepository:ScoreRepository?=null; var testServices:UiServices?=null; var testRegistryOwner:androidx.activity.result.ActivityResultRegistryOwner?=null }
     internal var diagnosticModel:ScoreViewModel?=null
+        private set
+    internal var diagnosticColors:androidx.compose.material3.ColorScheme?=null
         private set
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,14 +40,19 @@ class RecreationHostActivity:ComponentActivity() {
             SideEffect { diagnosticModel=model }
             val owner=testRegistryOwner
             val content:@Composable ()->Unit={
-                if(owner==null) ScoreLedgerTheme { StarterScreen(model,services) }
-                else CompositionLocalProvider(androidx.activity.compose.LocalActivityResultRegistryOwner provides owner) { ScoreLedgerTheme { StarterScreen(model,services) } }
+                if(owner==null) ScoreLedgerTheme { val colors=androidx.compose.material3.MaterialTheme.colorScheme; SideEffect { diagnosticColors=colors }; StarterScreen(model,services) }
+                else CompositionLocalProvider(androidx.activity.compose.LocalActivityResultRegistryOwner provides owner) { ScoreLedgerTheme { val colors=androidx.compose.material3.MaterialTheme.colorScheme; SideEffect { diagnosticColors=colors }; StarterScreen(model,services) } }
+            }
+            val themedContent:@Composable ()->Unit={
+                val configuration=android.content.res.Configuration(androidx.compose.ui.platform.LocalConfiguration.current)
+                testNightMode?.let { configuration.uiMode=(configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK.inv()) or it }
+                CompositionLocalProvider(androidx.compose.ui.platform.LocalConfiguration provides configuration) { content() }
             }
             val layout=testLayout
-            if(layout==null) content()
+            if(layout==null) themedContent()
             else CompositionLocalProvider(LocalDensity provides Density(LocalDensity.current.density,layout.fontScale)) {
                 Box(Modifier.fillMaxSize(),contentAlignment=Alignment.TopCenter) {
-                    Box(Modifier.widthIn(max=layout.widthDp.dp).fillMaxSize()) { content() }
+                    Box(Modifier.widthIn(max=layout.widthDp.dp).fillMaxSize()) { themedContent() }
                 }
             }
         }
