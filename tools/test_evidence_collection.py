@@ -117,6 +117,34 @@ adb() {
                 self.assertEqual((root/'software-keyboard-preference-after.txt').read_text().strip(),actual)
             self.assertEqual((root/'writes.txt').read_text().splitlines(),['shell settings put secure show_ime_with_hard_keyboard 1']*3)
 
+    def test_guest_framebuffer_verification_rejects_mismatch(self):
+        import struct
+        code=SCRIPT.split("<<'PYDISPLAYVERIFY'\n",1)[1].split('\nPYDISPLAYVERIFY',1)[0]
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            for api,w,h,d,good in [(36,720,1280,280,True),(26,1080,1920,420,True),(30,1080,1920,420,True),(36,1080,1920,420,False)]:
+                (root/'display-size.txt').write_text(f'Physical size: {w}x{h}\n')
+                (root/'display-density.txt').write_text(f'Physical density: {d}\n')
+                (root/'display-verification.png').write_bytes(b'\x89PNG\r\n\x1a\n'+struct.pack('>I',13)+b'IHDR'+struct.pack('>II',w,h))
+                result=subprocess.run(['python3','-',str(root),str(api)],input=code,text=True,capture_output=True)
+                self.assertEqual(result.returncode==0,good,result.stderr)
+            (root/'display-size.txt').write_text('Physical size: 720x1280\n')
+            (root/'display-density.txt').write_text('Physical density: 280\n')
+            result=subprocess.run(['python3','-',str(root),'36'],input=code,text=True,capture_output=True)
+            self.assertNotEqual(result.returncode,0,'Wrong PNG dimensions must fail')
+
+    def test_framebuffer_transform_is_api36_only(self):
+        code=SCRIPT.split("<<'PYDISPLAYCONFIG'\n",1)[1].split('\nPYDISPLAYCONFIG',1)[0]
+        original='hw.lcd.width=1080\nhw.lcd.height=1920\nhw.lcd.density=420\nhw.keyboard=no\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'config.ini'
+            for api in (26,30,36,35):
+                path.write_text(original)
+                result=subprocess.run(['python3','-',str(path),str(api)],input=code,text=True,capture_output=True)
+                self.assertEqual(result.returncode==0,api!=35)
+                expected='hw.keyboard=no\nhw.lcd.width=720\nhw.lcd.height=1280\nhw.lcd.density=280\n' if api==36 else original
+                self.assertEqual(path.read_text(),expected)
+
     def test_touch_only_fixture_replaces_only_keyboard_setting(self):
         code=SCRIPT.split("<<'PYKEYBOARD'\n",1)[1].split('\nPYKEYBOARD',1)[0]
         with tempfile.TemporaryDirectory() as tmp:

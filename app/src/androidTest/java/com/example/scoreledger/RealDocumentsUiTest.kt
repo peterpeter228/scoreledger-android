@@ -48,18 +48,24 @@ class RealDocumentsUiTest {
         evidence("real-saf-timeout-$stage")
         error("Required enabled visible real DocumentsUI control missing at $stage")
     }
-    private fun awaitAppText(text:String,timeoutMillis:Long) {
-        val deadline=SystemClock.uptimeMillis()+timeoutMillis
-        while(SystemClock.uptimeMillis()<deadline) {
-            // SAF can still own the foreground window after a successful click.
-            // Do not ask Compose for a mandatory root until the actual app returns.
-            val root=instrumentation.uiAutomation.rootInActiveWindow
-            if(root?.packageName?.toString()==instrumentation.targetContext.packageName &&
-                compose.onAllNodesWithText(text).fetchSemanticsNodes(atLeastOneRootRequired=false).isNotEmpty())return
-            SystemClock.sleep(100)
+    private fun awaitAppText(scenario:ActivityScenario<RecreationHostActivity>,text:String,timeoutMillis:Long) {
+        try {
+            compose.waitUntil(timeoutMillis) {
+                // Accessibility root can remain null after the actual activity resumes.
+                // Always synchronize/query optional Compose roots so its clock can advance;
+                // a transient provider window is not a missing mandatory Compose root.
+                val hasText=compose.onAllNodesWithText(text)
+                    .fetchSemanticsNodes(atLeastOneRootRequired=false).isNotEmpty()
+                var focused=false
+                if(scenario.state==androidx.lifecycle.Lifecycle.State.RESUMED) {
+                    scenario.onActivity { focused=it.hasWindowFocus() }
+                }
+                hasText && focused
+            }
+        } catch(failure:Throwable) {
+            evidence("real-saf-app-return-timeout-$stage")
+            throw failure
         }
-        evidence("real-saf-app-return-timeout-$stage")
-        error("App did not return with the required result within ${timeoutMillis}ms at $stage")
     }
     private fun click(node:AccessibilityNodeInfo) {
         check(node.refresh() && node.isEnabled && node.isVisibleToUser) { "DocumentsUI target became stale" }
@@ -138,7 +144,7 @@ class RealDocumentsUiTest {
             val fixture=instrumentation.context.assets.open("backup-valid.json").use{BackupCodec.read(it)}
             runBlocking{repository.replace(PendingRestore(fixture,repository.restorePreview())){}}
             val before=runBlocking{repository.snapshot()}
-            ActivityScenario.launch(RecreationHostActivity::class.java).use {
+            ActivityScenario.launch(RecreationHostActivity::class.java).use { scenario ->
               try {
                 compose.onNodeWithText("设置").performClick()
                 setting("导出 JSON 备份（免费）").performClick()
@@ -151,7 +157,7 @@ class RealDocumentsUiTest {
                 instrumentation.uiAutomation.waitForIdle(200,5000)
                 capture("real-saf-create")
                 click(awaitNode { it.isEnabled && (it.viewIdResourceName?.endsWith("/menu_save")==true || it.text?.toString()?.equals("Save",true)==true) })
-                awaitAppText("备份已保存并回读校验，请妥善保管明文文件",20000)
+                awaitAppText(scenario,"备份已保存并回读校验，请妥善保管明文文件",20000)
                 // Diverge only this test's isolated synthetic repository after export.
                 // The following restore must replace data, not merely accept an identical snapshot.
                 val child=before.children.first().id
@@ -170,7 +176,7 @@ class RealDocumentsUiTest {
                 setting("选择备份并预览恢复（免费）").performClick()
                 awaitNode { it.packageName?.toString()?.contains("documentsui")==true }
                 instrumentation.uiAutomation.executeShellCommand("input keyevent 4").close()
-                awaitAppText("已取消选择，数据未改变",10000)
+                awaitAppText(scenario,"已取消选择，数据未改变",10000)
                 assertEquals(changed,runBlocking{repository.restorePreview()})
                 setting("选择备份并预览恢复（免费）").performClick()
                 stage="select-created-document"
@@ -180,7 +186,7 @@ class RealDocumentsUiTest {
                 evidence("real-saf-open-document")
                 click(awaitNode { it.text?.toString()==filename && it.className?.toString()!="android.widget.EditText" })
                 stage="restore-preview"
-                awaitAppText("确认替换并丢弃旧草稿",15000)
+                awaitAppText(scenario,"确认替换并丢弃旧草稿",15000)
                 capture("real-saf-restore-preview")
                 compose.onNodeWithText("取消").performClick()
                 compose.waitUntil(5000){compose.onAllNodesWithText("确认替换并丢弃旧草稿").fetchSemanticsNodes().isEmpty()}
@@ -190,10 +196,10 @@ class RealDocumentsUiTest {
                 stage="reselect-created-document"
                 click(awaitNode { it.text?.toString()==filename && it.className?.toString()!="android.widget.EditText" })
                 stage="confirm-replacement"
-                awaitAppText("确认替换并丢弃旧草稿",15000)
+                awaitAppText(scenario,"确认替换并丢弃旧草稿",15000)
                 assertEquals(changed,runBlocking{repository.restorePreview()})
                 compose.onNodeWithText("确认替换并丢弃旧草稿").performClick()
-                awaitAppText("恢复完成，已替换数据；旧草稿已丢弃",15000)
+                awaitAppText(scenario,"恢复完成，已替换数据；旧草稿已丢弃",15000)
                 assertEquals(before,runBlocking{repository.snapshot()})
                 assertTrue(runBlocking{db.dao().allDrafts()}.isEmpty())
                 assertNull(runBlocking{db.dao().exam(extraId)})

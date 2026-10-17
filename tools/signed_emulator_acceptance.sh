@@ -269,6 +269,18 @@ text=re.sub(r'^hw\.keyboard\s*=.*\n?', '', text, flags=re.M)
 path.write_text(text.rstrip()+'\nhw.keyboard=no\n')
 assert re.findall(r'^hw\.keyboard=(.*)$',path.read_text(),re.M)==['no']
 PYKEYBOARD
+# API36-only reduced software-rendered framebuffer; logical dp is unchanged.
+python3 - "$AVD_CONFIG" "$API" <<'PYDISPLAYCONFIG'
+import pathlib,re,sys
+path=pathlib.Path(sys.argv[1]);api=int(sys.argv[2])
+assert api in (26,30,36)
+if api==36:
+    text=path.read_text()
+    for key,value in [('hw.lcd.width',720),('hw.lcd.height',1280),('hw.lcd.density',280)]:
+        text=re.sub(r'^'+re.escape(key)+r'\s*=.*\n?', '', text, flags=re.M)
+        text=text.rstrip()+f'\n{key}={value}\n'
+    path.write_text(text)
+PYDISPLAYCONFIG
 cp "$AVD_CONFIG" "$EVIDENCE/avd-config-effective.ini"
 "$SDK_ROOT/emulator/emulator" -list-avds | grep -Fx "$AVD_NAME"
 adb start-server
@@ -352,6 +364,23 @@ done
 # dismiss an ANR or treat a blocked system window as successful UI coverage.
 timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/pre-install-logcat.txt"
 check_boot_health "$EVIDENCE/pre-install-logcat.txt" | tee "$EVIDENCE/pre-install-health.txt"
+# Verify actual guest geometry, not only intended AVD configuration.
+timeout 10 adb -s "$SERIAL" shell wm size > "$EVIDENCE/display-size.txt"
+timeout 10 adb -s "$SERIAL" shell wm density > "$EVIDENCE/display-density.txt"
+timeout 15 adb -s "$SERIAL" exec-out screencap -p > "$EVIDENCE/display-verification.png"
+python3 - "$EVIDENCE" "$API" <<'PYDISPLAYVERIFY'
+import pathlib,re,struct,sys,json
+root=pathlib.Path(sys.argv[1]);api=int(sys.argv[2]);assert api in (26,30,36)
+w,h,d=(720,1280,280) if api==36 else (1080,1920,420)
+size=(root/'display-size.txt').read_text().strip()
+density=(root/'display-density.txt').read_text().strip()
+assert re.fullmatch(r'Physical size: '+str(w)+'x'+str(h),size),size
+assert re.fullmatch(r'Physical density: '+str(d),density),density
+png=(root/'display-verification.png').read_bytes()
+assert png[:8]==b'\x89PNG\r\n\x1a\n' and png[12:16]==b'IHDR'
+assert struct.unpack('>II',png[16:24])==(w,h)
+(root/'display-verification.json').write_text(json.dumps({'api':api,'width':w,'height':h,'densityDpi':d,'logicalWidthDp':w*160/d,'logicalHeightDp':h*160/d,'verifiedGuestAndPng':True})+'\n')
+PYDISPLAYVERIFY
 configure_visible_software_keyboard
 capture_input_diagnostics pre-install
 
