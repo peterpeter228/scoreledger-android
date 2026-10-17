@@ -51,6 +51,30 @@ class SyntheticJourneyTest {
         compose.waitUntil(10000) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().size==1 }
         compose.onNodeWithTag(tag).assertExists()
     }
+    private fun awaitFocusedKeyboard(scenario:ActivityScenario<RecreationHostActivity>,tag:String) {
+        val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
+        val priorFlags=automation.serviceInfo.flags
+        automation.serviceInfo=automation.serviceInfo.apply {
+            flags=flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+        }
+        try {
+                compose.waitUntil(10000) {
+                    var visible=false
+                    scenario.onActivity {
+                        val insets=ViewCompat.getRootWindowInsets(it.window.decorView)
+                        visible=insets?.isVisible(WindowInsetsCompat.Type.ime())==true &&
+                            (insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)>0
+                    }
+                    visible && automation.windows.any { window ->
+                        window.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD &&
+                            Rect().also { window.getBoundsInScreen(it) }.let { !it.isEmpty && it.height()>0 }
+                    } && compose.onAllNodes(hasTestTag(tag) and isFocused()).fetchSemanticsNodes().size==1
+                }
+        } finally { automation.serviceInfo=automation.serviceInfo.apply { flags=priorFlags } }
+    }
+    private fun assertEditable(node:SemanticsNodeInteraction,value:String) = node.assert(
+        SemanticsMatcher.expectValue(androidx.compose.ui.semantics.SemanticsProperties.EditableText,
+            androidx.compose.ui.text.AnnotatedString(value)))
     private fun assertSaveAboveVisibleIme(scenario:ActivityScenario<RecreationHostActivity>,scoreTag:String,captureName:String) {
         val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
         val flags=automation.serviceInfo.flags
@@ -85,8 +109,7 @@ class SyntheticJourneyTest {
             captureSyntheticUi(captureName,scenario) { assertCurrentKeyboardGeometry() }
         } finally { automation.serviceInfo=automation.serviceInfo.apply { this.flags=flags } }
     }
-    /** Diagnostic evidence only; image existence is not a visual correctness assertion. */
-    private fun captureSyntheticUi(name:String,scenario:ActivityScenario<RecreationHostActivity>,beforeCapture:(()->Unit)?=null) {
+    private fun awaitRenderedFrames(scenario:ActivityScenario<RecreationHostActivity>) {
         compose.waitForIdle()
         // Match genuine-Main evidence: semantics/layout completion is not rendered-surface completion.
         val rendered=CountDownLatch(2)
@@ -101,6 +124,10 @@ class SyntheticJourneyTest {
         try { check(rendered.await(5,TimeUnit.SECONDS)) { "Destination frames did not render before screenshot" } }
         finally { scenario.onActivity { it.window.removeOnFrameMetricsAvailableListener(listener) } }
         InstrumentationRegistry.getInstrumentation().uiAutomation.waitForIdle(100,3000)
+    }
+    /** Diagnostic evidence only; image existence is not a visual correctness assertion. */
+    private fun captureSyntheticUi(name:String,scenario:ActivityScenario<RecreationHostActivity>,beforeCapture:(()->Unit)?=null) {
+        awaitRenderedFrames(scenario)
         val instrumentation=InstrumentationRegistry.getInstrumentation()
         val directory=File(instrumentation.targetContext.filesDir,"ui-evidence")
         check(directory.isDirectory || directory.mkdirs())
@@ -131,6 +158,7 @@ class SyntheticJourneyTest {
                     .put("selectedChildPresent",model.selectedChild.value!=null)
                     .put("editorBelongsToSelectedChild",model.editor.value?.childId==model.selectedChild.value)
                     .put("visibleExamCount",model.exams.value.size).put("draftCount",model.drafts.value.size)
+                    .put("appliedTitleSearchPresent",model.recordQuery.value.titleSearch.isNotBlank())
             } }
             val snapshot=runBlocking { repository.snapshot() }
             state.put("storedExamCount",snapshot.exams.size).put("storedScoreCount",snapshot.scores.size)
@@ -148,28 +176,10 @@ class SyntheticJourneyTest {
             compose.onNodeWithTag("first-nickname").performClick()
             // Inject text only after the real keyboard/input session is ready. Sending an
             // edit during IME startup can race its initial empty InputConnection snapshot.
-            val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
-            val priorFlags=automation.serviceInfo.flags
-            automation.serviceInfo=automation.serviceInfo.apply {
-                flags=flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
-            }
-            try {
-                compose.waitUntil(10000) {
-                    var visible=false
-                    scenario.onActivity {
-                        val insets=ViewCompat.getRootWindowInsets(it.window.decorView)
-                        visible=insets?.isVisible(WindowInsetsCompat.Type.ime())==true &&
-                            (insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)>0
-                    }
-                    visible && automation.windows.any { window ->
-                        window.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD &&
-                            Rect().also { window.getBoundsInScreen(it) }.let { !it.isEmpty && it.height()>0 }
-                    } && compose.onAllNodes(hasTestTag("first-nickname") and isFocused()).fetchSemanticsNodes().size==1
-                }
-                compose.onNodeWithTag("first-nickname").assertIsFocused().performTextInput("合成孩子甲")
-                compose.onNodeWithTag("first-nickname").assert(hasText("合成孩子甲",substring=false))
-                compose.onNodeWithTag("new-record").assertIsEnabled()
-            } finally { automation.serviceInfo=automation.serviceInfo.apply { flags=priorFlags } }
+            awaitFocusedKeyboard(scenario,"first-nickname")
+            compose.onNodeWithTag("first-nickname").assertIsFocused().performTextInput("合成孩子甲")
+            assertEditable(compose.onNodeWithTag("first-nickname"),"合成孩子甲")
+            compose.onNodeWithTag("new-record").assertIsEnabled()
             // A real Back closes the nickname keyboard for the default-layout evidence only.
             // The later score-typing checkpoint explicitly opens and verifies the IME again.
             InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK)
@@ -290,11 +300,43 @@ class SyntheticJourneyTest {
             item("detail-list",hasText("返回记录")).performClick()
             item("home-list",hasTestTag("all-records")).performClick()
             item("history-list",hasTestTag("filter-toggle")).performClick()
-            item("history-list",hasTestTag("filter-search")).performTextInput("合成纠正标题")
-            item("history-list",hasTestTag("apply-filters")).performClick()
+            item("history-list",hasTestTag("filter-search")).performClick()
+            awaitFocusedKeyboard(scenario,"filter-search")
+            compose.onNodeWithTag("filter-search").performTextInput("合成纠正标题")
+            assertEditable(compose.onNodeWithTag("filter-search"),"合成纠正标题")
+            // Finish typing with a genuine Back before scrolling to Apply. Otherwise the
+            // keyboard's pending resize can move the target during pointer injection.
+            InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK)
+            compose.waitUntil(10000) {
+                var hidden=false
+                scenario.onActivity {
+                    val insets=ViewCompat.getRootWindowInsets(it.window.decorView)
+                    hidden=insets!=null && !insets.isVisible(WindowInsetsCompat.Type.ime()) &&
+                        insets.getInsets(WindowInsetsCompat.Type.ime()).bottom==0
+                }
+                hidden
+            }
+            assertEditable(compose.onNodeWithTag("filter-search"),"合成纠正标题")
+            val apply=item("history-list",hasTestTag("apply-filters")).assertIsDisplayed().assertIsEnabled()
+            val applyBounds=apply.fetchSemanticsNode().boundsInWindow
+            awaitRenderedFrames(scenario)
+            assertEquals("Apply target must remain stationary after rendering",applyBounds,apply.fetchSemanticsNode().boundsInWindow)
+            apply.performClick()
+            // The selected record exists with or without the filter. It is not evidence that
+            // Apply ran: require the applied query and its one-record result before leaving.
+            compose.waitUntil(10000) {
+                var applied=false
+                scenario.onActivity { applied=it.diagnosticModel?.recordQuery?.value?.titleSearch=="合成纠正标题" }
+                applied && compose.onAllNodesWithTag("apply-filters").fetchSemanticsNodes().isEmpty()
+            }
+            item("history-list",hasText("名称含“合成纠正标题”",substring=true)).assertExists()
+            item("history-list",hasText("1次考试")).assertExists()
+            compose.onNodeWithTag("record-${second.id}").assertDoesNotExist()
             item("history-list",hasTestTag("record-${first.exams.single().id}")).performClick()
             item("detail-list",hasText("合成纠正标题")).assertExists()
             item("detail-list",hasText("返回记录")).performClick()
+            awaitScreen("history-list")
+            item("history-list",hasText("名称含“合成纠正标题”",substring=true)).assertExists()
             item("history-list",hasText("1次考试")).assertExists()
             captureSyntheticUi("05-filter-return",scenario)
             // Delete and undo through the real controls; compare the entire isolated database,
