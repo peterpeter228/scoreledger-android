@@ -146,10 +146,16 @@ class ScaleWorkloadUiTest {
                     compose.waitUntil(60000) { compose.onAllNodesWithText("关闭预览").fetchSemanticsNodes().size==1 }
                     compose.waitUntil(30000) { compose.onAllNodesWithContentDescription("报告第1页图像；原值可在记录与趋势明细查看").fetchSemanticsNodes().size==1 }
                     evidence.put("reportGenerateAndFirstPageMs",SystemClock.elapsedRealtime()-reportStart).put("reportExamCount",20).put("reportScoreCount",200).put("memoryWithPreview",memory())
-                    compose.onNode(hasText("条成绩",substring=true)).assertTextContains("200条成绩",substring=true)
                     val pdf=File(context.cacheDir,"reports").listFiles().orEmpty().single { it.extension=="pdf" }
                     ParcelFileDescriptor.open(pdf,ParcelFileDescriptor.MODE_READ_ONLY).use { descriptor ->
-                        PdfRenderer(descriptor).use { renderer -> assertTrue(renderer.pageCount>0);evidence.put("reportPages",renderer.pageCount) }
+                        PdfRenderer(descriptor).use { renderer ->
+                            assertTrue(renderer.pageCount>0)
+                            evidence.put("reportPages",renderer.pageCount)
+                            // The background report summary also contains the row count.
+                            // Assert the visible dialog header against the actual PDF pages.
+                            compose.onNode(hasText("第1/${renderer.pageCount}页 · 200条成绩") and hasAnyAncestor(isDialog()))
+                                .assertIsDisplayed().assertTextEquals("第1/${renderer.pageCount}页 · 200条成绩")
+                        }
                     }
                     assertEquals(after,runBlocking { repository.restorePreview() })
                     capture("scale-report-preview")

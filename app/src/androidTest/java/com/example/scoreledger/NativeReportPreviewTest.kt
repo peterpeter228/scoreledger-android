@@ -1,7 +1,14 @@
 package com.example.scoreledger
 
 import androidx.compose.ui.test.*
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.lifecycle.Lifecycle
 import androidx.room.Room
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -18,14 +25,18 @@ import java.io.File
 
 @RunWith(AndroidJUnit4::class)
 class NativeReportPreviewTest {
-    @get:Rule val compose=createComposeRule()
+    @get:Rule val compose=createAndroidComposeRule<ComponentActivity>()
+    private fun semanticTrees():String {
+        val roots=compose.onAllNodes(isRoot(),useUnmergedTree=true)
+        return roots.fetchSemanticsNodes().indices.joinToString("\n") { roots[it].printToString(maxDepth=30) }
+    }
     private fun captureNavigation(name:String) {
         val instrumentation=InstrumentationRegistry.getInstrumentation()
         val directory=File(instrumentation.targetContext.filesDir,"ui-evidence").apply{mkdirs()}
         val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         try { File(directory,"$name.png").outputStream().use { assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it)) } }
         finally { bitmap.recycle() }
-        File(directory,"$name.txt").writeText(compose.onAllNodes(isRoot(),useUnmergedTree=true).printToString())
+        File(directory,"$name.txt").writeText(semanticTrees())
     }
     @Test fun nativePreviewIsBoundedAndNavigableWithoutExternalReader() {
         val instrumentation=InstrumentationRegistry.getInstrumentation();val context=IsolatedUiContext(instrumentation.targetContext)
@@ -65,7 +76,16 @@ class NativeReportPreviewTest {
             assertTrue(bitmap.width<=1000 && bitmap.height<=1500);bitmap.recycle()
             var closed=false
             stage="first-page-render"
-            compose.setContent{ScoreLedgerTheme{NativeReportPreview(manager,report){closed=true}}}
+            compose.setContent { ScoreLedgerTheme {
+                // A Dialog emits no host layout. A dialog-only fixture produced a measured
+                // 0x0 Compose host during the captured loading stall. Real app previews sit
+                // above a full-size screen; preserve that host/layout lifecycle here too.
+                Box(Modifier.fillMaxSize().testTag("native-preview-host")) {
+                    NativeReportPreview(manager,report){closed=true}
+                }
+            } }
+            compose.onNodeWithTag("native-preview-host").assertWidthIsAtLeast(100.dp).assertHeightIsAtLeast(100.dp)
+            assertEquals(Lifecycle.State.RESUMED,compose.activityRule.scenario.state)
             compose.waitUntil(10000){
                 compose.onAllNodesWithContentDescription("报告第1页图像；原值可在记录与趋势明细查看").fetchSemanticsNodes().isNotEmpty() &&
                     compose.onAllNodesWithText("正在读取本页…").fetchSemanticsNodes().isEmpty()
@@ -100,7 +120,7 @@ class NativeReportPreviewTest {
                 finally { bitmap.recycle() }
             } }
             runCatching {
-                File(directory,"native-preview-semantics.txt").writeText(compose.onAllNodes(isRoot(),useUnmergedTree=true).printToString())
+                File(directory,"native-preview-semantics.txt").writeText(semanticTrees())
             }
             throw failure
         }finally{db.close();context.cleanup()}
