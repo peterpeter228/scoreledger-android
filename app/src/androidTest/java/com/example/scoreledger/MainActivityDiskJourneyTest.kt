@@ -5,6 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import android.view.accessibility.AccessibilityWindowInfo
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.view.Window
+import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
@@ -31,8 +36,24 @@ class MainActivityDiskJourneyTest {
         compose.onNodeWithTag(list).performScrollToNode(matcher)
         return compose.onNode(matcher).performScrollTo()
     }
-    private fun capture(name:String) {
+    private fun capture(name:String,scenario:ActivityScenario<MainActivity>?=null) {
         compose.waitForIdle()
+        if(scenario!=null) {
+            // Semantics idle can precede SurfaceFlinger presentation. Require two
+            // newly rendered Window frames, not merely a queued recomposition.
+            val rendered=CountDownLatch(2)
+            val listener=Window.OnFrameMetricsAvailableListener { window,_,_->
+                rendered.countDown()
+                if(rendered.count>0) window.decorView.postInvalidateOnAnimation()
+            }
+            scenario.onActivity { activity->
+                activity.window.addOnFrameMetricsAvailableListener(listener,Handler(Looper.getMainLooper()))
+                activity.window.decorView.postInvalidateOnAnimation()
+            }
+            try { check(rendered.await(5,TimeUnit.SECONDS)) { "Destination frames did not render before screenshot" } }
+            finally { scenario.onActivity { it.window.removeOnFrameMetricsAvailableListener(listener) } }
+            instrumentation.uiAutomation.waitForIdle(100,3000)
+        }
         val file=File(instrumentation.targetContext.filesDir,"ui-evidence/$name.png")
         check(file.parentFile!!.isDirectory || file.parentFile!!.mkdirs())
         val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
@@ -52,7 +73,7 @@ class MainActivityDiskJourneyTest {
             val score=compose.onNodeWithTag(scoreTag).assertIsDisplayed().fetchSemanticsNode().boundsInWindow
             assertTrue("Save action overlaps real IME",save.bottom+offset[1]<=ime.top+1)
             assertTrue("Focused score overlaps real IME",score.bottom+offset[1]<=ime.top+1)
-            capture("main-disk-entry-ime")
+            capture("main-disk-entry-ime",scenario)
         } finally { automation.serviceInfo=automation.serviceInfo.apply { this.flags=flags } }
     }
     @Test fun genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline() {
@@ -91,7 +112,14 @@ class MainActivityDiskJourneyTest {
                 item("entry-list",hasText("修改考试信息")).performClick()
                 item("entry-list",hasText("考试名称")).performTextReplacement(title)
                 item("entry-list",hasText("本次年级（可选）")).performTextReplacement("本次合成年级")
-                item("entry-list",hasTestTag("score-${subject.id}")).performClick().performTextReplacement("８５．５")
+                item("entry-list",hasTestTag("score-${subject.id}")).performTextReplacement("８５．５")
+                compose.waitForIdle()
+                compose.onNodeWithTag("score-${subject.id}").assertIsFocused()
+                // Text replacement uses semantics and may restart the input connection.
+                // A real pointer tap after that update is the user action under test;
+                // do not force-show IME or accept a focused field without its keyboard.
+                item("entry-list",hasTestTag("score-${subject.id}")).assertIsEnabled().performTouchInput { click() }
+                compose.onNodeWithTag("score-${subject.id}").assertIsFocused()
                 assertVisibleAboveRealIme(scenario,"score-${subject.id}")
                 compose.onNodeWithTag("save-record").performClick()
                 compose.waitUntil(10000){compose.onAllNodesWithTag("detail-list").fetchSemanticsNodes().isNotEmpty()}
@@ -100,10 +128,12 @@ class MainActivityDiskJourneyTest {
                 examId=saved.id;assertEquals(title,saved.title);assertEquals("本次合成年级",saved.gradeSnapshot)
                 assertEquals(8550L,runBlocking{repository.snapshot()}.scores.single{it.examId==examId}.scoreMinor)
                 compose.onNodeWithTag("saved-record-notice").assertIsDisplayed()
-                capture("main-disk-saved-detail")
+                capture("main-disk-saved-detail",scenario)
                 item("detail-list",hasText("返回记录")).performClick()
-                compose.onNodeWithTag("home-list").assertExists()
-                capture("main-disk-home")
+                compose.onNodeWithTag("home-list").assertIsDisplayed()
+                compose.onNodeWithTag("detail-list").assertDoesNotExist()
+                compose.onNodeWithTag("new-record").assertIsDisplayed()
+                capture("main-disk-home",scenario)
                 item("home-list",hasTestTag("all-records")).performClick()
                 item("history-list",hasTestTag("record-$examId")).performClick()
                 item("detail-list",hasText(title)).assertExists()
@@ -118,7 +148,7 @@ class MainActivityDiskJourneyTest {
                 assertEquals(8550L,disk.dao().scores(exam.id).single().scoreMinor)
                 assertNull(disk.dao().draft(exam.id,exam.childId))
             } } finally { disk.close() }
-            ActivityScenario.launch(MainActivity::class.java).use {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
               try {
                 val originalName=before.data.children.first().nickname
                 compose.waitUntil(10000){compose.onAllNodesWithText(originalName).fetchSemanticsNodes().isNotEmpty()}
@@ -128,7 +158,7 @@ class MainActivityDiskJourneyTest {
                 item("history-list",hasTestTag("record-$examId")).performClick()
                 item("detail-list",hasText(title)).assertExists()
                 item("detail-list",hasText("得分 85.5")).assertExists()
-                capture("main-disk-reopened-detail")
+                capture("main-disk-reopened-detail",scenario)
               } catch(failure:Throwable) { runCatching { capture("main-disk-failure-reopen") };throw failure }
             }
             verified=true

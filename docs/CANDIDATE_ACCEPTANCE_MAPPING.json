@@ -932,7 +932,7 @@
       "steps": "免费版恢复100次考试多孩子",
       "expected": "恢复/查看/编辑/导出正常，只限制新增",
       "layer": "device",
-      "candidateStatus": "NOT_RUN",
+      "candidateStatus": "SUPERSEDED_OLD_COMMERCIAL_POLICY",
       "candidateEvidence": [],
       "proposedMethodLinks": [
         "com.example.scoreledger.core.CoreRulesTest.businessContracts"
@@ -941,7 +941,8 @@
         "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml"
       ],
       "unprovenRequirements": "Real free repository/UI restore 100 exams across children, view/edit/export and addition rejection.",
-      "reviewRule": "Do not mark PASS from method count. Re-evaluate every step/assertion against this candidate APK and actual evidence."
+      "reviewRule": "Do not mark PASS from method count. Re-evaluate every step/assertion against this candidate APK and actual evidence.",
+      "replacementPolicy": "Current beta keeps basic records, multiple children, history, trend, standard complete PDF and backup free. Resource safety caps remain. No real payment or store release."
     },
     {
       "id": "AC049",
@@ -1022,7 +1023,7 @@
       "steps": "A/B总和3次考试免费新增",
       "expected": "第四次新增受限，不按孩子分别送3次",
       "layer": "core+device",
-      "candidateStatus": "NOT_RUN",
+      "candidateStatus": "SUPERSEDED_OLD_COMMERCIAL_POLICY",
       "candidateEvidence": [],
       "proposedMethodLinks": [
         "com.example.scoreledger.core.CoreRulesTest.businessContracts",
@@ -1033,7 +1034,8 @@
         "evidence/api30-pass/full-instrumentation.txt"
       ],
       "unprovenRequirements": "A/B combined quota and actual UI fourth-add rejection.",
-      "reviewRule": "Do not mark PASS from method count. Re-evaluate every step/assertion against this candidate APK and actual evidence."
+      "reviewRule": "Do not mark PASS from method count. Re-evaluate every step/assertion against this candidate APK and actual evidence.",
+      "replacementPolicy": "Current beta keeps basic records, multiple children, history, trend, standard complete PDF and backup free. Resource safety caps remain. No real payment or store release."
     },
     {
       "id": "AC054",
@@ -1043,7 +1045,7 @@
       "steps": "3次删除1次后新建",
       "expected": "允许，刻意的产品规则",
       "layer": "core+device",
-      "candidateStatus": "NOT_RUN",
+      "candidateStatus": "SUPERSEDED_OLD_COMMERCIAL_POLICY",
       "candidateEvidence": [],
       "proposedMethodLinks": [
         "com.example.scoreledger.core.CoreRulesTest.businessContracts"
@@ -1052,7 +1054,8 @@
         "evidence/d09-ci-reports/core/build/test-results/test/TEST-com.example.scoreledger.core.CoreRulesTest.xml"
       ],
       "unprovenRequirements": "Actual delete from 3 then create through UI with correct count.",
-      "reviewRule": "Do not mark PASS from method count. Re-evaluate every step/assertion against this candidate APK and actual evidence."
+      "reviewRule": "Do not mark PASS from method count. Re-evaluate every step/assertion against this candidate APK and actual evidence.",
+      "replacementPolicy": "Current beta keeps basic records, multiple children, history, trend, standard complete PDF and backup free. Resource safety caps remain. No real payment or store release."
     },
     {
       "id": "AC055",
@@ -1384,6 +1387,29 @@
         "com.example.scoreledger.MainActivityDiskJourneyTest#genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline"
       ],
       "scope": "Genuine MainActivity production factory/services and app disk Room. UI-created nonce child/record, save/detail/history/reopen, independent disk read, strict owned cleanup preserving original data and drafts. Not fresh-empty-install or process-death proof."
+    },
+    "REAL_SAF_REPLACEMENT": {
+      "status": "NOT_RUN",
+      "proposedMethods": [
+        "com.example.scoreledger.RealDocumentsUiTest#realDownloadsExportCancelAndRestorePreserveExactSyntheticSnapshot"
+      ],
+      "scope": "Real AOSP DocumentsUI export, picker cancel, replacement-preview cancel with exact changed data/draft baseline preserved, then real provider reselect and confirmed replacement removing post-export synthetic exam and draft. Isolated repository host, not production disk MainActivity."
+    },
+    "REAL_PDF_SAF": {
+      "status": "NOT_RUN",
+      "proposedMethods": [
+        "com.example.scoreledger.RealPdfDocumentsUiTest#realPdfPickerCancelRetrySavesSamePreviewSnapshotAndPreservesDatabase"
+      ],
+      "scope": "Real AOSP DocumentsUI cancel/retry PDF save with exact preview-to-Download byte equality, nine-row text/A4 rendering, unchanged synthetic data/drafts. Isolated host; not OEM provider or independent reader/print proof."
+    },
+    "EXTERNAL_MAIN_DRAFT_RESUME": {
+      "status": "NOT_RUN",
+      "scope": "Separate opt-in real MainActivity disk draft prepare, script-observed PID and external force-stop with no PID, new instrumentation process UI continue/edit/save same draft ID and owned cleanup. Not mid-I/O kill or automatic editor restoration.",
+      "phaseManifest": "tools/required_device_acceptance.json#requiredPhaseLogs"
+    },
+    "EXPANDED_SYNTHETIC_UI": {
+      "status": "NOT_RUN",
+      "scope": "Actual multiselect/custom subject save/reopen and populated child isolation; bounded debug-host measured320dp viewport at2x font with visible IME geometry and save/reopen. Not physical device/OEM keyboard coverage."
     }
   }
 }

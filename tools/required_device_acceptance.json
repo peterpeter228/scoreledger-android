@@ -53,7 +53,10 @@
     "com.example.scoreledger.ViewModelLocatorRecoveryTest#replacementGenerationClearsEditorAndStaleLocatorFallsBackWithoutResurrectingDraft",
     "com.example.scoreledger.ReportRevisionFenceTest#changedScoreWithSameQueryRejectsOldResultButPendingSaveKeepsSnapshot",
     "com.example.scoreledger.MainActivityDiskJourneyTest#genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline",
-    "com.example.scoreledger.RepositoryIntegrityTest#freeChildRecordingStillEnforcesRealResourceLimitWithoutMutation"
+    "com.example.scoreledger.RepositoryIntegrityTest#freeChildRecordingStillEnforcesRealResourceLimitWithoutMutation",
+    "com.example.scoreledger.RealPdfDocumentsUiTest#realPdfPickerCancelRetrySavesSamePreviewSnapshotAndPreservesDatabase",
+    "com.example.scoreledger.SyntheticJourneyTest#multiSelectAndCustomSubjectSaveReopenAndIsolatePopulatedChildren",
+    "com.example.scoreledger.SyntheticJourneyTest#narrow320dpDoubleFontEntryCanScrollTypeSaveAndReopen"
   ],
   "requiredFiles": [
     "ui-artifacts/synthetic-01-entry-before-save.png",
@@ -78,6 +81,39 @@
     "ui-artifacts/main-disk-entry-ime.png",
     "ui-artifacts/real-saf-open-document.png",
     "ui-artifacts/real-saf-open-document.xml",
-    "ui-artifacts/main-disk-home.png"
+    "ui-artifacts/main-disk-home.png",
+    "ui-artifacts/real-saf-preview-cancelled.png",
+    "ui-artifacts/real-pdf-preview.png",
+    "ui-artifacts/real-pdf-cancel-picker.png",
+    "ui-artifacts/real-pdf-cancelled.png",
+    "ui-artifacts/real-pdf-save-picker.png",
+    "ui-artifacts/real-pdf-saved.png",
+    "ui-artifacts/real-pdf-result.json",
+    "pdf-artifacts/real-documentsui-saved-report.pdf",
+    "pdf-artifacts/real-documentsui-saved-report-page.png",
+    "ui-artifacts/synthetic-06-multiselect-custom-before-save.png",
+    "ui-artifacts/synthetic-07-multiselect-custom-reopened.png",
+    "ui-artifacts/synthetic-08-populated-child-isolation.png",
+    "ui-artifacts/synthetic-09-narrow320-font200-entry-ime.png",
+    "ui-artifacts/synthetic-10-narrow320-font200-saved-detail.png",
+    "ui-artifacts/external-draft-prepared.png",
+    "ui-artifacts/external-draft-resumed.png",
+    "ui-artifacts/external-draft-saved.png",
+    "ui-artifacts/external-draft-integrity.json",
+    "external-draft-prepare.txt",
+    "external-draft-resume.txt",
+    "external-draft-stop.txt",
+    "external-draft-pre-stop-pid.txt",
+    "external-draft-completed-marker.json"
+  ],
+  "requiredPhaseLogs": [
+    {
+      "log": "external-draft-prepare.txt",
+      "method": "com.example.scoreledger.ExternalDraftResumeTest#prepareOwnedDraftThroughMainActivity"
+    },
+    {
+      "log": "external-draft-resume.txt",
+      "method": "com.example.scoreledger.ExternalDraftResumeTest#resumeOwnedDraftThroughMainActivityAfterExternalStop"
+    }
   ]
 }

@@ -16,12 +16,15 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.scoreledger.backup.BackupCodec
 import com.example.scoreledger.data.*
+import com.example.scoreledger.core.*
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
+import java.util.UUID
+import java.time.LocalDate
 
 /** Actual AOSP DocumentsUI and Downloads provider; no fake activity-result registry.
  * This proves the AOSP provider only, not OEM/cloud providers or physical devices. */
@@ -149,12 +152,26 @@ class RealDocumentsUiTest {
                 capture("real-saf-create")
                 click(awaitNode { it.isEnabled && (it.viewIdResourceName?.endsWith("/menu_save")==true || it.text?.toString()?.equals("Save",true)==true) })
                 awaitAppText("备份已保存并回读校验，请妥善保管明文文件",20000)
+                // Diverge only this test's isolated synthetic repository after export.
+                // The following restore must replace data, not merely accept an identical snapshot.
+                val child=before.children.first().id
+                val subject=before.subjects.first { !it.archived }
+                val extraId=UUID.randomUUID().toString()
+                val draft=EntryDraft(childId=child,title="导出后的合成草稿")
+                runBlocking {
+                    repository.saveExam(ExamInput(extraId,child,"导出后的合成记录",LocalDate.now().toString(),
+                        values=listOf(ScoreValue(subject.id,ScoreStatus.SCORED,0,subject.defaultMaxMinor))),false)
+                    repository.putDraft(draft)
+                }
+                val changed=runBlocking{repository.restorePreview()}
+                assertEquals(before.exams.size+1,changed.data.exams.size)
+                assertEquals(draft.encode(),changed.drafts.single().payloadJson)
                 stage="cancel-picker"
                 setting("选择备份并预览恢复（免费）").performClick()
                 awaitNode { it.packageName?.toString()?.contains("documentsui")==true }
                 instrumentation.uiAutomation.executeShellCommand("input keyevent 4").close()
                 awaitAppText("已取消选择，数据未改变",10000)
-                assertEquals(before,runBlocking{repository.snapshot()})
+                assertEquals(changed,runBlocking{repository.restorePreview()})
                 setting("选择备份并预览恢复（免费）").performClick()
                 stage="select-created-document"
                 // Newly created document appears in the same Downloads provider (or Recents).
@@ -165,9 +182,21 @@ class RealDocumentsUiTest {
                 stage="restore-preview"
                 awaitAppText("确认替换并丢弃旧草稿",15000)
                 capture("real-saf-restore-preview")
+                compose.onNodeWithText("取消").performClick()
+                compose.waitUntil(5000){compose.onAllNodesWithText("确认替换并丢弃旧草稿").fetchSemanticsNodes().isEmpty()}
+                assertEquals(changed,runBlocking{repository.restorePreview()})
+                capture("real-saf-preview-cancelled")
+                setting("选择备份并预览恢复（免费）").performClick()
+                stage="reselect-created-document"
+                click(awaitNode { it.text?.toString()==filename && it.className?.toString()!="android.widget.EditText" })
+                stage="confirm-replacement"
+                awaitAppText("确认替换并丢弃旧草稿",15000)
+                assertEquals(changed,runBlocking{repository.restorePreview()})
                 compose.onNodeWithText("确认替换并丢弃旧草稿").performClick()
                 awaitAppText("恢复完成，已替换数据；旧草稿已丢弃",15000)
                 assertEquals(before,runBlocking{repository.snapshot()})
+                assertTrue(runBlocking{db.dao().allDrafts()}.isEmpty())
+                assertNull(runBlocking{db.dao().exam(extraId)})
                 capture("real-saf-restored")
               } catch(failure:Throwable) { evidence("real-saf-failure-$stage");throw failure }
             }

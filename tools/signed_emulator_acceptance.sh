@@ -322,6 +322,38 @@ if adb -s "$SERIAL" shell pidof "$PACKAGE"; then echo 'Process still alive'; exi
 retention_phase verify verifyPersistentSyntheticData
 cp "$EVIDENCE/retention-verify.txt" "$EVIDENCE/external-process-death-verify.txt"
 printf 'PASS: externally force-stopped process; persisted business snapshot and draft verified on restart. UI editor restoration and mid-I/O death NOT covered.\n' > "$EVIDENCE/process-death.txt"
+# Separate opt-in real MainActivity draft journey. These methods must not enter
+# the full-suite allowlist, where their phase assumptions would be skips.
+external_draft_phase() {
+  local phase="$1" method="$2"
+  timeout 180 adb -s "$SERIAL" shell am instrument -w -r \
+    -e class "com.example.scoreledger.ExternalDraftResumeTest#$method" \
+    -e externalDraftResume "$phase" -e allowPersistentSyntheticData true \
+    -e upgradeNonce "$NONCE" "$RUNNER" 2>&1 | tee "$EVIDENCE/external-draft-$phase.txt"
+  python3 - "$EVIDENCE/external-draft-$phase.txt" "$method" <<'PYDRAFTPHASE'
+import pathlib,sys
+from tools.acceptance_gate import verify_methods
+verify_methods(pathlib.Path(sys.argv[1]).read_text(), ['com.example.scoreledger.ExternalDraftResumeTest#'+sys.argv[2]])
+PYDRAFTPHASE
+}
+external_draft_phase prepare prepareOwnedDraftThroughMainActivity
+timeout 30 adb -s "$SERIAL" shell am start -W -n "$PACKAGE/com.example.scoreledger.MainActivity" > "$EVIDENCE/external-draft-pre-stop-launch.txt"
+timeout 10 adb -s "$SERIAL" shell pidof "$PACKAGE" > "$EVIDENCE/external-draft-pre-stop-pid.txt"
+grep -Eq '^[0-9]+([[:space:]]+[0-9]+)*[[:space:]]*$' "$EVIDENCE/external-draft-pre-stop-pid.txt"
+timeout 10 adb -s "$SERIAL" shell am force-stop "$PACKAGE"
+set +e
+timeout 10 adb -s "$SERIAL" shell pidof "$PACKAGE" > "$EVIDENCE/external-draft-post-stop-pid.txt"
+STOP_STATUS=$?
+set -e
+[ "$STOP_STATUS" = 1 ] && [ ! -s "$EVIDENCE/external-draft-post-stop-pid.txt" ] || { echo 'EXTERNAL_DRAFT_STOP_NOT_PROVEN'; exit 1; }
+printf 'PASS: observed app PID, external am force-stop returned success, pidof returned 1 with no PID before resume instrumentation.\n' > "$EVIDENCE/external-draft-stop.txt"
+external_draft_phase resume resumeOwnedDraftThroughMainActivityAfterExternalStop
+timeout 15 adb -s "$SERIAL" shell run-as "$PACKAGE" cat "no_backup/external-draft-$NONCE.json" > "$EVIDENCE/external-draft-completed-marker.json"
+python3 - "$EVIDENCE/external-draft-completed-marker.json" "$NONCE" <<'PYDRAFTDONE'
+import json,pathlib,sys
+marker=json.loads(pathlib.Path(sys.argv[1]).read_text())
+assert marker['nonce']==sys.argv[2] and marker['phase']=='completed', 'External draft resume did not complete'
+PYDRAFTDONE
 adb -s "$SERIAL" shell pm list instrumentation | tr -d '\r' > "$EVIDENCE/instrumentation-target.txt"
 grep -Fx "instrumentation:$RUNNER (target=$PACKAGE)" "$EVIDENCE/instrumentation-target.txt"
 set +e

@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T08:19:00Z",
-  "stage": "REVIEW_REVISION_IMPLEMENTING",
-  "androidBuild": "NEW_SOURCE_NOT_YET_COMPILED",
-  "deviceTests": "NEW_APK_NOT_RUN",
+  "asOf": "2026-10-17T09:35:00Z",
+  "stage": "REVIEW_REVISION_DEVICE_REPAIR",
+  "androidBuild": "03d1256_COMPILED_SUCCESS",
+  "deviceTests": "NOT_ACCEPTED_PREVIOUS_MATRIX_FAILED",
   "billing": "NOT_IMPLEMENTED_NOT_TESTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "Implement review T01–T17, compile 0.2.0-beta, actual AOSP26/30/36 UI and upgrade acceptance, Argon independent review",
+  "nextTask": "Finish actual UI flow corrections and evidence, rerun exact signed APK on AOSP26/30/36, then decide delivery.",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -34,7 +34,8 @@
     "partial": 52,
     "notRun": 14,
     "fullAcceptance": "INCOMPLETE",
-    "note": "Automated34 normal+2 explicit retention methods pass on each API26/30/36; broad cases contain additional real-device/provider/accessibility/performance steps."
+    "note": "Automated34 normal+2 explicit retention methods pass on each API26/30/36; broad cases contain additional real-device/provider/accessibility/performance steps.",
+    "scope": "Historical 0.1.0 only; does not establish new 0.2.0 acceptance. See docs/CANDIDATE_ACCEPTANCE_MAPPING.json."
   },
   "blockers": [
     {
@@ -188,5 +189,30 @@
     "tasks": 20,
     "argonBudgetCny": 10,
     "emulatorAcceptedIfCloudPhysicalUnavailable": true
+  },
+  "currentRevision": {
+    "candidateCommit": "03d1256a4d3e6ccdc41d566490a7989b27c7ac54",
+    "runId": 39020787012,
+    "versionName": "0.2.0-beta",
+    "delivered": false,
+    "previousCandidate": "00b7ddf3d35307ff23227ab9f59ad8df63dde982",
+    "previousMatrix": {
+      "26": "51/52 passed",
+      "30": "50/52 passed",
+      "36": "49/52 passed; boot SystemUI/phone ANR predates UI tests"
+    },
+    "remainingValidation": [
+      "save/edit transition",
+      "actual DocumentsUI backup replacement and PDF cancel/retry/save",
+      "external process death followed by UI draft resume",
+      "populated child isolation",
+      "compact and large-font entry layout"
+    ],
+    "currentMatrix": {
+      "26": "52/52 and evidence gate PASS",
+      "30": "52/52 and evidence gate PASS",
+      "36": "51/52; real MainActivity keyboard did not show after input replacement. No ANR dialog in failure screenshot."
+    },
+    "nextTestExpansion": "55 full methods + 2 separate external-force-stop UI phases, NOT_RUN"
   }
 }

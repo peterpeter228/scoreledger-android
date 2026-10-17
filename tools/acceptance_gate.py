@@ -60,6 +60,10 @@ def main():
     if args.evidence:
         root = pathlib.Path(args.evidence)
         output['files'] = verify_files(root, manifest['requiredFiles'])
+        output['separatePhaseMethods'] = {
+            phase['log']: verify_methods((root / phase['log']).read_text(errors='replace'), [phase['method']])
+            for phase in manifest.get('requiredPhaseLogs', [])
+        }
         output['status'] = 'METHODS_AND_REQUIRED_EVIDENCE_VERIFIED'
         (root / 'evidence-gate.json').write_text(json.dumps(output, indent=2) + '\n')
     print(json.dumps(output, indent=2))
