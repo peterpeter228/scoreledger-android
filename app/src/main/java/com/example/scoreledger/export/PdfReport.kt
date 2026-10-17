@@ -24,7 +24,7 @@ object PdfReport {
     const val WIDTH=595;const val HEIGHT=842;const val LEFT=36;const val TOP=40;const val BOTTOM=780;const val TEXT_WIDTH=523
     private fun paint()=TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize=11f;color=Color.BLACK;typeface=Typeface.create("sans-serif",Typeface.NORMAL) }
     private fun layout(text:String)=StaticLayout.Builder.obtain(text,0,text.length,paint(),TEXT_WIDTH)
-        .setAlignment(Layout.Alignment.ALIGN_NORMAL).setIncludePad(true).setLineSpacing(2f,1f).setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY).build()
+        .setAlignment(Layout.Alignment.ALIGN_NORMAL).setIncludePad(true).setLineSpacing(2f,1f).build()
     fun plan(snapshot:DataSnapshot,query:RecordQuery,options:ReportOptions,generatedAt:Instant=Instant.now()):ReportPlan {
         val child=requireNotNull(snapshot.children.firstOrNull{it.id==query.childId}) { "请选择孩子" }
         val scores=snapshot.scores.groupBy{it.examId}

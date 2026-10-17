@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T00:56:28.665505+00:00",
-  "stage": "D07_source_ready_android_verification_pending",
-  "androidBuild": "VERIFIED",
+  "asOf": "2026-10-17T01:04:14.420423+00:00",
+  "stage": "D09_source_and_lint_fix_pending_new_CI",
+  "androidBuild": "IMPLEMENTED_UNVERIFIED",
   "deviceTests": "NOT_RUN",
   "billing": "NOT_IMPLEMENTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "D05_D07_real_CI_and_device_verification",
+  "nextTask": "Build_D09_snapshot_then_run_device_acceptance",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -20,9 +20,13 @@
     "do-not-lock-existing-data"
   ],
   "kitValidation": {
-    "kotlinCoreChecksPassed": 58,
-    "pythonContractTestsPassed": 42,
-    "evidence": "evidence/validation_summary.json"
+    "kotlinCoreChecksPassed": 64,
+    "pythonContractTestsPassed": 46,
+    "evidence": [
+      "evidence/d09-lint-repair-core.log",
+      "evidence/d09-lint-repair-python.log",
+      "evidence/d09-lint-repair-static.log"
+    ]
   },
   "productAcceptance": {
     "total": 70,
@@ -31,16 +35,33 @@
   "currentEvidence": {
     "archiveSha256": "50f7ae72d08a64dc13ed592a45733fd615ead83be20099c47cede35b170981ff",
     "integrityFiles": 95,
-    "pythonTestsPassed": 42,
-    "kotlinTests": "58 baseline passed; 59 after regression fix",
+    "pythonTestsPassed": 46,
+    "kotlinTests": "64 CLI contracts passed; core JVM passed on3394203",
     "sdkLicense": "USER_APPROVED Sentinel_51a93471c0588191a3c9737e23794112",
     "repository": "NEW_PRIVATE_REPOSITORY_CONFIRMED",
     "wrapper": "VERIFIED_GENERATED",
-    "dataLayer": "D01 source and instrumentation compiled; device execution pending",
-    "gradleCoreCompile": "PASSED (real JVM compilation; Android not compiled)",
-    "gradleCoreTest": "PASSED_IN_CI",
+    "dataLayer": "Compiled including instrumentation APK on3394203; device tests NOT_RUN",
+    "gradleCoreCompile": "PASSED_IN_CI_3394203",
+    "gradleCoreTest": "PASSED_IN_CI_3394203",
     "sdkInstalled": "SDK36,BuildTools35,platform-tools installed with approved Android license",
-    "apk": {
+    "roomSchema": {
+      "status": "REAL_GENERATED_V1_AND_V2_PRESENT",
+      "v2SourceRunId": 38986723022,
+      "v2Sha256": "50f8c93b42c6e4c6bec216d4c2300ddf894132a53f77a1261b8a0406bca3eee1",
+      "deviceMigrationTest": "NOT_RUN"
+    },
+    "entryHistorySlice": "3394203 Android compile/instrumentation assembly passed; device acceptance NOT_RUN",
+    "localSliceChecks": "Latest core64/Python46/static passed; evidence/d09-lint-repair-*.log",
+    "trendSlice": "Android source compiled on3394203; Canvas device/TalkBack acceptance NOT_RUN",
+    "backupSlice": "Android and actual Gson/retention JVM tests passed on3394203; Room replacement/SAF device tests NOT_RUN",
+    "pdfSlice": "3394203 Android compilation passed; lint WrongConstant fixed in source; PdfRenderer/device tests NOT_RUN",
+    "backupAuditFixes": "3394203 compiled and app JVM passed; generation/Room/device regressions NOT_RUN",
+    "d07CompileRepair": "38988358601 compile failures repaired;3394203 compilation passed, subsequent lint-only failure now fixed in source",
+    "d09Preview": "IMPLEMENTED_UNVERIFIED: bounded in-app PdfRenderer, background file/share work, native preview and ActivityScenario recreation tests added NOT_RUN. Local core64/Python46/static pass.",
+    "gradleAppUnitTest": "PASSED_IN_CI_3394203 (actual Gson/importer and retention JVM tests included)",
+    "androidCompilation": "3394203 app compilation/APK assembly and instrumentation assembly PASSED; D09/new lint-fix source not yet built",
+    "lint": "3394203 FAILED WrongConstant on optional StaticLayout breakStrategy; removed call in source, new lint NOT_RUN",
+    "baselineApk": {
       "path": "evidence/d00-apk/app-localBeta-debug.apk",
       "sha256": "8a9cba634603d572d9de83c9c1c6d9940a627f9c623d7510824e3573fcec35cb",
       "bytes": 10997249,
@@ -48,16 +69,11 @@
       "versionName": "0.1.0-beta",
       "minSdk": 26,
       "targetSdk": 36,
-      "signature": "Android Debug; apksigner verification passed"
+      "signature": "Android Debug; apksigner verification passed",
+      "sourceCommit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
+      "scope": "D00 baseline only; not current D05-D09 feature APK"
     },
-    "roomSchema": "GENERATED_V1; V2_PENDING_REAL_KAPT",
-    "entryHistorySlice": "IMPLEMENTED_UNVERIFIED: Room v2 migration, draft transaction, native management/entry/history; new Android build and instrumentation NOT_RUN",
-    "localSliceChecks": "static pass; Python42 pass; core59 pass; evidence/d02-d04-*.log",
-    "trendSlice": "IMPLEMENTED_UNVERIFIED: core62/Python42/static passed; Android/Canvas UI NOT_RUN",
-    "backupSlice": "IMPLEMENTED_UNVERIFIED: core63/Python46/static passed; new Gson actual importer/JVM and Room replacement tests NOT_RUN",
-    "pdfSlice": "IMPLEMENTED_UNVERIFIED: native A4 paginated PdfDocument/SAF/share; core64/Python46/static passed, actual PDF renderer tests NOT_RUN",
-    "backupAuditFixes": "implemented source, retention/editor-race regressions added NOT_RUN",
-    "d07CompileRepair": "CI38988358601 failed: reset hides FilterReader member and unavailable OsConstants.O_DIRECTORY. Source renamed resetBudget and directory validated/opened O_RDONLY. Rebuild pending; newline-rich PDF note fix also included."
+    "latestApk": "3394203 assembly passed per CI; no latest APK hash asserted in this state update"
   },
   "blockers": [
     {
@@ -67,6 +83,25 @@
     }
   ],
   "ci": {
+    "commit": "3394203ebbe0ed24baa8c32e68db591a21b154f7",
+    "status": "FAILURE",
+    "failureStage": "LINT_ONLY",
+    "androidCompile": "PASSED",
+    "instrumentationAssembly": "PASSED",
+    "coreJvm": "PASSED",
+    "appJvm": "PASSED",
+    "deviceTests": "NOT_RUN",
+    "source": "Parent verified CI result at2026-10-17T01:03Z; run ID not supplied in this handoff",
+    "newSource": "D09 plus lint repair awaiting next snapshot build",
+    "runId": 38988800541,
+    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38988800541"
+  },
+  "baselineKitValidation": {
+    "kotlinCoreChecksPassed": 58,
+    "pythonContractTestsPassed": 42,
+    "evidence": "evidence/validation_summary.json"
+  },
+  "historicalBaselineCI": {
     "commit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
     "runId": 38985168690,
     "status": "SUCCESS",

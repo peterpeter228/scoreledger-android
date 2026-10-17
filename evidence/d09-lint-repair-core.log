@@ -1,0 +1,65 @@
+PASS integer input
+PASS decimal input
+PASS fullwidth input
+PASS trim input
+PASS zero input
+PASS upper bound
+PASS reject negative
+PASS reject excessive decimals
+PASS reject scientific notation
+PASS reject comma
+PASS reject NaN
+PASS reject empty
+PASS reject over limit
+PASS format removes zeros
+PASS format preserves hundredths
+PASS reject zero denominator
+PASS reject negative maximum
+PASS reject bonus above maximum
+PASS reject absent encoded zero
+PASS reject missing encoded zero
+PASS reject scored null
+PASS reject no subject
+PASS zero is valid score
+PASS absent is null
+PASS missing is null
+PASS percent rounding
+PASS weighted summary
+PASS missing excluded but coverage visible
+PASS all absent gives no rate
+PASS reject no rows
+PASS reject duplicate subject
+PASS reject more than 30 subjects
+PASS change with different maximum
+PASS change from missing is null
+PASS different subjects cannot compare percent
+PASS equal comparison scopes
+PASS cross child comparison denied
+PASS cross term comparison denied
+PASS different grade comparison denied
+PASS different kind comparison denied
+PASS changed maxima comparison denied
+PASS changed subject comparison denied
+PASS incomplete comparison denied
+PASS subject order irrelevant
+PASS free has three retained exams
+PASS restored oversized dataset stays blocked only for additions
+PASS pro permits additions
+PASS deletion releases quota
+PASS free active child limit
+PASS reject invalid count
+PASS valid leap day
+PASS invalid leap day
+PASS reject year zero
+PASS reject future exam
+PASS reject short date format
+PASS nickname trimmed
+PASS reject whitespace nickname
+PASS reject control character
+PASS reject long text
+PASS trend stable order and child isolation
+PASS zero plotted missing breaks and absent subject retained
+PASS trend scope change disconnects
+PASS reject unpaired local and imported unicode
+PASS report grouped summary weighted and all missing
+CONTRACT_CASES_PASSED=64

@@ -69,3 +69,12 @@ D06审查修复一并纳入：保护新回滚快照不受旧文件未来mtime误
 修复有效499-codepoint/250行备注导致PDF整块高度拒绝：按StaticLayout行边界逐页拆分非成绩文本，末尾换行重新测量，保留全部原文、11pt字体和逐成绩唯一sourceID。加入newline-rich备注仪器化回归（NOT_RUN）；静态检查通过evidence/d07-repair-static.log。另补旧写入I/O返回晚于恢复collector的UI收尾：旧epoch返回不覆盖已清理的落盘状态，finally再次关闭旧编辑器，避免旧页面重新出现。主线程已修复protected关键字与精确scoreMinor词法测试，保留不覆盖。
 
 00:56 UTC真实CI38988358601/job117265031375（5dd707）appcompile失败：BackupCodec reset隐藏FilterReader.reset；Android公开API无OsConstants.O_DIRECTORY。源码修复为resetBudget及验证目录后O_RDONLY打开/fsync/close，不硬编码flag。连同PDF多行备注和旧epochUI修复，本地core64/Python46/static再次通过（evidence/d07-repair-*.log）；新Android/Gson/PDF/设备待重跑。源码暂停供主线程快照。
+
+## 2026-10-17 01:02 UTC · D09窄范围可用性增量
+已接应用内PdfRenderer单页预览，不依赖GMS或外部阅读器。后台IO打开/渲染/关闭，仅持有当前页位图，宽<=900px、高<=1500px，适配显示，页码/上一页/下一页/关闭文字控制及48dp触区。系统阅读器成为可选项；分享/外部预览文件存在检查、mtime和FileProvider URI工作移至IO，Activity启动留Main。未增加库或网络权限。
+新增NativeReportPreviewTest位图上限/无外部阅读器分页控制；RecreationDraftTest使用ActivityScenario.recreate，验证正在编辑标题和已落盘草稿保持。重建测试通过非导出debug-only RecreationHostActivity与隔离in-memory DB运行，绝不清理用户app数据库；这不等同于进程死亡测试或生产MainActivity完整验收。
+实际本地core64/Python46/static通过（evidence/d09-*.log）；本快照Android编译/新增设备测试/预览截图/TalkBack均NOT_RUN。现有3394203 CI与主线程设备工作是此前快照，不能当成本快照证据。源码暂停等待主线程捕获与下一次CI。
+
+01:03 UTC真实3394203构建/JVM通过，lint在PdfReport setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)报WrongConstant。源码移除非必要的显式breakStrategy调用，保留StaticLayout.Builder默认换行与原测量/逐行分页，不引入API29 LineBreaker依赖，也不加lint豁免。core64/Python46/static重跑通过（evidence/d09-lint-repair-*.log），新版lint和D09设备仍NOT_RUN。源码暂停供主线程捕获。
+
+01:04 UTC状态纠偏：PROJECT_STATE将最新本地D09源码标IMPLEMENTED_UNVERIFIED，不再以D00旧APK/首次成功CI当最新证据。真实Room schema2已在仓库并记录SHA256及来源D04 CI38986723022。最新观测3394203 Android编译/组装、instrumentation组装、core/app JVM通过，仅lint失败；D09和lint修复待下次构建。baseline APK SHA/首次成功CI单独保留并明确历史范围。当前本地core64/Python46。

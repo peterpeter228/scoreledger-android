@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "currentTask": "D07",
+  "currentTask": "D09",
   "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
   "tasks": [
     {
@@ -262,7 +262,7 @@
     {
       "id": "D09",
       "title": "界面收口、隐私和无障碍",
-      "status": "NOT_STARTED",
+      "status": "IN_PROGRESS",
       "dependsOn": [
         "D05",
         "D06",
@@ -283,8 +283,12 @@
       "acceptance": [
         "指定设备矩阵截图/录屏及TalkBack证据；无死按钮、无假数据装成果。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d09-core.log",
+        "evidence/d09-python.log",
+        "evidence/d09-static.log"
+      ],
+      "notes": "Narrow native offline PDF preview and background share/file preparation implemented. Added bounded preview navigation and isolated ActivityScenario.recreate draft tests NOT_RUN. Broader fonts/TalkBack/device UX still pending."
     },
     {
       "id": "D10",

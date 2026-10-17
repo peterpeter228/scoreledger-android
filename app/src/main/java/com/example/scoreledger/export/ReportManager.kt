@@ -31,13 +31,13 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
         require(report.file.isFile) { "报告已清理，请重新生成" }
         requireNotNull(context.contentResolver.openOutputStream(uri,"wt")).use { out -> report.file.inputStream().use { it.copyTo(out) } }
     }
-    fun previewIntent(report:ReportFile):Intent {
+    suspend fun previewIntent(report:ReportFile):Intent = withContext(Dispatchers.IO) {
         require(report.file.isFile) { "报告已清理，请重新生成" }
         report.file.setLastModified(System.currentTimeMillis())
         val uri=FileProvider.getUriForFile(context,BuildConfig.APPLICATION_ID+".files",report.file)
-        return Intent(Intent.ACTION_VIEW).apply { setDataAndType(uri,"application/pdf");clipData=ClipData.newUri(context.contentResolver,"成绩报告",uri);addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) }
+        Intent(Intent.ACTION_VIEW).apply { setDataAndType(uri,"application/pdf");clipData=ClipData.newUri(context.contentResolver,"成绩报告",uri);addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) }
     }
-    fun shareIntent(report:ReportFile):Intent {
+    suspend fun shareIntent(report:ReportFile):Intent = withContext(Dispatchers.IO) {
         require(report.file.isFile) { "报告已清理，请重新生成" }
         // Refresh retention when a user shares an older prepared report; never delete immediately after sharing.
         report.file.setLastModified(System.currentTimeMillis())
@@ -47,7 +47,24 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
             clipData=ClipData.newUri(context.contentResolver,"成绩报告",uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        return Intent.createChooser(send,"分享报告").apply { addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);clipData=send.clipData }
+        Intent.createChooser(send,"分享报告").apply { addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);clipData=send.clipData }
+    }
+    suspend fun renderPage(report:ReportFile,index:Int):RenderedReportPage=withContext(Dispatchers.IO) {
+        require(report.file.isFile) { "报告已清理，请重新生成" }
+        report.file.setLastModified(System.currentTimeMillis())
+        android.graphics.pdf.PdfRenderer(android.os.ParcelFileDescriptor.open(report.file,android.os.ParcelFileDescriptor.MODE_READ_ONLY)).use { renderer ->
+            require(index in 0 until renderer.pageCount)
+            renderer.openPage(index).use { page ->
+                require(page.width>0 && page.height>0)
+                val scale=minOf(900f/page.width,1500f/page.height)
+                val bitmap=android.graphics.Bitmap.createBitmap(maxOf(1,(page.width*scale).toInt()),maxOf(1,(page.height*scale).toInt()),android.graphics.Bitmap.Config.ARGB_8888)
+                try {
+                    bitmap.eraseColor(android.graphics.Color.WHITE)
+                    page.render(bitmap,null,null,android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                    RenderedReportPage(bitmap,index,renderer.pageCount)
+                } catch(error:Throwable) { bitmap.recycle();throw error }
+            }
+        }
     }
     suspend fun maintenance()=withContext(Dispatchers.IO){cleanup()}
     private fun cleanup() {
@@ -55,3 +72,5 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
         directory.listFiles()?.filter{it.lastModified()<cutoff}?.forEach{check(it.delete()){ "无法清理过期报告" }}
     }
 }
+
+data class RenderedReportPage(val bitmap:android.graphics.Bitmap,val index:Int,val pageCount:Int)

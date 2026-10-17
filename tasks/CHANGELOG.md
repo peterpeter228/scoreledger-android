@@ -32,3 +32,10 @@
 - Actual local checks: core64, Python46, package static pass. Commercial purchase remains unavailable, no added account/cloud/OCR/AI/network integrations.
 
 D07审查修复：有效多换行备注按测量行边界跨页、原文无损；新增250行备注测试（NOT_RUN）。旧epoch写入返回后的UI状态也再次失效，避免恢复后旧编辑页重现。
+
+### 2026-10-17 D09 offline PDF preview (source only)
+- Added bounded single-page in-app PdfRenderer preview with readable previous/next/page count/close controls; external reader optional.
+- Moved file metadata and FileProvider setup to IO; kept activity launches on main.
+- Added isolated debug-host ActivityScenario recreation and preview bounds/navigation tests (NOT_RUN). Local core64/Python46/static pass; no release/signing changes.
+
+D09 lint修复：移除StaticLayout可选高质量breakStrategy常量调用，保留默认换行，避免API29常量与minAPI26冲突；不抑制lint。新lint待CI。

@@ -101,5 +101,11 @@
     <string name="report_save">选择位置保存 PDF</string>
     <string name="report_share">打开系统分享面板</string>
     <string name="report_busy">正在生成或写入 PDF…</string>
-    <string name="report_preview">用系统阅读器预览 PDF</string>
+    <string name="report_preview">应用内预览 PDF</string>
+    <string name="report_external_preview">使用外部 PDF 阅读器（可选）</string>
+    <string name="report_close_preview">关闭预览</string>
+    <string name="report_preview_loading">正在读取本页…</string>
+    <string name="report_preview_error">此页未能打开，请关闭后重新生成报告。</string>
+    <string name="report_previous_page">上一页</string>
+    <string name="report_next_page">下一页</string>
 </resources>

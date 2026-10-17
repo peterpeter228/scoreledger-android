@@ -27,3 +27,5 @@ D06增量（00:41 UTC）：备份/恢复/设置源码IMPLEMENTED_UNVERIFIED；�
 D07增量（00:49 UTC）：原生分页PDF/预览/保存/只读分享/缓存维护已实现，IMPLEMENTED_UNVERIFIED。D06审查修复也已写入。实际本地core64/Python46/static通过。新增实际Gson JVM、Room恢复及PdfRenderer/布局仪器化测试尚未运行；无新Android编译、设备渲染截图、真实分享或支付验收结论。原先表格“PDF/备份NOT_STARTED”被此源码状态替代，不代表验收完成。
 
 D07首次真实编译CI38988358601失败在两处API/命名错误；已源码修复resetBudget及目录O_RDONLY fsync，同时修复多换行备注分页。重构建待跑，绝不据源码改动标PASS；本地修复检查core64/Python46/static通过。
+
+D09增量（01:02 UTC）：应用内离线单页PDF预览、IO线程分享准备已实现；新增隔离ActivityScenario.recreate与预览导航测试尚未运行。core64/Python46/static真实通过；新Android/device验收NOT_RUN，D09整体仍IN_PROGRESS（大字/TalkBack/矩阵未通过）。

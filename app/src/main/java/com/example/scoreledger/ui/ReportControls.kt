@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
     var full by rememberSaveable { mutableStateOf(BuildConfig.INTERNAL_BETA) }
     var busy by remember { mutableStateOf(false) }
     var report by remember(query,subjectId) { mutableStateOf<ReportFile?>(null) }
+    var preview by remember { mutableStateOf<ReportFile?>(null) }
     var saveTarget by remember { mutableStateOf<ReportFile?>(null) }
     var message by remember { mutableStateOf("") }
     fun operation(block:suspend ()->Unit) { if(busy)return;busy=true;message="";scope.launch { try{block()}catch(e:CancellationException){throw e}catch(_:Exception){message="报告操作未完成。请选择有记录的范围或重新生成；保存失败时请删除可能不完整的目标文件。"}finally{busy=false} } }
@@ -35,6 +36,7 @@ import kotlinx.coroutines.launch
         if(uri==null)message="已取消保存，没有报告保存成功" else if(target==null)message="报告状态已失效，请重新生成并保存" else operation { manager.save(target,uri);message="PDF已保存" }
     }
     LaunchedEffect(manager) { runCatching { manager.maintenance() } }
+    preview?.let { NativeReportPreview(manager,it){preview=null} }
     TextButton(onClick={show=!show},enabled=!busy) { Text(stringResource(R.string.report_export)) }
     if(show) {
         Text(stringResource(R.string.report_warning))
@@ -45,9 +47,10 @@ import kotlinx.coroutines.launch
         Button(onClick={operation { report=manager.generate(query,ReportOptions(anonymous,notes,full,subjectId));message="报告已生成，请预览后保存或分享" }},enabled=!busy && query.childId.isNotEmpty(),modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_generate))}
         report?.let { ready ->
             Text("${ready.pageCount}页 · ${ready.scoreRows}条成绩；生成时的同一筛选快照，后续修改不会更新此文件。")
-            OutlinedButton(onClick={try{context.startActivity(manager.previewIntent(ready))}catch(_:Exception){message="没有可用PDF阅读器，可先保存后使用其他阅读器查看"}},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_preview))}
+            OutlinedButton(onClick={preview=ready},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_preview))}
+            TextButton(onClick={operation { val intent=manager.previewIntent(ready);try{context.startActivity(intent)}catch(_:android.content.ActivityNotFoundException){message="没有外部PDF阅读器，可直接使用应用内预览"} }},enabled=!busy){Text(stringResource(R.string.report_external_preview))}
             OutlinedButton(onClick={saveTarget=ready;save.launch("scoreledger-report-${java.time.LocalDate.now()}.pdf")},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_save))}
-            OutlinedButton(onClick={try{context.startActivity(manager.shareIntent(ready));message="已打开系统分享面板，是否发送由你决定"}catch(_:Exception){message="无法打开分享面板，可使用保存PDF"}},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_share))}
+            OutlinedButton(onClick={operation { val intent=manager.shareIntent(ready);try{context.startActivity(intent);message="已打开系统分享面板，是否发送由你决定"}catch(_:android.content.ActivityNotFoundException){message="无法打开分享面板，可使用保存PDF"} }},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_share))}
         }
         if(busy)Text(stringResource(R.string.report_busy))
         if(message.isNotEmpty())Text(message)
