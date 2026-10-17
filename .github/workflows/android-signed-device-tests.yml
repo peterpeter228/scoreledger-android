@@ -6,6 +6,16 @@ on:
         description: Same-repository build run containing the fixed-signed APK and test APK
         required: true
         type: string
+      test_artifact_run_id:
+        description: Optional same-repository run for test APK only; blank uses the app artifact run
+        required: false
+        default: ''
+        type: string
+      expected_app_sha256:
+        description: Optional SHA-256 pin for the exact delivered app APK (64 hexadecimal characters)
+        required: false
+        default: ''
+        type: string
       api:
         description: Disposable AOSP emulator API
         required: true
@@ -36,7 +46,26 @@ jobs:
       - name: Validate artifact selection
         env:
           ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
-        run: '[[ "$ARTIFACT_RUN_ID" =~ ^[1-9][0-9]*$ ]]'
+          TEST_ARTIFACT_RUN_ID: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
+          EXPECTED_APP_SHA256: ${{ inputs.expected_app_sha256 }}
+        run: |
+          [[ "$ARTIFACT_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          [[ "$TEST_ARTIFACT_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          [[ -z "$EXPECTED_APP_SHA256" || "$EXPECTED_APP_SHA256" =~ ^[a-fA-F0-9]{64}$ ]]
+      - name: Record separate artifact source runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
+          TEST_ARTIFACT_RUN_ID: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/signed-device
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$ARTIFACT_RUN_ID" \
+            --jq '{id,head_sha,repository:.repository.full_name,html_url,event,path,status,conclusion}' \
+            > evidence/signed-device/app-source-run.json
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$TEST_ARTIFACT_RUN_ID" \
+            --jq '{id,head_sha,repository:.repository.full_name,html_url,event,path,status,conclusion}' \
+            > evidence/signed-device/test-source-run.json
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -54,11 +83,13 @@ jobs:
           name: android-test-reports
           path: signed-input/test
           repository: ${{ github.repository }}
-          run-id: ${{ inputs.artifact_run_id }}
+          run-id: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
           github-token: ${{ github.token }}
       - name: Test exact downloaded fixed-signed APKs
         env:
           ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
+          TEST_ARTIFACT_RUN_ID: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
+          EXPECTED_APP_SHA256: ${{ inputs.expected_app_sha256 }}
           ANDROID_API: ${{ inputs.api }}
           ALLOW_KVM: ${{ inputs.allow_kvm }}
           RUN_REINSTALL_RETENTION: ${{ inputs.run_reinstall_retention }}

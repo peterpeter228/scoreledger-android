@@ -30,7 +30,7 @@ class PdfSaveRecreationTest {
     }
     private fun saveFailureEvidence() {
         val instrumentation=InstrumentationRegistry.getInstrumentation()
-        val directory=File(instrumentation.targetContext.getExternalFilesDir(null),"ui-evidence").apply{mkdirs()}
+        val directory=File(instrumentation.targetContext.filesDir,"ui-evidence").apply{mkdirs()}
         runCatching { File(directory,"pdf-save-recreation-failure.txt").writeText(compose.onRoot(useUnmergedTree=true).printToString()) }
         runCatching { instrumentation.uiAutomation.takeScreenshot()?.let { bitmap ->
             try { File(directory,"pdf-save-recreation-failure.png").outputStream().use{bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it)} }

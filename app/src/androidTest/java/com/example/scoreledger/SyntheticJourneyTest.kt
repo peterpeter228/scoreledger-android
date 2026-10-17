@@ -27,7 +27,7 @@ class SyntheticJourneyTest {
     private fun captureSyntheticUi(name:String) {
         compose.waitForIdle()
         val instrumentation=InstrumentationRegistry.getInstrumentation()
-        val directory=File(requireNotNull(instrumentation.targetContext.getExternalFilesDir(null)),"ui-evidence")
+        val directory=File(instrumentation.targetContext.filesDir,"ui-evidence")
         check(directory.isDirectory || directory.mkdirs())
         val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         try {

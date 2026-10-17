@@ -137,12 +137,36 @@ verify_apk "$APP_APK" app "$PACKAGE"
 verify_apk "$TEST_APK" test "$TEST_PACKAGE"
 sha256sum "$APP_APK" "$TEST_APK" | tee "$EVIDENCE/apk-sha256.txt"
 python3 - "$EVIDENCE/artifact-provenance.json" "$APP_APK" "$TEST_APK" "$API" "$CERT" <<'PY'
-import hashlib, json, os, pathlib, sys
+import hashlib, json, os, pathlib, re, sys
 paths = [pathlib.Path(p) for p in sys.argv[2:4]]
-data = {'repository': os.getenv('GITHUB_REPOSITORY'), 'artifactRunId': os.getenv('ARTIFACT_RUN_ID'),
+root = pathlib.Path(sys.argv[1]).parent
+app_run_id = os.environ['ARTIFACT_RUN_ID']
+test_run_id = os.getenv('TEST_ARTIFACT_RUN_ID') or app_run_id
+repository = os.environ['GITHUB_REPOSITORY']
+def source_run(name, expected_id):
+    assert re.fullmatch(r'[1-9][0-9]*', expected_id), 'Invalid run ID'
+    run = json.loads((root / (name + '-source-run.json')).read_text())
+    assert str(run['id']) == expected_id, 'Run metadata ID mismatch'
+    assert run['repository'] == repository, 'Artifact source repository mismatch'
+    assert re.fullmatch(r'[a-fA-F0-9]{40}', run['head_sha']), 'Missing source commit SHA'
+    return run
+app_source = source_run('app', app_run_id)
+test_source = source_run('test', test_run_id)
+apks = [{'role': role, 'path': str(p), 'bytes': p.stat().st_size,
+         'sha256': hashlib.sha256(p.read_bytes()).hexdigest()}
+        for role, p in zip(('app', 'instrumentation'), paths)]
+pin = os.getenv('EXPECTED_APP_SHA256', '').lower()
+assert not pin or re.fullmatch(r'[a-f0-9]{64}', pin), 'Invalid app APK SHA-256 pin'
+assert not pin or apks[0]['sha256'] == pin, 'App APK does not match expected SHA-256'
+data = {'repository': repository, 'artifactRunId': app_run_id,
+        'appArtifactRunId': app_run_id, 'testArtifactRunId': test_run_id,
+        'appSourceSha': app_source['head_sha'], 'testSourceSha': test_source['head_sha'],
+        'mixedArtifactRuns': app_run_id != test_run_id,
+        'expectedAppSha256': pin or None, 'appHashPinVerified': bool(pin),
         'acceptanceRunId': os.getenv('GITHUB_RUN_ID'), 'acceptanceSourceSha': os.getenv('GITHUB_SHA'),
         'api': int(sys.argv[4]), 'certificateSha256': sys.argv[5], 'rebuilt': False,
-        'apks': [{'path': str(p), 'bytes': p.stat().st_size, 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in paths]}
+        'apks': apks,
+        'sourceCompatibilityReview': 'Separate review required for mixed app/test source runs; this script verifies identities, not source equivalence.'}
 pathlib.Path(sys.argv[1]).write_text(json.dumps(data, indent=2) + '\n')
 PY
 

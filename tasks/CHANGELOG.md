@@ -52,3 +52,5 @@ Device milestone: exact2c9 AOSP30 emulator executed26tests,25pass/1failure in mi
 - PDF beta safety: explicit 200-page per-report limit (no silent truncation), cross-manager serialized generation, cooperative cancellation and failed/cancelled publication cleanup. Added boundary/cancellation instrumentation; runtime verification pending.
 
 - Fixed SAF ownership lifetime: report save and backup picker registrations/state are now above lazy UI items, so recreation/scroll disposal cannot orphan callbacks. Report save regression retains exact-byte and visible-success assertions and captures failure evidence; added isolated backup export/preview recreation coverage. Device rerun pending.
+
+- Capture-only: synthetic PDF/UI diagnostics now use internal filesDir/pdf-evidence and filesDir/ui-evidence for package-scoped run-as collection. Existing filenames retained; no application business changes. Prior exact58 API30 ordinary tests and opt-in reinstall retention passed; visual evidence collection rerun pending.

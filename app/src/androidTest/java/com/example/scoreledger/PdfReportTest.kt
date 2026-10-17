@@ -37,7 +37,7 @@ class PdfReportTest {
     @Test fun rendererOpensNativeA4PdfAndProducesScreenshotEvidence() {
         val data=fixture();val plan=PdfReport.plan(data,RecordQuery(data.children.single().id),ReportOptions(full=true))
         val context=InstrumentationRegistry.getInstrumentation().targetContext
-        val evidence=File(context.getExternalFilesDir(null),"pdf-evidence").apply{mkdirs()}
+        val evidence=File(context.filesDir,"pdf-evidence").apply{mkdirs()}
         val file=File(evidence,"synthetic-report.pdf")
         file.outputStream().use{PdfReport.write(plan,it)}
         PdfRenderer(ParcelFileDescriptor.open(file,ParcelFileDescriptor.MODE_READ_ONLY)).use{renderer ->
