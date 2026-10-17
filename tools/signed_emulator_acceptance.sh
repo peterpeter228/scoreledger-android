@@ -42,6 +42,58 @@ RUNNER="$TEST_PACKAGE/androidx.test.runner.AndroidJUnitRunner"
 EMU_PID=''
 SERIAL=emulator-5580
 export PATH="$SDK_ROOT/platform-tools:$PATH"
+# Read only the app's own evidence as its debuggable UID. Shell's direct adb
+# pull cannot access app-scoped external storage on newer Android versions.
+collect_app_evidence() {
+  local name="$1" destination="$2" base archive
+  local found=false
+  case "$name" in pdf-evidence|ui-evidence) ;; *) return 1;; esac
+  # Prefer private files if a newer test writes there; support older delivered APKs.
+  for base in files "/sdcard/Android/data/$PACKAGE/files"; do
+    if timeout 10 adb -s "$SERIAL" shell run-as "$PACKAGE" test -d "$base/$name"; then
+      found=true
+      archive="$EVIDENCE/$name.tar"
+      if ! timeout 30 adb -s "$SERIAL" exec-out run-as "$PACKAGE" tar -cf - -C "$base" "$name" > "$archive" 2> "$EVIDENCE/$name-collection.stderr"; then
+        echo "EVIDENCE_COLLECTION_FAILED: $name (run-as tar)"
+        return 1
+      fi
+      # Never extract device-controlled symlinks, special files, or traversal paths.
+      # Validate the whole archive before writing regular files into a new folder.
+      python3 - "$archive" "$EVIDENCE/$destination" "$name" <<'PYEVIDENCE'
+import pathlib, shutil, sys, tarfile
+archive, destination, expected = sys.argv[1:]
+root = pathlib.Path(destination)
+with tarfile.open(archive, 'r:') as tar:
+    members = tar.getmembers()
+    if len(members) > 1000 or sum(m.size for m in members) > 100 * 1024 * 1024:
+        raise ValueError('Evidence archive exceeds limits')
+    paths = set()
+    for member in members:
+        path = pathlib.PurePosixPath(member.name)
+        if (path.is_absolute() or '..' in path.parts or not path.parts or
+                path.parts[0] != expected or not (member.isdir() or member.isfile()) or
+                path in paths or member.size < 0):
+            raise ValueError('Unsafe evidence archive member: ' + member.name)
+        paths.add(path)
+    root.mkdir(parents=True, exist_ok=False)
+    for member in members:
+        relative = pathlib.PurePosixPath(member.name).relative_to(expected)
+        target = root.joinpath(*relative.parts)
+        if member.isdir():
+            target.mkdir(parents=True, exist_ok=True)
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            with tar.extractfile(member) as source, target.open('xb') as output:
+                shutil.copyfileobj(source, output)
+    print('EVIDENCE_COLLECTED:', expected, 'regular_files=', sum(m.isfile() for m in members))
+PYEVIDENCE
+      return "$?"
+    fi
+  done
+  [ "$found" = true ] || echo "EVIDENCE_NOT_PRESENT: $name"
+  return 1
+}
+
 collect_and_stop() {
   local result=$?
   trap - EXIT
@@ -50,8 +102,8 @@ collect_and_stop() {
     timeout 15 adb -s "$SERIAL" exec-out screencap -p > "$EVIDENCE/final-screen.png"
     timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/logcat.txt"
     timeout 10 adb -s "$SERIAL" shell getprop > "$EVIDENCE/device-properties.txt"
-    timeout 30 adb -s "$SERIAL" pull "/sdcard/Android/data/$PACKAGE/files/pdf-evidence" "$EVIDENCE/pdf-artifacts"
-    timeout 30 adb -s "$SERIAL" pull "/sdcard/Android/data/$PACKAGE/files/ui-evidence" "$EVIDENCE/ui-artifacts"
+    collect_app_evidence pdf-evidence pdf-artifacts
+    collect_app_evidence ui-evidence ui-artifacts
     kill "$EMU_PID" 2>/dev/null
     wait "$EMU_PID" 2>/dev/null
   fi

@@ -28,6 +28,15 @@ class PdfSaveRecreationTest {
         compose.onNodeWithTag("history-list").performScrollToNode(hasText(text))
         return compose.onNodeWithText(text)
     }
+    private fun saveFailureEvidence() {
+        val instrumentation=InstrumentationRegistry.getInstrumentation()
+        val directory=File(instrumentation.targetContext.getExternalFilesDir(null),"ui-evidence").apply{mkdirs()}
+        runCatching { File(directory,"pdf-save-recreation-failure.txt").writeText(compose.onRoot(useUnmergedTree=true).printToString()) }
+        runCatching { instrumentation.uiAutomation.takeScreenshot()?.let { bitmap ->
+            try { File(directory,"pdf-save-recreation-failure.png").outputStream().use{bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it)} }
+            finally {bitmap.recycle()}
+        } }
+    }
     @Test fun pendingSafSaveSurvivesActivityRecreation() {
         val instrumentation=InstrumentationRegistry.getInstrumentation();val isolated=IsolatedUiContext(instrumentation.targetContext)
         val db=Room.inMemoryDatabaseBuilder(isolated,ScoreDatabase::class.java).build();val repository=ScoreRepository(db,true)
@@ -48,11 +57,19 @@ class PdfSaveRecreationTest {
                 val code=requireNotNull(registry.pendingCode)
                 scenario.recreate();compose.waitForIdle()
                 val target=File(isolated.cacheDir,"controlled-target.pdf")
-                instrumentation.runOnMainSync { registry.dispatchResult(code,Activity.RESULT_OK,Intent().setData(Uri.fromFile(target))) }
+                // Result delivery must not depend on a lazy report item being composed.
+                instrumentation.runOnMainSync { assertTrue(registry.dispatchResult(code,Activity.RESULT_OK,Intent().setData(Uri.fromFile(target)))) }
+                try {
+                compose.waitUntil(15000){target.isFile && target.length()>0}
+                // Recreation removes the non-saveable preview/buttons, so the restored lazy
+                // offset may now be below the report item. Bring status into view explicitly.
+                history("PDF 报告").assertExists()
                 compose.waitUntil(15000){compose.onAllNodesWithText("PDF已保存").fetchSemanticsNodes().isNotEmpty()}
+                history("PDF已保存").assertIsDisplayed()
                 assertTrue(target.length()>0)
                 val original=File(isolated.cacheDir,"reports").listFiles()!!.single{it.extension=="pdf"}
                 assertArrayEquals(original.readBytes(),target.readBytes())
+                } catch(failure:Throwable) { saveFailureEvidence();throw failure }
             }
         }finally{RecreationHostActivity.testRegistryOwner=null;RecreationHostActivity.testRepository=null;RecreationHostActivity.testServices=null;db.close();isolated.cleanup()}
     }

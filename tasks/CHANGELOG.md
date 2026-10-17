@@ -50,3 +50,5 @@ D09 lint修复：移除StaticLayout可选高质量breakStrategy常量调用，�
 Device milestone: exact2c9 AOSP30 emulator executed26tests,25pass/1failure in migration fixture parsing. Corrected legitimate absent indices handling and strengthened row/index preservation assertions; rerun pending. Added opt-in guarded synthetic signed reinstall seed/verify test (NOT_RUN, skips normal discovery, never clears data).
 
 - PDF beta safety: explicit 200-page per-report limit (no silent truncation), cross-manager serialized generation, cooperative cancellation and failed/cancelled publication cleanup. Added boundary/cancellation instrumentation; runtime verification pending.
+
+- Fixed SAF ownership lifetime: report save and backup picker registrations/state are now above lazy UI items, so recreation/scroll disposal cannot orphan callbacks. Report save regression retains exact-byte and visible-success assertions and captures failure evidence; added isolated backup export/preview recreation coverage. Device rerun pending.

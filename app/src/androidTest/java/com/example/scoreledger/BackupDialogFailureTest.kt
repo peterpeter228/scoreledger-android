@@ -35,7 +35,7 @@ class BackupDialogFailureTest {
         val db=Room.inMemoryDatabaseBuilder(isolated,ScoreDatabase::class.java).build();val r=ScoreRepository(db,true)
         try {
             runBlocking{r.addChild("旧记录")};val services=isolated.services(r)
-            compose.setContent{CompositionLocalProvider(LocalUiServices provides services){ScoreLedgerTheme{Column(Modifier.verticalScroll(rememberScrollState())){BackupSettings()}}}}
+            compose.setContent{CompositionLocalProvider(LocalUiServices provides services){val content=rememberBackupSettings();ScoreLedgerTheme{Column(Modifier.verticalScroll(rememberScrollState())){content()}}}}
             compose.onNodeWithText("清除本机全部记录").performScrollTo().performClick()
             compose.waitUntil(10000){compose.onAllNodesWithText("确认删除").fetchSemanticsNodes().isNotEmpty()}
             runBlocking{r.addChild("预览后新增")}
@@ -53,7 +53,7 @@ class BackupDialogFailureTest {
             runBlocking{r.addChild("必须保留")};val before=runBlocking{r.restorePreview()};val services=isolated.services(r)
             val fixture=File(isolated.cacheDir,"fixture.json");instrumentation.context.assets.open("backup-valid.json").use{input->fixture.outputStream().use{input.copyTo(it)}}
             File(isolated.noBackupFilesDir,"rollback").writeText("synthetic blocked directory")
-            compose.setContent{CompositionLocalProvider(LocalUiServices provides services,LocalActivityResultRegistryOwner provides owner){ScoreLedgerTheme{Column(Modifier.verticalScroll(rememberScrollState())){BackupSettings()}}}}
+            compose.setContent{CompositionLocalProvider(LocalUiServices provides services,LocalActivityResultRegistryOwner provides owner){val content=rememberBackupSettings();ScoreLedgerTheme{Column(Modifier.verticalScroll(rememberScrollState())){content()}}}}
             compose.onNodeWithText("选择备份并预览恢复（免费）").performScrollTo().performClick()
             compose.waitUntil(10000){registry.code!=null}
             instrumentation.runOnMainSync{registry.dispatchResult(requireNotNull(registry.code),Activity.RESULT_OK,Intent().setData(Uri.fromFile(fixture)))}

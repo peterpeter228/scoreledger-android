@@ -20,7 +20,11 @@ fun StarterScreen(model: ScoreViewModel, services:UiServices?=null) {
     val resolved=services ?: remember(model,context) { UiServices(
         com.example.scoreledger.backup.BackupManager(context,model.repository),
         com.example.scoreledger.export.ReportManager(context,model.repository)) }
-    CompositionLocalProvider(LocalUiServices provides resolved) { StarterContent(model) }
+    val reportSave=rememberReportSaveState(resolved.reports)
+    CompositionLocalProvider(LocalUiServices provides resolved,LocalReportSaveState provides reportSave) {
+        val backupContent=rememberBackupSettings()
+        CompositionLocalProvider(LocalBackupContent provides backupContent) { StarterContent(model) }
+    }
 }
 @Composable private fun StarterContent(model:ScoreViewModel) {
     val counts by model.childCounts.collectAsStateWithLifecycle()

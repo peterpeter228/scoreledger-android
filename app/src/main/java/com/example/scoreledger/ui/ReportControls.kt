@@ -29,16 +29,13 @@ import kotlinx.coroutines.launch
     var anonymous by rememberSaveable { mutableStateOf(true) }
     var notes by rememberSaveable { mutableStateOf(false) }
     var full by rememberSaveable { mutableStateOf(BuildConfig.INTERNAL_BETA) }
-    var busy by remember { mutableStateOf(false) }
+    var operationBusy by remember { mutableStateOf(false) }
+    val saveState=LocalReportSaveState.current
+    val busy=operationBusy || saveState.busy
     var report by remember(query,subjectId) { mutableStateOf<ReportFile?>(null) }
     var preview by remember { mutableStateOf<ReportFile?>(null) }
-    var saveTargetId by rememberSaveable { mutableStateOf<String?>(null) }
     var message by remember { mutableStateOf("") }
-    fun operation(block:suspend ()->Unit) { if(busy)return;busy=true;message="";scope.launch { try{block()}catch(e:CancellationException){throw e}catch(e:ReportPageLimitException){report=null;message=requireNotNull(e.message)}catch(_:Exception){message="报告操作未完成。请选择有记录的范围或重新生成；保存失败时请删除可能不完整的目标文件。"}finally{busy=false} } }
-    val save=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
-        val target=saveTargetId;saveTargetId=null
-        if(uri==null)message="已取消保存，没有报告保存成功" else if(target==null)message="报告状态已失效，请重新生成并保存" else operation { manager.savePending(target,uri);message="PDF已保存" }
-    }
+    fun operation(block:suspend ()->Unit) { if(busy)return;operationBusy=true;message="";scope.launch { try{block()}catch(e:CancellationException){throw e}catch(e:ReportPageLimitException){report=null;message=requireNotNull(e.message)}catch(_:Exception){message="报告操作未完成。请选择有记录的范围或重新生成；保存失败时请删除可能不完整的目标文件。"}finally{operationBusy=false} } }
     LaunchedEffect(manager) { runCatching { manager.maintenance() } }
     preview?.let { NativeReportPreview(manager,it){preview=null} }
     TextButton(onClick={show=!show},enabled=!busy) { Text(stringResource(R.string.report_export)) }
@@ -53,12 +50,13 @@ import kotlinx.coroutines.launch
             Text("${ready.pageCount}页 · ${ready.scoreRows}条成绩；生成时的同一筛选快照，后续修改不会更新此文件。")
             OutlinedButton(onClick={preview=ready},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_preview))}
             TextButton(onClick={operation { val intent=manager.previewIntent(ready);try{context.startActivity(intent)}catch(_:android.content.ActivityNotFoundException){message="没有外部PDF阅读器，可直接使用应用内预览"} }},enabled=!busy){Text(stringResource(R.string.report_external_preview))}
-            OutlinedButton(onClick={saveTargetId=manager.reportId(ready);save.launch("scoreledger-report-${java.time.LocalDate.now()}.pdf")},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_save))}
+            OutlinedButton(onClick={message="";saveState.launch(manager.reportId(ready))},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_save))}
             OutlinedButton(onClick={operation { val intent=manager.shareIntent(ready);try{context.startActivity(intent);message="已打开系统分享面板，是否发送由你决定"}catch(_:android.content.ActivityNotFoundException){message="无法打开分享面板，可使用保存PDF"} }},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_share))}
         }
         if(busy)Text(stringResource(R.string.report_busy))
         if(message.isNotEmpty())Text(message)
     }
+    if(saveState.message.isNotEmpty())Text(saveState.message)
 }
 
 @Composable fun ReportOption(label:String,checked:Boolean,enabled:Boolean=true,change:(Boolean)->Unit) {
