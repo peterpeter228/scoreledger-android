@@ -35,6 +35,41 @@ class TrendHistoryAcceptanceTest {
     private val instrumentation get()=InstrumentationRegistry.getInstrumentation()
     private val output get()=File(instrumentation.targetContext.filesDir,"ui-evidence").apply { mkdirs() }
     private val chartDescription="得分率趋势，纵轴0至100。可通过下方考试明细选择并读取每个点。"
+    private fun awaitFocusedKeyboard(scenario:ActivityScenario<RecreationHostActivity>) {
+        val automation=instrumentation.uiAutomation
+        val oldFlags=automation.serviceInfo.flags
+        automation.serviceInfo=automation.serviceInfo.apply {
+            flags=flags or android.accessibilityservice.AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+        }
+        try {
+            compose.waitUntil(10000) {
+                var visible=false
+                scenario.onActivity {
+                    val insets=androidx.core.view.ViewCompat.getRootWindowInsets(it.window.decorView)
+                    visible=insets?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime())==true &&
+                        (insets?.getInsets(androidx.core.view.WindowInsetsCompat.Type.ime())?.bottom ?: 0)>0
+                }
+                visible && automation.windows.any { window ->
+                    window.type==android.view.accessibility.AccessibilityWindowInfo.TYPE_INPUT_METHOD &&
+                        android.graphics.Rect().also { window.getBoundsInScreen(it) }.let { !it.isEmpty && it.height()>0 }
+                } && compose.onAllNodes(hasTestTag("filter-search") and isFocused()).fetchSemanticsNodes().size==1
+            }
+        } finally { automation.serviceInfo=automation.serviceInfo.apply { flags=oldFlags } }
+    }
+    private fun assertSearchText()=compose.onNodeWithTag("filter-search").assert(
+        SemanticsMatcher.expectValue(androidx.compose.ui.semantics.SemanticsProperties.EditableText,
+            androidx.compose.ui.text.AnnotatedString("合成排序")))
+    private fun awaitKeyboardClosed(scenario:ActivityScenario<RecreationHostActivity>) {
+        compose.waitUntil(10000) {
+            var gone=false
+            scenario.onActivity {
+                val insets=androidx.core.view.ViewCompat.getRootWindowInsets(it.window.decorView)
+                gone=insets!=null && !insets.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime()) &&
+                    insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.ime()).bottom==0
+            }
+            gone
+        }
+    }
     private fun writeImage(name:String,bitmap:Bitmap) {
         File(output,"$name.png").outputStream().use { check(bitmap.compress(Bitmap.CompressFormat.PNG,100,it)) }
     }
@@ -75,17 +110,26 @@ class TrendHistoryAcceptanceTest {
                     compose.onNodeWithTag("home-list").performScrollToNode(hasTestTag("all-records"))
                     compose.onNodeWithTag("all-records").performClick()
                     compose.onNodeWithTag("filter-toggle").performClick()
+                    compose.onNodeWithTag("filter-search").performScrollTo().performTouchInput { click() }
+                    awaitFocusedKeyboard(scenario)
                     compose.onNodeWithTag("filter-search").performTextReplacement("合成排序")
+                    assertSearchText()
+                    // A real Back closes the already-proven IME, never navigates blindly.
+                    instrumentation.sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK)
+                    awaitKeyboardClosed(scenario)
+                    assertSearchText()
                     compose.onNodeWithTag("history-list").performScrollToNode(hasTestTag("apply-filters"))
-                    compose.onNodeWithTag("apply-filters").performClick()
-                    compose.waitUntil(10000) { compose.onAllNodesWithText("3次考试").fetchSemanticsNodes().isNotEmpty() }
+                    val apply=compose.onNodeWithTag("apply-filters").performScrollTo().assertIsDisplayed().assertIsEnabled()
+                    compose.waitForIdle()
+                    val initialBounds=apply.fetchSemanticsNode().boundsInRoot
+                    capture("trend-filter-before-apply",scenario)
+                    assertEquals("Apply bounds stable across real draw frames",initialBounds,apply.fetchSemanticsNode().boundsInRoot)
+                    apply.performTouchInput { click() }
                     compose.waitUntil(10000) {
-                        var keyboardGone=false
-                        scenario.onActivity { activity ->
-                            keyboardGone=(androidx.core.view.ViewCompat.getRootWindowInsets(activity.window.decorView)
-                                ?.getInsets(androidx.core.view.WindowInsetsCompat.Type.ime())?.bottom ?: 0)==0
-                        }
-                        keyboardGone
+                        var applied=false
+                        scenario.onActivity { applied=it.diagnosticModel?.recordQuery?.value?.titleSearch=="合成排序" }
+                        applied && compose.onAllNodesWithText("3次考试").fetchSemanticsNodes().size==1 &&
+                            compose.onAllNodesWithTag("filter-search").fetchSemanticsNodes().isEmpty()
                     }
                     compose.onNodeWithTag("history-list").performScrollToIndex(0)
                     compose.onNodeWithTag("history-list").performScrollToNode(hasTestTag("record-${ids[2]}"))
@@ -93,6 +137,10 @@ class TrendHistoryAcceptanceTest {
                     assertTrue("Same-day createdAt order, then late-inserted past date",ordered.zipWithNext().all { (a,b)->a.top<b.top })
                     compose.onNodeWithTag("record-${ids[3]}").assertDoesNotExist()
                     capture("trend-history-filtered-order",scenario)
+                    compose.onNodeWithTag("history-list").performScrollToNode(hasText("返回记录"))
+                    compose.onNodeWithText("返回记录").performClick()
+                    compose.waitUntil(10000) { compose.onAllNodesWithTag("home-list").fetchSemanticsNodes().size==1 }
+                    scenario.onActivity { assertEquals("Shared filter survives return", "合成排序",it.diagnosticModel!!.recordQuery.value.titleSearch) }
                     compose.onNodeWithText("趋势",useUnmergedTree=true).performClick()
                     compose.waitUntil(10000) { compose.onAllNodesWithContentDescription(chartDescription).fetchSemanticsNodes().isNotEmpty() }
                     val chart=compose.onNodeWithContentDescription(chartDescription)
