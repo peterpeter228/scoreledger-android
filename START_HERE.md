@@ -5,7 +5,8 @@
 2. `PROJECT_STATE.json`、`tasks/HANDOFF.md`、`docs/IMPLEMENTATION_STATUS.md`：当前状态，不从记忆猜进度。
 3. `docs/PRD.md`、`docs/STATISTICS_RULES.md`、`docs/DATA_CONTRACT.md`：产品和数据规则。
 4. `docs/ANDROID_ARCHITECTURE.md`、`docs/UI_UX.md`、`docs/DOT_RUNBOOK.md`。
-5. 只加载当前任务需要的其他文档；以 `tasks/BACKLOG.json` 驱动实施。
+5. 修改或新增功能前必读 `docs/TEST_PLAN.md`，先确定本次实际验收用例、预期结果和证据，再开发；实际测试通过才按已完成交付。
+6. 只加载当前任务需要的其他文档；以 `tasks/BACKLOG.json` 驱动实施。
 
 ## 第一次行动
 运行 `python3 tools/preflight.py` 和 `python3 tools/verify_package.py`。
@@ -26,4 +27,6 @@
 - 只有 PURCHASED 且按真实渠道完成校验/确认的交易才能开启商业权益。
 - 未接通支付时可交付内测，但不能说“已经可收款”。
 - 没有实际 APK 文件和安装证据，不说“手机能用”。
+- 每次功能改动必须安装并运行对应 APK，真实点击走通受影响闭环、核对数据/输出与回归；关键用例失败、未运行或受阻，不得称已完成或已验收。具体要求见 `docs/TEST_PLAN.md`。
+- 模拟器通过不等于用户手机/OEM、真实文件提供方或支付通过；测试范围和未验证项必须分开写。
 - 公共发布、收费、创建云资源、传输真实孩子信息、改账户权限，均不在本包默认授权内。

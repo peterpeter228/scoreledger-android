@@ -1,3 +1,11 @@
+# Current rule update — 2026-10-17
+
+此后每次功能修改、新增或缺陷修复，必须按 `AGENTS.md` 和 `docs/TEST_PLAN.md` 在真实运行的对应 APK 上完成实际交互、结果/数据断言和相关回归，通过后才作为已完成交付。关键实测缺失或失败时保持 BLOCKED / IMPLEMENTED_UNVERIFIED，不能让用户试用来代替开发验收。
+
+本次仅更新开发/验收/交付文档，不修改业务代码、UI、技术栈或工作流，不生成或发布新版 APK，不改变下列历史产物与验证边界。既有 GPT-6 Pro 审计继续独立进行；本规则更新不代表审计结束或问题已修复，不据审计自行增加功能。功能验收和美观/易用性认可分开记录。
+
+下方“Current delivery checkpoint”是首个内测版本的历史交付记录，不是对未来改动豁免实测；后续交付执行新门禁。已有 70 用例的 4 PASS / 52 PARTIAL / 14 NOT_RUN、真机/OEM/真实提供方/支付等缺口不因本文改动而升级状态。
+
 # Current delivery checkpoint — 2026-10-17
 
 The first localBetaDebug candidate is fixed-signed and passed AOSP API26/30/36 tests. The delivered business APK must remain SHA256 d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92, source58a91061b33e853f66e475bdc2273ff6af5c63c8, build38991766567. Test-only e0c971 captures diagnostics internally; all production/build Git blob IDs are unchanged.

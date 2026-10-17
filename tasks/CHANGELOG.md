@@ -54,3 +54,9 @@ Device milestone: exact2c9 AOSP30 emulator executed26tests,25pass/1failure in mi
 - Fixed SAF ownership lifetime: report save and backup picker registrations/state are now above lazy UI items, so recreation/scroll disposal cannot orphan callbacks. Report save regression retains exact-byte and visible-success assertions and captures failure evidence; added isolated backup export/preview recreation coverage. Device rerun pending.
 
 - Capture-only: synthetic PDF/UI diagnostics now use internal filesDir/pdf-evidence and filesDir/ui-evidence for package-scoped run-as collection. Existing filenames retained; no application business changes. Prior exact58 API30 ordinary tests and opt-in reinstall retention passed; visual evidence collection rerun pending.
+
+## 2026-10-17 mandatory actual-test delivery gate (documentation only)
+- Require every changed/new feature or bug fix to pass real APK installation, launch, UI interaction, workflow/output/data assertions, persistence and relevant regression before completed delivery.
+- Bind results to commit/APK hash/build variant/device/API and screenshots/logs; distinguish unit/static/build checks, mocks, real integrations and unverified physical/OEM/payment boundaries.
+- Keep functional correctness separate from visual/usability approval. Missing critical actual tests block completed delivery.
+- Updated AGENTS, START_HERE, TEST_PLAN and current HANDOFF; no application/UI/stack/workflow changes, no new APK or release, no historical acceptance-status promotion. The independent GPT-6 Pro audit remains separate.
