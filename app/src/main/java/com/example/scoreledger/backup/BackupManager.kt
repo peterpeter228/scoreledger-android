@@ -60,13 +60,14 @@ class BackupManager(private val context:Context,private val repository:ScoreRepo
             try { android.system.Os.fsync(descriptor) } finally { android.system.Os.close(descriptor) }
         } finally { partial.delete() }
     }
-    private fun pruneRollbacks(protected:File?=null) = pruneRollbackFiles(rollbacks,System.currentTimeMillis(),protected)
+    private fun pruneRollbacks(protectedFile:File?=null) = pruneRollbackFiles(rollbacks,System.currentTimeMillis(),protectedFile)
 }
 /** Clock corrections/future mtimes must never evict the new rollback before replacement. */
-internal fun pruneRollbackFiles(directory:File,now:Long,protected:File?=null) {
-    val otherSlots=if(protected==null)3 else 2
-    directory.listFiles()?.filter{it.extension=="json" && it!=protected}?.sortedByDescending{it.lastModified()}?.forEachIndexed { i,file ->
+internal fun pruneRollbackFiles(directory:File,now:Long,protectedFile:File?=null) {
+    val otherSlots=if(protectedFile==null)3 else 2
+    directory.listFiles()?.filter{it.extension=="json" && it!=protectedFile}?.sortedByDescending{it.lastModified()}?.forEachIndexed { i,file ->
         if(i>=otherSlots || now-file.lastModified()>7L*24*60*60*1000)check(file.delete()) { "无法清理过期内部快照" }
     }
     directory.listFiles()?.filter{it.extension=="partial" && now-it.lastModified()>24L*60*60*1000}?.forEach{it.delete()}
 }
+
