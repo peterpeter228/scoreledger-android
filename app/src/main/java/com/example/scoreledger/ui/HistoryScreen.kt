@@ -12,6 +12,9 @@ import com.example.scoreledger.R
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.example.scoreledger.core.*
 import com.example.scoreledger.data.*
@@ -108,11 +111,13 @@ private fun scoreLabel(score:ScoreEntity):String = when(score.status) {
         Text("已录科目得分率 ${summary.ratePercent?.toPlainString()}%")
     }
 }
-@Composable fun DetailScreen(model: ScoreViewModel,record: ExamWithScores,busy: Boolean,back: ()->Unit,report:()->Unit={}) {
+@Composable fun DetailScreen(model: ScoreViewModel,record: ExamWithScores,busy: Boolean,back: ()->Unit,saved:Boolean=false,report:()->Unit={}) {
     var deletion by rememberSaveable {mutableStateOf(false)}
     var more by rememberSaveable {mutableStateOf(false)}
     LazyColumn(modifier=Modifier.testTag("detail-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
-        item { TextButton(onClick=back){Text(stringResource(R.string.ui_43))};Text(record.exam.title,style=MaterialTheme.typography.headlineSmall)
+        item { TextButton(onClick=back){Text(stringResource(R.string.ui_43))}
+            if(saved) Text("已保存到本机",color=MaterialTheme.colorScheme.primary,modifier=Modifier.testTag("saved-record-notice").semantics { liveRegion=LiveRegionMode.Polite })
+            Text(record.exam.title,style=MaterialTheme.typography.headlineSmall)
             Text("${record.exam.examDate} · ${ExamKind.valueOf(record.exam.kind).label()}")
             Text("学期：${record.exam.term.ifBlank { "未填写" }} · 本次年级：${record.exam.gradeSnapshot.ifBlank { "未填写" }}")
             SummaryText(record)

@@ -1361,6 +1361,29 @@
         "com.example.scoreledger.FileOperationRecoveryTest#clearingViewModelDuringWriteKeepsInterruptedJournalForNextLaunch"
       ],
       "scope": "ViewModel journal cancellation only; not external mid-write process-death proof"
+    },
+    "VM_LOCATOR_SAFETY": {
+      "status": "NOT_RUN",
+      "proposedMethods": [
+        "com.example.scoreledger.ViewModelLocatorRecoveryTest#recreatedViewModelRestoresConfirmedDraftAndOwnerNotFailedUnsavedPayload",
+        "com.example.scoreledger.ViewModelLocatorRecoveryTest#pendingSavedRecordNavigationClearsOnChildSwitchAndChildDeletion",
+        "com.example.scoreledger.ViewModelLocatorRecoveryTest#replacementGenerationClearsEditorAndStaleLocatorFallsBackWithoutResurrectingDraft"
+      ],
+      "scope": "SavedStateHandle/ViewModel recreation in isolated Room, NOT external Android process death."
+    },
+    "REPORT_REVISION_FENCE": {
+      "status": "NOT_RUN",
+      "proposedMethods": [
+        "com.example.scoreledger.ReportRevisionFenceTest#changedScoreWithSameQueryRejectsOldResultButPendingSaveKeepsSnapshot"
+      ],
+      "scope": "Synthetic same-query data-revision invalidation and approved-save snapshot byte preservation; not real external provider lifecycle evidence."
+    },
+    "REAL_MAIN_DISK_JOURNEY": {
+      "status": "NOT_RUN",
+      "proposedMethods": [
+        "com.example.scoreledger.MainActivityDiskJourneyTest#genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline"
+      ],
+      "scope": "Genuine MainActivity production factory/services and app disk Room. UI-created nonce child/record, save/detail/history/reopen, independent disk read, strict owned cleanup preserving original data and drafts. Not fresh-empty-install or process-death proof."
     }
   }
 }

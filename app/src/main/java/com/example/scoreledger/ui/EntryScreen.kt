@@ -14,6 +14,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.semantics.contentDescription
+import com.example.scoreledger.R
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -63,7 +69,7 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
     BackHandler { if(!busy) leaving=true }
     fun rowChange(row: DraftRow) { model.change(draft.copy(rows=draft.rows.map { if(it.subjectId==row.subjectId) row else it })) }
     Column(Modifier.fillMaxSize()) {
-        LazyColumn(state=listState,modifier=Modifier.weight(1f).testTag("entry-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+        LazyColumn(state=listState,modifier=Modifier.weight(1f).testTag("entry-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             item {
                 TextButton(onClick={leaving=true},enabled=!busy){Text("返回")}
                 Text(if(draft.editing) "编辑成绩" else "记一次成绩",style=MaterialTheme.typography.headlineSmall)
@@ -91,16 +97,49 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
                 var options by rememberSaveable(row.subjectId) { mutableStateOf(false) }
                 val next=draft.rows.dropWhile { it.subjectId!=row.subjectId }.drop(1).firstOrNull { it.status!=ScoreStatus.ABSENT }
                 Column(Modifier.fillMaxWidth().testTag("subject-${row.subjectId}"),verticalArrangement=Arrangement.spacedBy(8.dp)) {
-                    Text(row.name,style=MaterialTheme.typography.titleMedium)
-                    OutlinedTextField(row.score,{rowChange(row.copy(score=it,status=if(it.isBlank()) ScoreStatus.MISSING else ScoreStatus.SCORED))},
-                        label={Text(if(row.status==ScoreStatus.ABSENT) "缺考" else "得分")},placeholder={Text("未录入")},
-                        enabled=!busy && row.status!=ScoreStatus.ABSENT,
-                        modifier=Modifier.fillMaxWidth().testTag("score-${row.subjectId}").focusRequester(requireNotNull(focusers[row.subjectId])),singleLine=true,
-                        keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal,imeAction=if(next==null) ImeAction.Done else ImeAction.Next),
-                        keyboardActions=KeyboardActions(onNext={next?.let { scope.launch { focusScore(it.subjectId) } }},onDone={focus.clearFocus()}),
-                        isError=row.error()!=null,supportingText={row.error()?.let { Text(it) }})
-                    Text("满分 ${row.maximum}",color=MaterialTheme.colorScheme.onSurfaceVariant)
-                    TextButton(onClick={options=!options},enabled=!busy) { Text(if(options) "收起" else "改满分 / 标记缺考") }
+                    val density=LocalDensity.current
+                    val measurer=rememberTextMeasurer()
+                    val nameStyle=MaterialTheme.typography.titleMedium
+                    val maximumStyle=MaterialTheme.typography.bodyMedium
+                    val nameWidth=with(density) { measurer.measure(row.name,nameStyle).size.width.toDp()+4.dp }.coerceAtLeast(48.dp)
+                    val maximumLabel="/ ${row.maximum}"
+                    val maximumWidth=with(density) { measurer.measure(maximumLabel,maximumStyle).size.width.toDp()+4.dp }
+                    val scoreMinimum=100.dp*density.fontScale
+                    val rowError=row.error()
+                    val scoreInput:@Composable (Modifier,Boolean)->Unit={ modifier,compact ->
+                        OutlinedTextField(row.score,{rowChange(row.copy(score=it,status=if(it.isBlank()) ScoreStatus.MISSING else ScoreStatus.SCORED))},
+                            label=if(compact) null else ({Text(if(row.status==ScoreStatus.ABSENT) "缺考" else "得分")}),
+                            placeholder={Text(if(row.status==ScoreStatus.ABSENT) "缺考" else "未录入")},
+                            enabled=!busy && row.status!=ScoreStatus.ABSENT,
+                            modifier=modifier.testTag("score-${row.subjectId}").focusRequester(requireNotNull(focusers[row.subjectId])).semantics { contentDescription="${row.name}得分" },singleLine=true,
+                            keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal,imeAction=if(next==null) ImeAction.Done else ImeAction.Next),
+                            keyboardActions=KeyboardActions(onNext={next?.let { scope.launch { focusScore(it.subjectId) } }},onDone={focus.clearFocus()}),
+                            isError=rowError!=null)
+                    }
+                    val optionsButton:@Composable ()->Unit={
+                        IconButton(onClick={options=!options},enabled=!busy,modifier=Modifier.size(48.dp).testTag("subject-options-${row.subjectId}")) {
+                            Icon(painterResource(R.drawable.ic_more),contentDescription="${row.name}：${if(options) "收起选项" else "改满分或标记缺考"}")
+                        }
+                    }
+                    BoxWithConstraints(Modifier.fillMaxWidth()) {
+                        // Measure the actual name and maximum; never truncate a long subject or squeeze numbers.
+                        val compact=maxWidth>=320.dp && density.fontScale<=1.3f && row.name.length<=6 &&
+                            nameWidth+scoreMinimum+maximumWidth+48.dp+24.dp<=maxWidth
+                        if(compact) Row(Modifier.fillMaxWidth().heightIn(min=72.dp),verticalAlignment=Alignment.CenterVertically,horizontalArrangement=Arrangement.spacedBy(8.dp)) {
+                            Text(row.name,style=nameStyle,modifier=Modifier.width(nameWidth))
+                            scoreInput(Modifier.weight(1f),true)
+                            Text(maximumLabel,style=maximumStyle,color=MaterialTheme.colorScheme.onSurfaceVariant,modifier=Modifier.width(maximumWidth))
+                            optionsButton()
+                        } else Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
+                            Text(row.name,style=nameStyle)
+                            scoreInput(Modifier.fillMaxWidth(),false)
+                            Row(Modifier.fillMaxWidth(),verticalAlignment=Alignment.CenterVertically) {
+                                Text("满分 ${row.maximum}",color=MaterialTheme.colorScheme.onSurfaceVariant,modifier=Modifier.weight(1f))
+                                optionsButton()
+                            }
+                        }
+                    }
+                    rowError?.let { Text(it,color=MaterialTheme.colorScheme.error,modifier=Modifier.semantics { liveRegion=LiveRegionMode.Polite }) }
                     if(options) {
                         OutlinedTextField(row.maximum,{rowChange(row.copy(maximum=it))},label={Text("本次满分")},enabled=!busy,modifier=Modifier.fillMaxWidth(),singleLine=true,
                             keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal,imeAction=ImeAction.Done),keyboardActions=KeyboardActions(onDone={focus.clearFocus()}))

@@ -51,9 +51,16 @@ fun StarterScreen(model: ScoreViewModel, services:UiServices?=null) {
     var destination by rememberSaveable { mutableStateOf("记录") }
     var page by rememberSaveable { mutableStateOf("") }
     var detail by rememberSaveable(selected) { mutableStateOf<String?>(null) }
+    var justSavedId by rememberSaveable(selected) { mutableStateOf<String?>(null) }
     val snack=remember { SnackbarHostState() }
-    LaunchedEffect(savedRecord) { savedRecord?.let { detail=it;model.consumeSavedRecord() } }
-    LaunchedEffect(error) { error?.let { snack.showSnackbar(it);model.clearMessage() } }
+    LaunchedEffect(savedRecord) { savedRecord?.let { justSavedId=it;detail=it;model.consumeSavedRecord() } }
+    LaunchedEffect(detail,editor?.id) { if(editor!=null || detail!=justSavedId) justSavedId=null }
+    LaunchedEffect(error) { error?.let {
+        // Successful save already opens its exact result. A floating Snackbar can cover the
+        // bottom Edit action; keep that feedback inline without muting any error/other message.
+        if(it!="记录已保存") snack.showSnackbar(it)
+        model.clearMessage()
+    } }
     BackHandler(enabled=editor == null && (page.isNotEmpty() || detail != null)) { if(detail!=null) detail=null else if(page=="报告") { page=reportReturnPage;detail=reportExam } else page="" }
     Scaffold(snackbarHost={SnackbarHost(snack)},bottomBar={ if(editor == null && page.isEmpty() && detail == null) NavigationBar {
         listOf("记录","趋势","设置").forEachIndexed { i,label -> NavigationBarItem(selected=destination==label,
@@ -72,7 +79,7 @@ fun StarterScreen(model: ScoreViewModel, services:UiServices?=null) {
                 }
                 detail != null -> {
                     val record=exams.firstOrNull { it.exam.id == detail && it.exam.childId == selected }
-                    if(record != null) DetailScreen(model,record,busy,{detail=null}) { reportSubject=null;reportExam=record.exam.id;reportReturnPage=page;detail=null;page="报告" } else { Text(stringResource(R.string.ui_42));TextButton(onClick={detail=null}){Text(stringResource(R.string.ui_43))}}
+                    if(record != null) DetailScreen(model,record,busy,{detail=null},saved=justSavedId==record.exam.id) { reportSubject=null;reportExam=record.exam.id;reportReturnPage=page;detail=null;page="报告" } else { Text(stringResource(R.string.ui_42));TextButton(onClick={detail=null}){Text(stringResource(R.string.ui_43))}}
                 }
                 page=="报告" -> LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp),modifier=Modifier.testTag("report-list")) {
                     item { TextButton(onClick={page=reportReturnPage;detail=reportExam}) { Text("返回") };Text("导出报告",style=MaterialTheme.typography.headlineSmall) }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.SideEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -13,6 +14,8 @@ import com.example.scoreledger.ui.*
 /** Non-exported debug-only instrumentation host; never opens the user's persisted database. */
 class RecreationHostActivity:ComponentActivity() {
     companion object { var testRepository:ScoreRepository?=null; var testServices:UiServices?=null; var testRegistryOwner:androidx.activity.result.ActivityResultRegistryOwner?=null }
+    internal var diagnosticModel:ScoreViewModel?=null
+        private set
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -23,6 +26,7 @@ class RecreationHostActivity:ComponentActivity() {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T:ViewModel> create(modelClass:Class<T>):T=ScoreViewModel(repository) as T
             })
+            SideEffect { diagnosticModel=model }
             val owner=testRegistryOwner
             if(owner==null) ScoreLedgerTheme { StarterScreen(model,services) }
             else androidx.compose.runtime.CompositionLocalProvider(androidx.activity.compose.LocalActivityResultRegistryOwner provides owner) { ScoreLedgerTheme { StarterScreen(model,services) } }

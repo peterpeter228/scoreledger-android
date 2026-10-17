@@ -20,6 +20,24 @@ print('INSTRUMENTATION_VERIFIED_PASS reported_tests=' + counts[0] +
       ' skipped_or_assumptions=' + str(statuses.count('-3') + statuses.count('-4')))
 PY
 }
+check_boot_health() {
+  python3 - "$1" <<'PYBOOT'
+import pathlib, re, sys
+text = pathlib.Path(sys.argv[1]).read_text(errors='replace')
+if not text.strip():
+    sys.exit('EMULATOR_BOOT_HEALTH_UNCONFIRMED: empty logcat')
+failures = re.findall(r'^.*\bANR in com\.android\.(?:systemui|phone)(?:[ \t]|$).*$', text, re.M)
+if failures:
+    print('EMULATOR_BOOT_HEALTH_FAILED: system component ANR before app installation')
+    print('\n'.join(failures))
+    sys.exit(1)
+print('EMULATOR_BOOT_HEALTH_CHECKED: no SystemUI/phone ANR in captured boot log; not a guarantee of later health')
+PYBOOT
+}
+if [ "${1:-}" = --check-boot-health ]; then
+  check_boot_health "$2"
+  exit
+fi
 # Offline parser regression checks can use synthetic logs without touching devices.
 if [ "${1:-}" = --check-instrumentation ]; then
   check_instrumentation "$2"
@@ -50,7 +68,10 @@ collect_app_evidence() {
   case "$name" in pdf-evidence|ui-evidence) ;; *) return 1;; esac
   # Prefer private files if a newer test writes there; support older delivered APKs.
   for base in files "/sdcard/Android/data/$PACKAGE/files"; do
-    if timeout 10 adb -s "$SERIAL" shell run-as "$PACKAGE" test -d "$base/$name"; then
+    # API 26 has shell-builtin test, not necessarily an executable for run-as.
+    # All interpolated values are fixed above or allowlisted; preserve quoting
+    # through adb's remote-shell join, then test as the same app UID.
+    if timeout 10 adb -s "$SERIAL" shell "run-as '$PACKAGE' sh -c 'test -d \"$base/$name\" && ! test -L \"$base/$name\"'"; then
       found=true
       archive="$EVIDENCE/$name.tar"
       if ! timeout 30 adb -s "$SERIAL" exec-out run-as "$PACKAGE" tar -cf - -C "$base" "$name" > "$archive" 2> "$EVIDENCE/$name-collection.stderr"; then
@@ -217,6 +238,11 @@ while [ "$SECONDS" -lt "$DEADLINE" ]; do
   sleep 3
 done
 [ "$READY" = true ] || { echo 'BOOT_OR_PACKAGE_MANAGER_TIMEOUT'; exit 1; }
+# Preserve boot diagnostics before installing either old or candidate APK. Never
+# dismiss an ANR or treat a blocked system window as successful UI coverage.
+timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/pre-install-logcat.txt"
+check_boot_health "$EVIDENCE/pre-install-logcat.txt" | tee "$EVIDENCE/pre-install-health.txt"
+
 timeout 10 adb -s "$SERIAL" shell pm list packages com.google.android.gms | tr -d '\r' > "$EVIDENCE/gms-packages.txt"
 if grep -q '^package:com.google.android.gms$' "$EVIDENCE/gms-packages.txt"; then
   echo 'Unexpected GMS in AOSP default image'; exit 1

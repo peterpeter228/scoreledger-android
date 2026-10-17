@@ -50,6 +50,7 @@ jobs:
         run: |
           python3 tools/test_acceptance_gate.py
           python3 tools/test_current_round_guard.py
+          python3 tools/test_evidence_collection.py
           bash -n tools/signed_emulator_acceptance.sh
       - name: Build and JVM checks (not emulator/device testing)
         env:

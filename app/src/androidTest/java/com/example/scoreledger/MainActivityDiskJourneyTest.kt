@@ -99,6 +99,7 @@ class MainActivityDiskJourneyTest {
                 val saved=runBlocking{repository.snapshot()}.exams.single{it.childId==ownedId}
                 examId=saved.id;assertEquals(title,saved.title);assertEquals("本次合成年级",saved.gradeSnapshot)
                 assertEquals(8550L,runBlocking{repository.snapshot()}.scores.single{it.examId==examId}.scoreMinor)
+                compose.onNodeWithTag("saved-record-notice").assertIsDisplayed()
                 capture("main-disk-saved-detail")
                 item("detail-list",hasText("返回记录")).performClick()
                 compose.onNodeWithTag("home-list").assertExists()

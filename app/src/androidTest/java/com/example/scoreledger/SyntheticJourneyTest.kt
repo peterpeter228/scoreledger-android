@@ -72,23 +72,51 @@ class SyntheticJourneyTest {
             }
         } finally { bitmap.recycle() }
     }
+    /** Capture before ActivityScenario closes; values are booleans/counts/enums only.
+     * The semantics tree belongs to this synthetic isolated fixture, never the user's database. */
+    private fun captureFailure(scenario:ActivityScenario<RecreationHostActivity>,repository:ScoreRepository) {
+        val instrumentation=InstrumentationRegistry.getInstrumentation()
+        val directory=File(instrumentation.targetContext.filesDir,"ui-evidence").apply { mkdirs() }
+        runCatching {
+            val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
+            try { File(directory,"synthetic-failure.png").outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG,100,it) } } finally { bitmap.recycle() }
+        }
+        runCatching { File(directory,"synthetic-failure-semantics.txt").writeText(compose.onRoot(useUnmergedTree=true).printToString()) }
+        runCatching {
+            val state=org.json.JSONObject()
+            scenario.onActivity { activity -> activity.diagnosticModel?.let { model ->
+                state.put("editorPresent",model.editor.value!=null).put("editingExisting",model.editor.value?.editing==true)
+                    .put("saving",model.saving.value).put("draftSaveState",model.draftSaveState.value.name)
+                    .put("errorPresent",model.error.value!=null).put("conflict",model.draftConflict.value)
+                    .put("selectedChildPresent",model.selectedChild.value!=null)
+                    .put("editorBelongsToSelectedChild",model.editor.value?.childId==model.selectedChild.value)
+                    .put("visibleExamCount",model.exams.value.size).put("draftCount",model.drafts.value.size)
+            } }
+            val snapshot=runBlocking { repository.snapshot() }
+            state.put("storedExamCount",snapshot.exams.size).put("storedScoreCount",snapshot.scores.size)
+                .put("storedDraftsForExistingRecords",runBlocking { snapshot.exams.count { repository.draft(it.id,it.childId)!=null } })
+            File(directory,"synthetic-failure-state.json").writeText(state.toString(2))
+        }
+    }
     @Test fun emptyInstallCreateTemplateEnterMixedStatesEditAndIsolateChildren() {
         val isolated=IsolatedUiContext(InstrumentationRegistry.getInstrumentation().targetContext)
         val db=Room.inMemoryDatabaseBuilder(isolated,ScoreDatabase::class.java).build();val repository=ScoreRepository(db,true)
         RecreationHostActivity.testRepository=repository;RecreationHostActivity.testServices=isolated.services(repository)
         try { ActivityScenario.launch(RecreationHostActivity::class.java).use { scenario ->
+            try {
             awaitScreen("home-list")
             compose.onNodeWithTag("first-nickname").performTextInput("合成孩子甲")
             compose.onNodeWithTag("new-record").performClick()
             compose.waitUntil(10000){runBlocking{db.dao().childCount()==1 && db.dao().subjectCount()==3}}
             awaitEditorReady()
+            captureSyntheticUi("00-default-three-subject-entry")
             item("entry-list",hasText("修改考试信息")).performClick()
             item("entry-list",hasText("考试名称")).performTextReplacement("合成混合状态考试")
             item("entry-list",hasText("本次年级（可选）")).performTextReplacement("合成七年级")
             val subjects=runBlocking{db.dao().subjects()}.associateBy{it.name}
             item("entry-list",hasTestTag("score-${subjects.getValue("语文").id}")).performTextReplacement("0")
             item("entry-list",hasTestTag("score-${subjects.getValue("数学").id}")).performTextReplacement("８５．５")
-            item("entry-list",hasText("改满分 / 标记缺考") and hasAnyAncestor(hasTestTag("subject-${subjects.getValue("英语").id}"))).performClick()
+            item("entry-list",hasTestTag("subject-options-${subjects.getValue("英语").id}")).performClick()
             item("entry-list",hasText("缺考") and hasAnyAncestor(hasTestTag("subject-${subjects.getValue("英语").id}"))).performClick()
             item("entry-list",hasTestTag("score-${subjects.getValue("语文").id}")).assertExists()
             compose.onNodeWithTag("score-${subjects.getValue("语文").id}").performClick()
@@ -97,6 +125,7 @@ class SyntheticJourneyTest {
             compose.onNodeWithTag("save-record").performClick()
             compose.waitUntil(10000){runBlocking{db.dao().examCount()==1}}
             compose.waitUntil(10000){compose.onAllNodesWithTag("detail-list").fetchSemanticsNodes().isNotEmpty()}
+            compose.onNodeWithTag("saved-record-notice").assertExists()
             val first=runBlocking{repository.snapshot()};val scores=first.scores.associateBy{it.subjectId}
             assertEquals(0L,scores.getValue(subjects.getValue("语文").id).scoreMinor)
             assertEquals(8550L,scores.getValue(subjects.getValue("数学").id).scoreMinor)
@@ -104,7 +133,9 @@ class SyntheticJourneyTest {
             assertEquals("合成七年级",first.exams.single().gradeSnapshot)
             item("detail-list",hasText("合成混合状态考试")).assertExists()
             captureSyntheticUi("02-history-after-save")
-            item("detail-list",hasText("编辑这次记录")).performClick()
+            val editAction=item("detail-list",hasText("编辑这次记录")).assertIsEnabled()
+            captureSyntheticUi("02b-edit-target-before-click")
+            editAction.performClick()
             awaitEditorReady()
             val editDraft=runBlocking { repository.draft(first.exams.single().id,first.exams.single().childId) }
             assertNotNull("Edit must reopen the same persisted record",editDraft)
@@ -164,6 +195,29 @@ class SyntheticJourneyTest {
             item("detail-list",hasText("返回记录")).performClick()
             item("history-list",hasText("1次考试")).assertExists()
             captureSyntheticUi("05-filter-return")
+            // Delete and undo through the real controls; compare the entire isolated database,
+            // including the untouched second record and second child, not just a count.
+            val beforeDelete=runBlocking { repository.snapshot() }
+            val deletedId=first.exams.single().id
+            item("history-list",hasTestTag("record-$deletedId")).performClick()
+            item("detail-list",hasText("更多操作")).performClick()
+            item("detail-list",hasText("删除记录")).performClick()
+            compose.onNodeWithText("确认删除").performClick()
+            compose.waitUntil(5000) {
+                runBlocking { db.dao().allExams().none { it.id==deletedId } } &&
+                    compose.onAllNodes(hasTestTag("undo-delete") and isEnabled()).fetchSemanticsNodes().size==1
+            }
+            assertTrue(runBlocking { db.dao().allScores().none { it.examId==deletedId } })
+            compose.onNodeWithTag("undo-delete").performClick()
+            compose.waitUntil(10000) { runBlocking { db.dao().allExams().any { it.id==deletedId } } }
+            val afterUndo=runBlocking { repository.snapshot() }
+            assertEquals(beforeDelete.children.toSet(),afterUndo.children.toSet())
+            assertEquals(beforeDelete.subjects.toSet(),afterUndo.subjects.toSet())
+            assertEquals(beforeDelete.exams.toSet(),afterUndo.exams.toSet())
+            assertEquals(beforeDelete.scores.toSet(),afterUndo.scores.toSet())
+            compose.waitUntil(10000) { compose.onAllNodesWithText("1次考试").fetchSemanticsNodes().size==1 }
+            item("history-list",hasTestTag("record-$deletedId")).assertExists()
+            } catch(failure:Throwable) { captureFailure(scenario,repository);throw failure }
         } }finally{RecreationHostActivity.testRepository=null;RecreationHostActivity.testServices=null;db.close();isolated.cleanup()}
     }
 }
