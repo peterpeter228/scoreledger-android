@@ -48,3 +48,5 @@ D09 lint修复：移除StaticLayout可选高质量breakStrategy常量调用，�
 - Local core64/Python46/static passed. Previous2c9 actual CI build/JVM/lint succeeded; new source/device results remain separate.
 
 Device milestone: exact2c9 AOSP30 emulator executed26tests,25pass/1failure in migration fixture parsing. Corrected legitimate absent indices handling and strengthened row/index preservation assertions; rerun pending. Added opt-in guarded synthetic signed reinstall seed/verify test (NOT_RUN, skips normal discovery, never clears data).
+
+- PDF beta safety: explicit 200-page per-report limit (no silent truncation), cross-manager serialized generation, cooperative cancellation and failed/cancelled publication cleanup. Added boundary/cancellation instrumentation; runtime verification pending.

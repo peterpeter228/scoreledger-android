@@ -73,4 +73,41 @@ class PdfReportTest {
         java.io.ByteArrayOutputStream().use{PdfReport.write(plan,it);assertTrue(it.size()>0)}
     }
 
+    @Test fun reportPageBoundaryRejectsWithoutTruncationAndDirectWriteChecksLimit() {
+        val original=fixture();val source=original.exams.first()
+        val exams=(0 until 60).map { source.copy(id=UUID.randomUUID().toString(),note="中\n".repeat(249)+"中") }
+        val scores=exams.flatMap { e->original.scores.filter{it.examId==source.id}.map{it.copy(examId=e.id)} }
+        try {
+            PdfReport.plan(original.copy(exams=exams,scores=scores),RecordQuery(source.childId),ReportOptions(includeNotes=true))
+            fail("More than 200 measured pages must fail, not truncate")
+        } catch(_:ReportPageLimitException) { }
+        val page=ReportPage(listOf(ReportBlock("边界页",40f,20f)))
+        val boundary=ReportPlan(List(200){page},Instant.EPOCH,1)
+        java.io.ByteArrayOutputStream().use { output -> PdfReport.write(boundary,output);assertTrue(output.size()>0) }
+        java.io.ByteArrayOutputStream().use { output ->
+            try { PdfReport.write(boundary.copy(pages=List(201){page}),output);fail("Direct plan must be bounded") }
+            catch(_:ReportPageLimitException) { assertEquals(0,output.size()) }
+        }
+    }
+    @Test fun cancellationStopsPlanningAndRemovesPartialPublication() {
+        val data=fixture();var planningChecks=0
+        try {
+            PdfReport.plan(data,RecordQuery(data.children.single().id),ReportOptions(),checkCancelled={
+                if(++planningChecks==5)throw kotlinx.coroutines.CancellationException("synthetic cancellation")
+            });fail("Planning must cancel")
+        } catch(_:kotlinx.coroutines.CancellationException) { assertEquals(5,planningChecks) }
+        val isolated=IsolatedUiContext(InstrumentationRegistry.getInstrumentation().targetContext)
+        val db=androidx.room.Room.inMemoryDatabaseBuilder(isolated,ScoreDatabase::class.java).build()
+        try {
+            val manager=ReportManager(isolated,ScoreRepository(db,true))
+            val plan=PdfReport.plan(data,RecordQuery(data.children.single().id),ReportOptions())
+            var writingChecks=0
+            try {
+                manager.writePrepared(plan){if(++writingChecks==4)throw kotlinx.coroutines.CancellationException("synthetic cancellation")}
+                fail("Writing must cancel")
+            } catch(_:kotlinx.coroutines.CancellationException) { assertEquals(4,writingChecks) }
+            assertTrue(File(isolated.cacheDir,"reports").listFiles().orEmpty().isEmpty())
+        } finally { db.close();isolated.cleanup() }
+    }
+
 }

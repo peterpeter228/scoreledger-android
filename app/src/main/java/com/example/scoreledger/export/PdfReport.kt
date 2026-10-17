@@ -20,20 +20,24 @@ data class ReportPage(val blocks:List<ReportBlock>)
 data class ReportPlan(val pages:List<ReportPage>,val generatedAt:Instant,val scoreRows:Int) {
     val sourceIds get()=pages.flatMap{it.blocks}.mapNotNull{it.sourceId}
 }
+class ReportPageLimitException : IllegalArgumentException("所选范围超过200页，未创建PDF。请尝试缩小日期、学期或类型范围，或不包含备注后重试；完整JSON备份和原始数据不受影响。")
 object PdfReport {
+    const val MAX_PAGES=200
     const val WIDTH=595;const val HEIGHT=842;const val LEFT=36;const val TOP=40;const val BOTTOM=780;const val TEXT_WIDTH=523
     private fun paint()=TextPaint(Paint.ANTI_ALIAS_FLAG).apply { textSize=11f;color=Color.BLACK;typeface=Typeface.create("sans-serif",Typeface.NORMAL) }
     private fun layout(text:String)=StaticLayout.Builder.obtain(text,0,text.length,paint(),TEXT_WIDTH)
         .setAlignment(Layout.Alignment.ALIGN_NORMAL).setIncludePad(true).setLineSpacing(2f,1f).build()
-    fun plan(snapshot:DataSnapshot,query:RecordQuery,options:ReportOptions,generatedAt:Instant=Instant.now()):ReportPlan {
+    fun plan(snapshot:DataSnapshot,query:RecordQuery,options:ReportOptions,generatedAt:Instant=Instant.now(),checkCancelled:()->Unit={}):ReportPlan {
+        checkCancelled()
         val child=requireNotNull(snapshot.children.firstOrNull{it.id==query.childId}) { "请选择孩子" }
         val scores=snapshot.scores.groupBy{it.examId}
-        val records=query.apply(snapshot.exams.map { ExamWithScores(it,scores[it.id].orEmpty()) }).reversed()
+        val records=query.apply(snapshot.exams.map { checkCancelled();ExamWithScores(it,scores[it.id].orEmpty()) }).reversed()
         require(records.isNotEmpty()) { "当前筛选没有考试，请调整范围" }
         val pages=mutableListOf<ReportPage>();var blocks=mutableListOf<ReportBlock>();var y=TOP.toFloat();var details=false;var nextTextGroup=0
         fun header() { val text="明细：日期／考试 · 科目 · 分数／满分 · 得分率 · 状态";val h=layout(text).height.toFloat();blocks.add(ReportBlock(text,y,h));y+=h+8 }
-        fun newPage() { if(blocks.isNotEmpty())pages.add(ReportPage(blocks.toList()));blocks=mutableListOf();y=TOP.toFloat();if(details)header() }
+        fun newPage() { checkCancelled();if(blocks.isNotEmpty())pages.add(ReportPage(blocks.toList()));if(pages.size>=MAX_PAGES)throw ReportPageLimitException();blocks=mutableListOf();y=TOP.toFloat();if(details)header() }
         fun add(text:String,source:String?=null) {
+            checkCancelled()
             val group=nextTextGroup++
             // A score row is bounded by validated title/name lengths and carries its ID once.
             if(source!=null) {
@@ -43,6 +47,7 @@ object PdfReport {
             }
             var offset=0
             while(offset<text.length) {
+                checkCancelled()
                 val remaining=text.substring(offset);val measured=layout(remaining);val available=BOTTOM-y
                 if(measured.height<=available) {
                     blocks.add(ReportBlock(remaining,y,measured.height.toFloat(),textGroup=group));y+=measured.height+8;break
@@ -81,6 +86,7 @@ object PdfReport {
         details=true
         if(y+80>BOTTOM)newPage() else header()
         records.forEach { record ->
+            checkCancelled()
             val e=record.exam;val total=ScoreRules.summarize(record.scores.map{it.toValue()})
             add("${e.examDate} · ${e.title}\n${ExamKind.valueOf(e.kind).let{when(it){ExamKind.UNIT->"单元";ExamKind.MONTHLY->"月考";ExamKind.MIDTERM->"期中";ExamKind.FINAL->"期末";ExamKind.OTHER->"其他"}}} · 学期${e.term.ifBlank{"未填"}} · 年级快照${e.gradeSnapshot.ifBlank{"未填"}}\n已录科目得分率${total.ratePercent?.toPlainString()?.plus("%") ?: "暂无"}；覆盖${total.recordedCount}/${total.selectedCount}科")
             record.scores.sortedWith(compareBy<ScoreEntity>{it.subjectNameSnapshot}.thenBy{it.subjectId}).forEach { score ->
@@ -93,27 +99,36 @@ object PdfReport {
         }
         if(options.full)add("家长手写备注（留白）\n\n\n\n")
         if(blocks.isNotEmpty())pages.add(ReportPage(blocks.toList()))
+        if(pages.size>MAX_PAGES)throw ReportPageLimitException()
+        checkCancelled()
         val result=ReportPlan(pages.toList(),generatedAt,all.size)
         check(result.sourceIds.size==all.size && result.sourceIds.toSet().size==all.size)
         check(result.pages.all{p->p.blocks.all{it.top>=TOP && it.top+it.height<=BOTTOM}})
         return result
     }
-    fun write(plan:ReportPlan,output:OutputStream) {
+    fun write(plan:ReportPlan,output:OutputStream,checkCancelled:()->Unit={}) {
+        checkCancelled()
+        if(plan.pages.size>MAX_PAGES)throw ReportPageLimitException()
         require(plan.pages.isNotEmpty() && plan.scoreRows>0)
         val document=PdfDocument()
         try {
             plan.pages.forEachIndexed { index,page ->
+                checkCancelled()
                 val current=document.startPage(PdfDocument.PageInfo.Builder(WIDTH,HEIGHT,index+1).create())
-                page.blocks.forEach { b -> val trendRows=b.trend
+                try {
+                page.blocks.forEach { b -> checkCancelled();val trendRows=b.trend
                     if(trendRows!=null)chart(current.canvas,trendRows,b.top,b.height) else {
                         current.canvas.save();current.canvas.translate(LEFT.toFloat(),b.top);layout(b.text).draw(current.canvas);current.canvas.restore()
                     }
                 }
                 val footer=Paint(Paint.ANTI_ALIAS_FLAG).apply{textSize=8f;color=Color.DKGRAY}
                 current.canvas.drawText("第${index+1}/${plan.pages.size}页 · 分数记录 · ${plan.generatedAt}",LEFT.toFloat(),HEIGHT-24f,footer)
-                document.finishPage(current)
+                } finally { document.finishPage(current) }
+                checkCancelled()
             }
+            checkCancelled()
             document.writeTo(output)
+            checkCancelled()
         } finally { document.close() }
     }
     private fun chart(canvas:Canvas,points:List<TrendPoint>,top:Float,height:Float) {

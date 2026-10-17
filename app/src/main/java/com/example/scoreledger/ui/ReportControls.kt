@@ -34,7 +34,7 @@ import kotlinx.coroutines.launch
     var preview by remember { mutableStateOf<ReportFile?>(null) }
     var saveTargetId by rememberSaveable { mutableStateOf<String?>(null) }
     var message by remember { mutableStateOf("") }
-    fun operation(block:suspend ()->Unit) { if(busy)return;busy=true;message="";scope.launch { try{block()}catch(e:CancellationException){throw e}catch(_:Exception){message="报告操作未完成。请选择有记录的范围或重新生成；保存失败时请删除可能不完整的目标文件。"}finally{busy=false} } }
+    fun operation(block:suspend ()->Unit) { if(busy)return;busy=true;message="";scope.launch { try{block()}catch(e:CancellationException){throw e}catch(e:ReportPageLimitException){report=null;message=requireNotNull(e.message)}catch(_:Exception){message="报告操作未完成。请选择有记录的范围或重新生成；保存失败时请删除可能不完整的目标文件。"}finally{busy=false} } }
     val save=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
         val target=saveTargetId;saveTargetId=null
         if(uri==null)message="已取消保存，没有报告保存成功" else if(target==null)message="报告状态已失效，请重新生成并保存" else operation { manager.savePending(target,uri);message="PDF已保存" }

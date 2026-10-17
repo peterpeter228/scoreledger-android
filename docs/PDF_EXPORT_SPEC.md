@@ -32,3 +32,8 @@ ACTION_SEND + application/pdf + ClipData + FLAG_GRANT_READ_URI_PERMISSION；使�
 当前本包仅给规格，未提供已执行的Android PDF渲染结果，不能标此模块完成。
 
 2026-10-17源码增量：PdfDocument+StaticLayout两遍分页（正文11pt、页脚8pt），原始行source ID唯一覆盖与坐标边界检查；原生系统阅读器预览、SAF保存、FileProvider只读分享/ClipData及24h缓存清理。已写PdfRenderer仪器化测试，输出synthetic-report.pdf和first-page.png到测试App外部私有pdf-evidence子目录。尚未执行真实渲染/中文截图、两种阅读器/微信分享/打印验收，不宣称已通过。
+
+
+## 2026-10-17 beta PDF resource boundary
+A single PDF is limited to 200 measured A4 pages. Planning fails explicitly before creating a PDF when this limit is exceeded; direct write also checks the limit before allocating PdfDocument. No rows or notes are silently truncated. The UI suggests narrowing date/term/type scope or omitting notes, without guaranteeing that every same-scope large dataset can be split by these filters. This is a deliberate beta requirement limitation, not full maximum-scale PDF acceptance or a performance claim. Storage/import limits (100,000 score rows / 10,000 exams) and complete JSON backup are unchanged.
+Generation is serialized by a process-wide mutex across ReportManager instances, runs on IO, and checks coroutine cancellation during record/text planning, page writing, and before publication. An active native page is finished in finally before closing PdfDocument. Cancelled/failed writes remove partial and unpublished target files. Native writeTo is synchronous and cannot be interrupted inside the platform call; checks run immediately before and after it. New boundary/cancellation instrumentation remains NOT_RUN until CI/device evidence.

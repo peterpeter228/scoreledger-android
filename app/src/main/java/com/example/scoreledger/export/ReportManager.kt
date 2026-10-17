@@ -10,22 +10,41 @@ import com.example.scoreledger.data.RecordQuery
 import com.example.scoreledger.data.ScoreRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.UUID
 
 class ReportFile internal constructor(internal val file:File,val pageCount:Int,val scoreRows:Int)
 class ReportManager(private val context:Context,private val repository:ScoreRepository) {
     private val directory=File(context.cacheDir,"reports")
+    companion object { private val generationMutex=Mutex() }
     suspend fun generate(query:RecordQuery,options:ReportOptions):ReportFile=withContext(Dispatchers.IO) {
-        cleanup()
+        val caller=currentCoroutineContext()
+        generationMutex.withLock {
+            caller.ensureActive()
+            cleanup()
+            val plan=PdfReport.plan(repository.snapshot(),query,options.copy(full=options.full && BuildConfig.INTERNAL_BETA),checkCancelled={caller.ensureActive()})
+            writePrepared(plan){caller.ensureActive()}
+        }
+    }
+    /** IO-only publication helper; caller holds generation lock. Also permits deterministic cancellation tests. */
+    internal fun writePrepared(plan:ReportPlan,checkCancelled:()->Unit):ReportFile {
+        checkCancelled()
+        if(plan.pages.size>PdfReport.MAX_PAGES)throw ReportPageLimitException()
         check(directory.exists() || directory.mkdirs()) { "无法创建报告临时目录" }
-        val plan=PdfReport.plan(repository.snapshot(),query,options.copy(full=options.full && BuildConfig.INTERNAL_BETA))
         val id=UUID.randomUUID().toString();val partial=File(directory,"$id.partial");val target=File(directory,"scoreledger-report-$id.pdf")
+        var published=false
         try {
-            partial.outputStream().use { PdfReport.write(plan,it) }
+            partial.outputStream().use { PdfReport.write(plan,it,checkCancelled) }
+            checkCancelled()
             check(partial.length()>0 && partial.renameTo(target)) { "报告未生成完成" }
-            ReportFile(target,plan.pages.size,plan.scoreRows)
-        } finally { partial.delete() }
+            checkCancelled()
+            published=true
+            return ReportFile(target,plan.pages.size,plan.scoreRows)
+        } finally { partial.delete();if(!published)target.delete() }
     }
     /** Only the opaque generated ID is saved across SAF recreation, never an arbitrary path. */
     fun reportId(report:ReportFile):String = report.file.name.removePrefix("scoreledger-report-").removeSuffix(".pdf").also(::validateId)
