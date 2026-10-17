@@ -45,7 +45,11 @@ for i in $(seq 1 30); do
   if timeout 10 adb -s emulator-5554 shell pm path android >/dev/null 2>&1; then break; fi
   sleep 2
 done
+# Retain useful PDF/screenshots even when a regression fails; preserve its exit status.
+set +e
 ./gradlew --no-daemon :app:connectedLocalBetaDebugAndroidTest 2>&1 | tee evidence/android-instrumentation.log
+TEST_STATUS=${PIPESTATUS[0]}
+set -e
 if adb -s emulator-5554 shell test -d /sdcard/Android/data/com.example.scoreledger.beta.debug/files/pdf-evidence; then
   adb -s emulator-5554 pull /sdcard/Android/data/com.example.scoreledger.beta.debug/files/pdf-evidence evidence/pdf-artifacts
 else
@@ -58,4 +62,8 @@ test -s evidence/emulator-pid.txt
 adb -s emulator-5554 exec-out screencap -p > evidence/emulator-start.png
 adb -s emulator-5554 shell getprop ro.build.version.sdk > evidence/emulator-api.txt
 adb -s emulator-5554 shell pm list packages com.google.android.gms > evidence/emulator-gms.txt
-echo 'Emulator instrumentation and launch completed; physical devices are NOT tested.'
+if [ "$TEST_STATUS" -ne 0 ]; then
+  echo "Instrumentation failed with status $TEST_STATUS; post-test visual evidence retained."
+  exit "$TEST_STATUS"
+fi
+echo 'Emulator instrumentation and launch completed; physical devices are NOT tested.' 

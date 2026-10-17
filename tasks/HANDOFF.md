@@ -88,3 +88,8 @@ PDF SAF待保存状态由plain remember文件对象改为rememberSaveable的生�
 01:16 UTC BACKLOG同步：D00按真实构建门禁标VERIFIED（不含设备/最新未编译源码）；D01从过期NOT_STARTED改IMPLEMENTED_UNVERIFIED并注明真实schema2/编译与设备待验独立。D09更新最新P1功能、隔离测试、64/46本地日志和当前真实2c9/设备证据范围。没有新增功能改动。
 
 01:17 UTC合成UI测试稳健性：录入/历史/详情/设置/管理/选科LazyColumn增加稳定测试tag，SyntheticJourneyTest与PdfSaveRecreationTest先在父列表performScrollToNode再操作子节点，不要求尚未compose的行已经存在。备份错误测试是普通verticalScroll全量Column，无此未组合行问题。静态检查再次通过，实际新UI测试仍NOT_RUN；源码暂停。
+
+## 2026-10-17 01:20 UTC · 首轮真实设备结果与迁移fixture修复
+主线程报告真实2c9 AOSP API30/KVM run38989862766：26测试，25PASS/1FAIL/0SKIP；失败在DraftIntegrityTest读取真实schema1的indices字段。已核对app/src/androidTest/assets/room-v1.json和真实导出1.json：children/subjects合法省略空indices，exams/scores各有索引。修复测试对缺省数组按空处理，不改真实schema、不略过migration；并增强种入subject/exam/0score及迁移后ID/值和两索引名称断言。修复后的设备测试NOT_RUN。
+新增UpgradeRetentionTest，正常发现时2个方法Assume跳过，只有显式upgradeRetention=seed/verify、allowPersistentSyntheticData=true及32–64位hex upgradeNonce才进入；严格DEBUG/localBeta/包名和ranchu/goldfish模拟器guard。seed要求真实应用库完全空，不清库、不覆盖，写标记的合成孩子/科目/考试/0分/草稿与精确摘要；verify核对ID/时间/内容/计数/草稿摘要。由主线程单独在可抛弃AVD上运行seed→同签名APK adb install -r→verify；不执行uninstall/pm clear，结束销毁AVD。此测试不等同Room迁移或跨版本升级，尚NOT_RUN。
+实际本地core64/Python46/static通过evidence/d09-migration-repair-*.log。没有改workflow/app Gradle/签名；源码暂停等主线程快照。

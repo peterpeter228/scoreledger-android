@@ -124,21 +124,36 @@ class DraftIntegrityTest {
         val name="migration-${UUID.randomUUID()}.db"
         val json=InstrumentationRegistry.getInstrumentation().context.assets.open("room-v1.json").bufferedReader().use{it.readText()}
         val schema=JSONObject(json).getJSONObject("database")
-        val child=UUID.randomUUID().toString()
+        val child=UUID.randomUUID().toString();val subject=UUID.randomUUID().toString();val exam=UUID.randomUUID().toString()
         context.openOrCreateDatabase(name,0,null).use { old ->
             val entities=schema.getJSONArray("entities")
             for(i in 0 until entities.length()) {
                 val entity=entities.getJSONObject(i);val table=entity.getString("tableName")
                 old.execSQL(entity.getString("createSql").replace("\u0024{TABLE_NAME}",table))
-                val indices=entity.getJSONArray("indices")
+                // Real Room schema omits indices on tables with no secondary indexes.
+                val indices=entity.optJSONArray("indices") ?: org.json.JSONArray()
                 for(j in 0 until indices.length())old.execSQL(indices.getJSONObject(j).getString("createSql").replace("\u0024{TABLE_NAME}",table))
             }
             old.execSQL("INSERT INTO children VALUES (?, '迁移测试', '三年级', 0, 1, 1)",arrayOf(child))
+            old.execSQL("INSERT INTO subjects (id,name,defaultMaxMinor,sortOrder,archived,createdAt,updatedAt) VALUES (?, '迁移科目', 10000, 0, 0, 1, 1)",arrayOf(subject))
+            old.execSQL("INSERT INTO exams (id,childId,title,examDate,kind,term,gradeSnapshot,note,createdAt,updatedAt) VALUES (?, ?, '迁移考试', '2026-01-01', 'OTHER', '', '三年级', '', 1, 1)",arrayOf(exam,child))
+            old.execSQL("INSERT INTO scores (examId,subjectId,subjectNameSnapshot,status,scoreMinor,maxMinor) VALUES (?, ?, '迁移科目', 'SCORED', 0, 10000)",arrayOf(exam,subject))
             old.version=1
         }
         val db=database(name)
         try {
             assertEquals("迁移测试",db.dao().child(child)!!.nickname)
+            assertEquals("迁移科目",db.dao().subjects().single().name)
+            assertEquals(exam,db.dao().allExams().single().id)
+            assertEquals(0L,db.dao().scores(exam).single().scoreMinor)
+            db.openHelper.readableDatabase.query("PRAGMA index_list(exams)").use { cursor ->
+                val names=mutableListOf<String>();while(cursor.moveToNext())names.add(cursor.getString(cursor.getColumnIndexOrThrow("name")))
+                assertTrue(names.contains("index_exams_childId_examDate"))
+            }
+            db.openHelper.readableDatabase.query("PRAGMA index_list(scores)").use { cursor ->
+                val names=mutableListOf<String>();while(cursor.moveToNext())names.add(cursor.getString(cursor.getColumnIndexOrThrow("name")))
+                assertTrue(names.contains("index_scores_subjectId"))
+            }
             val r=ScoreRepository(db,true,clock);val d=EntryDraft(childId=child);r.putDraft(d)
             assertEquals(d,EntryDraft.decode(requireNotNull(r.draft(d.id,child))))
             assertEquals(2,db.openHelper.readableDatabase.version)

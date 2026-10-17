@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T01:15:11.803889+00:00",
-  "stage": "D09_P1_lifecycle_accessibility_source_pending_CI",
+  "asOf": "2026-10-17T01:19:51.738952+00:00",
+  "stage": "Device_2c9_partial_pass_migration_fixture_fix_pending",
   "androidBuild": "IMPLEMENTED_UNVERIFIED",
-  "deviceTests": "IN_PROGRESS",
+  "deviceTests": "PARTIAL_PASS_25_OF_26",
   "billing": "NOT_IMPLEMENTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "Build_P1_snapshot_and_observe_2c9_device_run",
+  "nextTask": "Build_migration_fix_then_rerun_devices_and_opt_in_signed_reinstall",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -51,7 +51,7 @@
       "deviceMigrationTest": "NOT_RUN"
     },
     "entryHistorySlice": "3394203 Android compile/instrumentation assembly passed; device acceptance NOT_RUN",
-    "localSliceChecks": "core64/Python46/static passed; evidence/d09-p1-*.log",
+    "localSliceChecks": "core64/Python46/static passed; evidence/d09-migration-repair-*.log",
     "trendSlice": "Android source compiled on3394203; Canvas device/TalkBack acceptance NOT_RUN",
     "backupSlice": "Android and actual Gson/retention JVM tests passed on3394203; Room replacement/SAF device tests NOT_RUN",
     "pdfSlice": "3394203 Android compilation passed; lint WrongConstant fixed in source; PdfRenderer/device tests NOT_RUN",
@@ -80,7 +80,20 @@
       "sha256": "cbc72b71fb97bc74fffaf0be7da6b91d7582eebdfcf8846d550a2c5c9c40dbba",
       "sourceCommit": "2c9b199e4160497f5d2e72f05a3dc64c96845b25",
       "source": "Root verified downloaded reports; not committed as large artifact directory"
-    }
+    },
+    "device2c9": {
+      "runId": 38989862766,
+      "artifactId": 12084543731,
+      "sourceCommit": "2c9b199e4160497f5d2e72f05a3dc64c96845b25",
+      "environment": "AOSP API30 KVM emulator",
+      "total": 26,
+      "passed": 25,
+      "failed": 1,
+      "skipped": 0,
+      "failure": "DraftIntegrityTest.generatedVersionOneSchemaMigratesWithoutLosingRows: test assumes every genuine v1 entity contains indices; children/subjects legitimately omit field",
+      "repair": "Test reads absent index array as empty, retains all actual declared indexes and adds exam/score preservation + index-name assertions. NOT_RUN after repair."
+    },
+    "upgradeRetention": "Opt-in seed/verify instrumentation source added, DEBUG/localBeta/exact package/emulator hardware/nonce/explicit flag guards, empty DB prerequisite, no cleanup. Requires separate signed APK install -r run; NOT_RUN."
   },
   "blockers": [
     {
@@ -100,7 +113,7 @@
     "appJvm": "PASSED",
     "lint": "0 errors,30 warnings",
     "deviceRunId": 38989862766,
-    "deviceStatus": "IN_PROGRESS_NO_RESULT",
+    "deviceStatus": "COMPLETED_25_PASS_1_FAIL_0_SKIP",
     "newSource": "Signing-only148af79 and current P1 fixes are separate, not certified by2c9 success"
   },
   "baselineKitValidation": {

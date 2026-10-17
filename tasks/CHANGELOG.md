@@ -46,3 +46,5 @@ D09 lint修复：移除StaticLayout可选高质量breakStrategy常量调用，�
 - Make report checkbox labels clickable with combined role/checked semantics.
 - Explicitly inject isolated DB/file/settings managers into test hosts; add recreation/error/semantics and synthetic mixed-score journey tests (NOT_RUN).
 - Local core64/Python46/static passed. Previous2c9 actual CI build/JVM/lint succeeded; new source/device results remain separate.
+
+Device milestone: exact2c9 AOSP30 emulator executed26tests,25pass/1failure in migration fixture parsing. Corrected legitimate absent indices handling and strengthened row/index preservation assertions; rerun pending. Added opt-in guarded synthetic signed reinstall seed/verify test (NOT_RUN, skips normal discovery, never clears data).

@@ -31,3 +31,5 @@ D07首次真实编译CI38988358601失败在两处API/命名错误；已源码修
 D09增量（01:02 UTC）：应用内离线单页PDF预览、IO线程分享准备已实现；新增隔离ActivityScenario.recreate与预览导航测试尚未运行。core64/Python46/static真实通过；新Android/device验收NOT_RUN，D09整体仍IN_PROGRESS（大字/TalkBack/矩阵未通过）。
 
 01:15 UTC证据更新：2c9b199e CI38989323329成功，8JUnit方法/64core断言、Gson和retention测试通过，lint0error30warning；device38989862766仍执行中，无通过结论。此后新增SAF重建恢复/确认失败提示/复选框语义/显式隔离UI服务修复及合成E2E测试是未编译新源码，保持IMPLEMENTED_UNVERIFIED，不借用旧CI成功。
+
+01:20 UTC：真实2c9 AOSP30/KVM仪器化26项已执行，25PASS/1FAIL/0SKIP，失败为migration测试把真实schema合法省略的indices视为必填。源码测试修复并增强实体/索引保持断言，重跑未执行。新guarded签名重装保留测试仅实现，未运行；当前P1源码也不能借用2c9设备结果。

@@ -1,5 +1,7 @@
 package com.example.scoreledger
 
+import android.graphics.Bitmap
+import java.io.File
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.room.Room
@@ -20,6 +22,19 @@ class SyntheticJourneyTest {
     private fun item(list:String,matcher:SemanticsMatcher):SemanticsNodeInteraction {
         compose.onNodeWithTag(list).performScrollToNode(matcher)
         return compose.onNode(matcher)
+    }
+    /** Diagnostic evidence only; image existence is not a visual correctness assertion. */
+    private fun captureSyntheticUi(name:String) {
+        compose.waitForIdle()
+        val instrumentation=InstrumentationRegistry.getInstrumentation()
+        val directory=File(requireNotNull(instrumentation.targetContext.getExternalFilesDir(null)),"ui-evidence")
+        check(directory.isDirectory || directory.mkdirs())
+        val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
+        try {
+            File(directory,"synthetic-$name.png").outputStream().use { output ->
+                check(bitmap.compress(Bitmap.CompressFormat.PNG,100,output))
+            }
+        } finally { bitmap.recycle() }
     }
     @Test fun emptyInstallCreateTemplateEnterMixedStatesEditAndIsolateChildren() {
         val isolated=IsolatedUiContext(InstrumentationRegistry.getInstrumentation().targetContext)
@@ -48,6 +63,8 @@ class SyntheticJourneyTest {
             item("entry-list",hasTestTag("score-${subjects.getValue("数学").id}")).performTextReplacement("８５．５")
             item("entry-list",hasText("缺考") and hasAnyAncestor(hasTestTag("subject-${subjects.getValue("英语").id}"))).performClick()
             item("entry-list",hasText("未录入") and hasAnyAncestor(hasTestTag("subject-${subjects.getValue("物理").id}"))).performClick()
+            item("entry-list",hasTestTag("score-${subjects.getValue("语文").id}")).assertExists()
+            captureSyntheticUi("01-entry-before-save")
             item("entry-list",hasText("保存这次记录")).performClick()
             compose.waitUntil(10000){runBlocking{db.dao().examCount()==1}}
             val first=runBlocking{repository.snapshot()};val scores=first.scores.associateBy{it.subjectId}
@@ -55,6 +72,8 @@ class SyntheticJourneyTest {
             assertEquals(8550L,scores.getValue(subjects.getValue("数学").id).scoreMinor)
             assertEquals("ABSENT",scores.getValue(subjects.getValue("英语").id).status)
             assertEquals("MISSING",scores.getValue(subjects.getValue("物理").id).status)
+            item("history-list",hasText("合成混合状态考试")).assertExists()
+            captureSyntheticUi("02-history-after-save")
             item("history-list",hasText("合成混合状态考试")).performClick()
             item("detail-list",hasText("编辑这次记录")).performClick()
             item("entry-list",hasText("合成混合状态考试")).performTextReplacement("合成纠正标题")
@@ -67,6 +86,7 @@ class SyntheticJourneyTest {
             compose.waitUntil(10000){compose.onAllNodesWithText("合成孩子乙").fetchSemanticsNodes().isNotEmpty()}
             compose.onNodeWithText("合成孩子乙").performClick()
             compose.onNodeWithText("合成纠正标题").assertDoesNotExist()
+            captureSyntheticUi("03-child-isolation")
             compose.onNodeWithText("合成孩子甲").performClick()
             item("history-list",hasText("合成纠正标题")).assertExists()
         } }finally{RecreationHostActivity.testRepository=null;RecreationHostActivity.testServices=null;db.close();isolated.cleanup()}

@@ -1,0 +1,72 @@
+name: Signed Android artifact acceptance
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_run_id:
+        description: Same-repository build run containing the fixed-signed APK and test APK
+        required: true
+        type: string
+      api:
+        description: Disposable AOSP emulator API
+        required: true
+        type: choice
+        options: ['26', '30', '36']
+        default: '30'
+      allow_kvm:
+        description: Approve ACL granting only this ephemeral runner user access to /dev/kvm
+        required: true
+        default: false
+        type: boolean
+      run_reinstall_retention:
+        description: Seed synthetic data in the fresh emulator and verify retention after same-APK install -r (not a version upgrade)
+        required: true
+        default: false
+        type: boolean
+permissions:
+  contents: read
+  actions: read
+jobs:
+  signed-artifact-device:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate artifact selection
+        env:
+          ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
+        run: '[[ "$ARTIFACT_RUN_ID" =~ ^[1-9][0-9]*$ ]]'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      # Download only from this repository. No signing credentials or build step.
+      - uses: actions/download-artifact@v4
+        with:
+          name: scoreledger-internal-apk
+          path: signed-input/app
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-test-reports
+          path: signed-input/test
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.artifact_run_id }}
+          github-token: ${{ github.token }}
+      - name: Test exact downloaded fixed-signed APKs
+        env:
+          ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
+          ANDROID_API: ${{ inputs.api }}
+          ALLOW_KVM: ${{ inputs.allow_kvm }}
+          RUN_REINSTALL_RETENTION: ${{ inputs.run_reinstall_retention }}
+        run: bash tools/signed_emulator_acceptance.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: signed-device-evidence-api-${{ inputs.api }}
+          path: evidence/signed-device/
+          if-no-files-found: warn
+          retention-days: 14
