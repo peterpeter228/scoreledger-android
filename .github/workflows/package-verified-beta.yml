@@ -43,5 +43,7 @@ jobs:
           name: ScoreLedger-0.2.0-Complete-Delivery
           path: delivery-staging/
           if-no-files-found: error
+          # Staging contains only git-tracked source and verified artifacts, never .git or credentials.
+          include-hidden-files: true
           retention-days: 14
           compression-level: 9
