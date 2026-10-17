@@ -59,4 +59,18 @@ class PdfReportTest {
         assertEquals(data.scores.count{it.examId==exam.id},plan.scoreRows)
         assertEquals(plan.scoreRows,plan.sourceIds.toSet().size)
     }
+    @Test fun newlineRichMaximumNoteSplitsWithoutLossOrScoreDuplication() {
+        val original=fixture();val exam=original.exams.first().copy(note="中\n".repeat(249)+"中")
+        val scores=original.scores.filter{it.examId==exam.id}
+        val data=original.copy(exams=listOf(exam),scores=scores)
+        val plan=PdfReport.plan(data,RecordQuery(exam.childId),ReportOptions(includeNotes=true))
+        assertTrue(plan.pages.size>3)
+        val blocks=plan.pages.flatMap{it.blocks}
+        val noteGroup=blocks.first{it.text.startsWith("原记录备注：")}.textGroup
+        assertEquals("原记录备注："+exam.note,blocks.filter{it.textGroup==noteGroup}.joinToString(""){it.text})
+        assertTrue(blocks.all{it.top>=PdfReport.TOP && it.top+it.height<=PdfReport.BOTTOM})
+        assertEquals(scores.size,plan.sourceIds.size);assertEquals(scores.size,plan.sourceIds.toSet().size)
+        java.io.ByteArrayOutputStream().use{PdfReport.write(plan,it);assertTrue(it.size()>0)}
+    }
+
 }

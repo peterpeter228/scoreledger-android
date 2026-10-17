@@ -56,7 +56,8 @@ class BackupManager(private val context:Context,private val repository:ScoreRepo
             check(partial.renameTo(completed)) { "内部回滚快照未完成" }
             pruneRollbacks(completed)
             check(completed.isFile && completed.length()>0) { "内部回滚快照不可用" }
-            val descriptor=android.system.Os.open(rollbacks.absolutePath,android.system.OsConstants.O_RDONLY or android.system.OsConstants.O_DIRECTORY,0)
+            check(rollbacks.isDirectory) { "内部快照目录不可用" }
+            val descriptor=android.system.Os.open(rollbacks.absolutePath,android.system.OsConstants.O_RDONLY,0)
             try { android.system.Os.fsync(descriptor) } finally { android.system.Os.close(descriptor) }
         } finally { partial.delete() }
     }
@@ -70,4 +71,3 @@ internal fun pruneRollbackFiles(directory:File,now:Long,protectedFile:File?=null
     }
     directory.listFiles()?.filter{it.extension=="partial" && now-it.lastModified()>24L*60*60*1000}?.forEach{it.delete()}
 }
-

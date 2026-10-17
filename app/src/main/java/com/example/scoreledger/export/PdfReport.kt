@@ -15,7 +15,7 @@ import java.time.Instant
 
 /** Native A4 text layout. No web screenshot, bitmap page, interpolation, or guessed conclusions. */
 data class ReportOptions(val anonymous:Boolean=true,val includeNotes:Boolean=false,val full:Boolean=false,val subjectId:String?=null)
-data class ReportBlock(val text:String,val top:Float,val height:Float,val sourceId:String?=null,val trend:List<TrendPoint>?=null)
+data class ReportBlock(val text:String,val top:Float,val height:Float,val sourceId:String?=null,val trend:List<TrendPoint>?=null,val textGroup:Int=-1)
 data class ReportPage(val blocks:List<ReportBlock>)
 data class ReportPlan(val pages:List<ReportPage>,val generatedAt:Instant,val scoreRows:Int) {
     val sourceIds get()=pages.flatMap{it.blocks}.mapNotNull{it.sourceId}
@@ -30,10 +30,40 @@ object PdfReport {
         val scores=snapshot.scores.groupBy{it.examId}
         val records=query.apply(snapshot.exams.map { ExamWithScores(it,scores[it.id].orEmpty()) }).reversed()
         require(records.isNotEmpty()) { "当前筛选没有考试，请调整范围" }
-        val pages=mutableListOf<ReportPage>();var blocks=mutableListOf<ReportBlock>();var y=TOP.toFloat();var details=false
+        val pages=mutableListOf<ReportPage>();var blocks=mutableListOf<ReportBlock>();var y=TOP.toFloat();var details=false;var nextTextGroup=0
         fun header() { val text="明细：日期／考试 · 科目 · 分数／满分 · 得分率 · 状态";val h=layout(text).height.toFloat();blocks.add(ReportBlock(text,y,h));y+=h+8 }
         fun newPage() { if(blocks.isNotEmpty())pages.add(ReportPage(blocks.toList()));blocks=mutableListOf();y=TOP.toFloat();if(details)header() }
-        fun add(text:String,source:String?=null) { val h=layout(text).height.toFloat();require(h<=BOTTOM-TOP-70) { "文本超出单页范围" };if(y+h>BOTTOM)newPage();blocks.add(ReportBlock(text,y,h,source));y+=h+8 }
+        fun add(text:String,source:String?=null) {
+            val group=nextTextGroup++
+            // A score row is bounded by validated title/name lengths and carries its ID once.
+            if(source!=null) {
+                val h=layout(text).height.toFloat();require(h<=BOTTOM-TOP-70)
+                if(y+h>BOTTOM)newPage()
+                blocks.add(ReportBlock(text,y,h,source,textGroup=group));y+=h+8;return
+            }
+            var offset=0
+            while(offset<text.length) {
+                val remaining=text.substring(offset);val measured=layout(remaining);val available=BOTTOM-y
+                if(measured.height<=available) {
+                    blocks.add(ReportBlock(remaining,y,measured.height.toFloat(),textGroup=group));y+=measured.height+8;break
+                }
+                var lines=0
+                while(lines<measured.lineCount && measured.getLineBottom(lines)<=available)lines++
+                var end=0;var height=0
+                // A trailing newline creates an extra empty line in a standalone layout;
+                // remeasure the prefix, rather than assuming lineBottom is its final height.
+                while(lines>0) {
+                    end=measured.getLineEnd(lines-1)
+                    height=if(end>0)layout(remaining.substring(0,end)).height else 0
+                    if(end>0 && height<=available)break
+                    lines--
+                }
+                if(lines==0) {newPage();continue}
+                blocks.add(ReportBlock(remaining.substring(0,end),y,height.toFloat(),textGroup=group))
+                offset+=end;y+=height+8
+                if(offset<text.length)newPage()
+            }
+        }
         add("分数记录 · ${if(options.full) "完整报告（免费内测）" else "基础明细报告"}")
         add("${if(options.anonymous) "孩子A（匿名昵称）" else child.nickname}\n筛选：${query.from.ifBlank{"不限开始"}} 至 ${query.through.ifBlank{"不限结束"}}；学期：${query.term.ifBlank{"全部"}}；类型：${query.kind?.name ?: "全部"}\n实际记录日期：${records.first().exam.examDate} 至 ${records.last().exam.examDate}\n生成时间：$generatedAt")
         val summary=ScoreRules.summarizeGroups(records.map { it.scores.map { row->row.toValue() } })

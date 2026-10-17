@@ -66,7 +66,7 @@ object BackupCodec {
         require(exams.all { (counts[it] ?: 0) in 1..30 })
     }
     private class Fields(val j:JsonReader,val budget:TokenBudgetReader) {
-        private fun <T> step(block:()->T):T { budget.reset();return block() }
+        private fun <T> step(block:()->T):T { budget.resetBudget();return block() }
         fun text(max:Int=60,required:Boolean=false,note:Boolean=false):String=step { require(j.peek()==JsonToken.STRING);j.nextString().also { ScoreRules.validateExactText(it,max,!required,note) } }
         fun number():Long=step { require(j.peek()==JsonToken.NUMBER);val raw=j.nextString();require(Regex("-?(0|[1-9][0-9]*)").matches(raw) && raw!="-0");raw.toLong().also { require(it in 0..4102444800000L) } }
         fun bool():Boolean=step { require(j.peek()==JsonToken.BOOLEAN);j.nextBoolean() }
@@ -106,7 +106,7 @@ object BackupCodec {
      * A valid maximum escaped note is <=6000 chars; excessive whitespace is intentionally rejected. */
     private class TokenBudgetReader(reader:Reader):FilterReader(reader) {
         private var remaining=TOKEN_CHARS
-        fun reset(){remaining=TOKEN_CHARS}
+        fun resetBudget(){remaining=TOKEN_CHARS}
         override fun read(c:CharArray,off:Int,len:Int):Int { require(remaining>0);val n=super.read(c,off,minOf(len,remaining));if(n>0)remaining-=n;return n }
         override fun read():Int { require(remaining>0);return super.read().also { if(it>=0)remaining-- } }
     }

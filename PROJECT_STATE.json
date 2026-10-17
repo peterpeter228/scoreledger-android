@@ -1,7 +1,7 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T00:49:18.686499+00:00",
+  "asOf": "2026-10-17T00:56:28.665505+00:00",
   "stage": "D07_source_ready_android_verification_pending",
   "androidBuild": "VERIFIED",
   "deviceTests": "NOT_RUN",
@@ -56,7 +56,8 @@
     "trendSlice": "IMPLEMENTED_UNVERIFIED: core62/Python42/static passed; Android/Canvas UI NOT_RUN",
     "backupSlice": "IMPLEMENTED_UNVERIFIED: core63/Python46/static passed; new Gson actual importer/JVM and Room replacement tests NOT_RUN",
     "pdfSlice": "IMPLEMENTED_UNVERIFIED: native A4 paginated PdfDocument/SAF/share; core64/Python46/static passed, actual PDF renderer tests NOT_RUN",
-    "backupAuditFixes": "implemented source, retention/editor-race regressions added NOT_RUN"
+    "backupAuditFixes": "implemented source, retention/editor-race regressions added NOT_RUN",
+    "d07CompileRepair": "CI38988358601 failed: reset hides FilterReader member and unavailable OsConstants.O_DIRECTORY. Source renamed resetBudget and directory validated/opened O_RDONLY. Rebuild pending; newline-rich PDF note fix also included."
   },
   "blockers": [
     {

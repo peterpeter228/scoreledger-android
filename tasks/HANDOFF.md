@@ -64,3 +64,8 @@ D06审查修复一并纳入：保护新回滚快照不受旧文件未来mtime误
 本地实际core64/Python46/static通过，evidence/d07-*.log。新增3个PdfReportTest仪器化方法：长中文/多页/唯一覆盖/隐藏字段/0与缺失和不同满分、空范围拒绝/单次无重复、真实PdfRenderer打开并输出合成报告截图。全部Android/Gson/PdfRenderer测试NOT_RUN，等待CI，不把本地业务检查代替原生验证。
 若设备测试执行，截图/报告路径：/sdcard/Android/data/com.example.scoreledger.beta.debug/files/pdf-evidence/synthetic-report-first-page.png 与 synthetic-report.pdf。需要主线程收取并目视核验中文，不预先宣称成功。2阅读器、真实分享、打印、TalkBack、大字号、真机/支付仍未验收。
 源代码写入暂停，请主线程先取得不可变快照，再反馈CI编译或审查问题进行修复。没有修改workflow/emulator脚本，没有push。
+
+## 2026-10-17 00:56 UTC · D07审查修复
+修复有效499-codepoint/250行备注导致PDF整块高度拒绝：按StaticLayout行边界逐页拆分非成绩文本，末尾换行重新测量，保留全部原文、11pt字体和逐成绩唯一sourceID。加入newline-rich备注仪器化回归（NOT_RUN）；静态检查通过evidence/d07-repair-static.log。另补旧写入I/O返回晚于恢复collector的UI收尾：旧epoch返回不覆盖已清理的落盘状态，finally再次关闭旧编辑器，避免旧页面重新出现。主线程已修复protected关键字与精确scoreMinor词法测试，保留不覆盖。
+
+00:56 UTC真实CI38988358601/job117265031375（5dd707）appcompile失败：BackupCodec reset隐藏FilterReader.reset；Android公开API无OsConstants.O_DIRECTORY。源码修复为resetBudget及验证目录后O_RDONLY打开/fsync/close，不硬编码flag。连同PDF多行备注和旧epochUI修复，本地core64/Python46/static再次通过（evidence/d07-repair-*.log）；新Android/Gson/PDF/设备待重跑。源码暂停供主线程快照。

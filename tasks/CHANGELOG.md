@@ -30,3 +30,5 @@
 - Added PdfRenderer/synthetic screenshot/layout tests and backup audit regressions; Android execution NOT_RUN.
 - Closed source review findings for rollback retention/bulk I/O, per-row parse validation, exact external backup bytes, directory sync and stale editor generation.
 - Actual local checks: core64, Python46, package static pass. Commercial purchase remains unavailable, no added account/cloud/OCR/AI/network integrations.
+
+D07审查修复：有效多换行备注按测量行边界跨页、原文无损；新增250行备注测试（NOT_RUN）。旧epoch写入返回后的UI状态也再次失效，避免恢复后旧编辑页重现。

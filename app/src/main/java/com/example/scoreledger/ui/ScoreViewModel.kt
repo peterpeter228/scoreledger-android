@@ -83,7 +83,7 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
         if(busy.value || editorGeneration!=repository.generation.value || value.id != draft.value?.id || value.childId != selected.value) return
         draft.value=value
         val epoch=requireNotNull(editorGeneration)
-        operations.trySend { withContext(WriteGeneration(epoch)) { repository.putDraft(value,persisted.value);persisted.value=value.encode();conflict.value=false } }
+        operations.trySend { withContext(WriteGeneration(epoch)) { repository.putDraft(value,persisted.value);if(epoch==repository.generation.value){persisted.value=value.encode();conflict.value=false} } }
     }
     fun closeEditor(discard: Boolean) = perform {
         val d=requireNotNull(draft.value)
@@ -119,6 +119,9 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
         if(visibleGeneration!=repository.generation.value) { message.value="数据已改变，请重新打开页面";return }
         busy.value=true;message.value=null
         val epoch=visibleGeneration
-        operations.trySend { try { withContext(WriteGeneration(epoch)) { check(epoch==repository.generation.value) { "数据已改变，请重新打开页面" };block() } } finally { busy.value=false } }
+        operations.trySend { try { withContext(WriteGeneration(epoch)) { check(epoch==repository.generation.value) { "数据已改变，请重新打开页面" };block() } } finally {
+            if(epoch!=repository.generation.value){draft.value=null;persisted.value=null;editorGeneration=null;conflict.value=false}
+            busy.value=false
+        } }
     }
 }
