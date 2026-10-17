@@ -56,6 +56,21 @@ class EvidenceCollectionTests(unittest.TestCase):
             output = evidence / 'ui-artifacts/synthetic.png'
             return result, output.read_bytes() if output.exists() else None
 
+    def test_version_diagnostic_reads_metadata_without_starting_emulator(self):
+        self.assertNotIn('"$SDK_ROOT/emulator/emulator" -version',SCRIPT)
+        start=SCRIPT.index('if [ -r "$SDK_ROOT/emulator/source.properties" ]; then')
+        code=SCRIPT[start:SCRIPT.index('\nfi',start)+3]
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'emulator').mkdir();(root/'evidence').mkdir()
+            env={**os.environ,'SDK_ROOT':str(root),'EVIDENCE':str(root/'evidence')}
+            result=subprocess.run(['bash','-e','-c',code],env=env,capture_output=True)
+            self.assertEqual(result.returncode,0)
+            self.assertIn('UNAVAILABLE',(root/'evidence/emulator-version.txt').read_text())
+            (root/'emulator/source.properties').write_text('Pkg.Revision=37.2.12\n')
+            result=subprocess.run(['bash','-e','-c',code],env=env,capture_output=True)
+            self.assertEqual(result.returncode,0)
+            self.assertEqual((root/'evidence/emulator-version.txt').read_text(),'Pkg.Revision=37.2.12\n')
+
     def test_resource_selection_is_bounded_by_actual_host(self):
         code=SCRIPT.split("<<'PYRESOURCES'\n",1)[1].split('\nPYRESOURCES',1)[0]
         with tempfile.TemporaryDirectory() as tmp:

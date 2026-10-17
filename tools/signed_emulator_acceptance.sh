@@ -252,7 +252,13 @@ if adb devices | grep -q "^$SERIAL[[:space:]]"; then echo 'Emulator serial alrea
 nproc > "$EVIDENCE/host-nproc.txt"
 free -k > "$EVIDENCE/host-free.txt"
 cat /proc/meminfo > "$EVIDENCE/host-meminfo.txt"
-"$SDK_ROOT/emulator/emulator" -version > "$EVIDENCE/emulator-version.txt" 2>&1
+# Version metadata must not initialize the emulator GUI/Qt backend on a headless
+# runner. Missing diagnostic metadata is explicit; the real launch still fails hard.
+if [ -r "$SDK_ROOT/emulator/source.properties" ]; then
+  cat "$SDK_ROOT/emulator/source.properties" > "$EVIDENCE/emulator-version.txt"
+else
+  printf 'UNAVAILABLE: installed emulator/source.properties not readable\n' > "$EVIDENCE/emulator-version.txt"
+fi
 read -r EMULATOR_CORES EMULATOR_MEMORY < <(python3 - "$EVIDENCE" <<'PYRESOURCES'
 import json,pathlib,re,sys
 root=pathlib.Path(sys.argv[1]);cpus=int((root/'host-nproc.txt').read_text())
