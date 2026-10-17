@@ -67,25 +67,29 @@ object BackupCodec {
     }
     private class Fields(val j:JsonReader,val budget:TokenBudgetReader) {
         private fun <T> step(block:()->T):T { budget.reset();return block() }
-        fun text():String=step { require(j.peek()==JsonToken.STRING);j.nextString() }
-        fun number():Long=step { require(j.peek()==JsonToken.NUMBER);val raw=j.nextString();require(Regex("-?(0|[1-9][0-9]*)").matches(raw) && raw!="-0");raw.toLong() }
+        fun text(max:Int=60,required:Boolean=false,note:Boolean=false):String=step { require(j.peek()==JsonToken.STRING);j.nextString().also { ScoreRules.validateExactText(it,max,!required,note) } }
+        fun number():Long=step { require(j.peek()==JsonToken.NUMBER);val raw=j.nextString();require(Regex("-?(0|[1-9][0-9]*)").matches(raw) && raw!="-0");raw.toLong().also { require(it in 0..4102444800000L) } }
         fun bool():Boolean=step { require(j.peek()==JsonToken.BOOLEAN);j.nextBoolean() }
         fun nullableNumber():Long?=step { if(j.peek()==JsonToken.NULL){j.nextNull();null}else number() }
         fun obj(expected:Set<String>,field:(String)->Unit) { step{j.beginObject()};val seen=mutableSetOf<String>();while(step{j.hasNext()}) { val name=step{j.nextName()};require(name in expected && seen.add(name));field(name) };step{j.endObject()};require(seen==expected) }
         fun <T> array(max:Int,item:()->T):List<T> { step{j.beginArray()};val result=ArrayList<T>();while(step{j.hasNext()}){require(result.size<max);result.add(item())};step{j.endArray()};return java.util.Collections.unmodifiableList(result) }
         fun endDocument(){step{require(j.peek()==JsonToken.END_DOCUMENT)}}
+        private fun checkId(id:String) { require(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}").matches(id));require(UUID.fromString(id).toString()==id) }
         fun child():ChildEntity { var id="";var name="";var grade="";var archived=false;var c=0L;var u=0L
-            obj(setOf("id","nickname","gradeLabel","archived","createdAt","updatedAt")){when(it){"id"->id=text();"nickname"->name=text();"gradeLabel"->grade=text();"archived"->archived=bool();"createdAt"->c=number();"updatedAt"->u=number()}}
-            return ChildEntity(id,name,grade,archived,c,u) }
+            obj(setOf("id","nickname","gradeLabel","archived","createdAt","updatedAt")){when(it){"id"->id=text(36,true);"nickname"->name=text(24,true);"gradeLabel"->grade=text(30);"archived"->archived=bool();"createdAt"->c=number();"updatedAt"->u=number()}}
+            return ChildEntity(id,name,grade,archived,c,u).also { validate(DataSnapshot(listOf(it),emptyList(),emptyList(),emptyList())) } }
         fun subject():SubjectEntity { var id="";var name="";var maximum=0L;var order=0L;var archived=false;var c=0L;var u=0L
-            obj(setOf("id","name","defaultMaxMinor","sortOrder","archived","createdAt","updatedAt")){when(it){"id"->id=text();"name"->name=text();"defaultMaxMinor"->maximum=number();"sortOrder"->order=number();"archived"->archived=bool();"createdAt"->c=number();"updatedAt"->u=number()}}
-            require(order in 0..10000);return SubjectEntity(id,name,maximum,order.toInt(),archived,c,u) }
+            obj(setOf("id","name","defaultMaxMinor","sortOrder","archived","createdAt","updatedAt")){when(it){"id"->id=text(36,true);"name"->name=text(30,true);"defaultMaxMinor"->maximum=number();"sortOrder"->order=number();"archived"->archived=bool();"createdAt"->c=number();"updatedAt"->u=number()}}
+            require(order in 0..10000);return SubjectEntity(id,name,maximum,order.toInt(),archived,c,u).also { validate(DataSnapshot(emptyList(),listOf(it),emptyList(),emptyList())) } }
         fun exam():ExamEntity { var id="";var child="";var title="";var date="";var kind="";var term="";var grade="";var note="";var c=0L;var u=0L
-            obj(setOf("id","childId","title","examDate","kind","term","gradeSnapshot","note","createdAt","updatedAt")){when(it){"id"->id=text();"childId"->child=text();"title"->title=text();"examDate"->date=text();"kind"->kind=text();"term"->term=text();"gradeSnapshot"->grade=text();"note"->note=text();"createdAt"->c=number();"updatedAt"->u=number()}}
+            obj(setOf("id","childId","title","examDate","kind","term","gradeSnapshot","note","createdAt","updatedAt")){when(it){"id"->id=text(36,true);"childId"->child=text(36,true);"title"->title=text(60,true);"examDate"->date=text(10,true);"kind"->kind=text(10,true);"term"->term=text(40);"gradeSnapshot"->grade=text(30);"note"->note=text(500,false,true);"createdAt"->c=number();"updatedAt"->u=number()}}
+            checkId(id);checkId(child);require(u>=c);ExamKind.valueOf(kind)
+            require(Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}").matches(date) && LocalDate.parse(date).year>=1)
             return ExamEntity(id,child,title,date,kind,term,grade,note,c,u) }
         fun score():ScoreEntity { var exam="";var subject="";var name="";var status="";var score:Long?=null;var maximum=0L
-            obj(setOf("examId","subjectId","subjectNameSnapshot","status","scoreMinor","maxMinor")){when(it){"examId"->exam=text();"subjectId"->subject=text();"subjectNameSnapshot"->name=text();"status"->status=text();"scoreMinor"->score=nullableNumber();"maxMinor"->maximum=number()}}
-            return ScoreEntity(exam,subject,name,status,score,maximum) }
+            obj(setOf("examId","subjectId","subjectNameSnapshot","status","scoreMinor","maxMinor")){when(it){"examId"->exam=text(36,true);"subjectId"->subject=text(36,true);"subjectNameSnapshot"->name=text(30,true);"status"->status=text(10,true);"scoreMinor"->score=nullableNumber();"maxMinor"->maximum=number()}}
+            checkId(exam);checkId(subject)
+            return ScoreEntity(exam,subject,name,status,score,maximum).also { ScoreRules.validate(it.toValue()) } }
     }
     private class LimitedInput(input:InputStream):FilterInputStream(input) {
         var count=0L

@@ -9,6 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(entities = [ChildEntity::class, SubjectEntity::class, ExamEntity::class, ScoreEntity::class, DraftEntity::class], version = 2, exportSchema = true)
 abstract class ScoreDatabase : RoomDatabase() {
+    internal val dataGeneration=kotlinx.coroutines.flow.MutableStateFlow(0L)
     abstract fun dao(): ScoreDao
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {

@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T00:41:44.400695+00:00",
-  "stage": "D06_source_ready_android_verification_pending",
+  "asOf": "2026-10-17T00:49:18.686499+00:00",
+  "stage": "D07_source_ready_android_verification_pending",
   "androidBuild": "VERIFIED",
   "deviceTests": "NOT_RUN",
   "billing": "NOT_IMPLEMENTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "D06_CI_then_D07",
+  "nextTask": "D05_D07_real_CI_and_device_verification",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -54,7 +54,9 @@
     "entryHistorySlice": "IMPLEMENTED_UNVERIFIED: Room v2 migration, draft transaction, native management/entry/history; new Android build and instrumentation NOT_RUN",
     "localSliceChecks": "static pass; Python42 pass; core59 pass; evidence/d02-d04-*.log",
     "trendSlice": "IMPLEMENTED_UNVERIFIED: core62/Python42/static passed; Android/Canvas UI NOT_RUN",
-    "backupSlice": "IMPLEMENTED_UNVERIFIED: core63/Python46/static passed; new Gson actual importer/JVM and Room replacement tests NOT_RUN"
+    "backupSlice": "IMPLEMENTED_UNVERIFIED: core63/Python46/static passed; new Gson actual importer/JVM and Room replacement tests NOT_RUN",
+    "pdfSlice": "IMPLEMENTED_UNVERIFIED: native A4 paginated PdfDocument/SAF/share; core64/Python46/static passed, actual PDF renderer tests NOT_RUN",
+    "backupAuditFixes": "implemented source, retention/editor-race regressions added NOT_RUN"
   },
   "blockers": [
     {

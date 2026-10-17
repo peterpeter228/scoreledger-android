@@ -5,6 +5,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.example.scoreledger.backup.BackupCodec
 import com.example.scoreledger.data.*
+import kotlinx.coroutines.*
+import androidx.lifecycle.ViewModelStore
+import com.example.scoreledger.ui.ScoreViewModel
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.junit.Assert.*
@@ -55,4 +58,26 @@ class BackupReplacementTest {
             assertTrue(db.dao().allDrafts().isEmpty())
         }finally{db.close()}
     }
+    @Test fun blockedMainCollectorCannotResurrectPreRestoreEditor()=runBlocking {
+        val db=database();val store=ViewModelStore()
+        try {
+            val r=ScoreRepository(db,true);val data=fixture();r.replace(PendingRestore(data,r.restorePreview())){}
+            val draft=EntryDraft(childId=data.children.first().id,title="恢复前草稿");r.putDraft(draft)
+            lateinit var model:ScoreViewModel
+            withContext(Dispatchers.Main){model=ScoreViewModel(ScoreRepository(db,true));store.put("editor",model)}
+            withTimeout(10000){while(model.selectedChild.value!=draft.childId)delay(20)}
+            val row=requireNotNull(r.draft(draft.id,draft.childId))
+            withContext(Dispatchers.Main){model.openDraft(row)}
+            withTimeout(10000){while(model.editor.value==null || model.saving.value)delay(20)}
+            InstrumentationRegistry.getInstrumentation().runOnMainSync {
+                // Block Handler dispatch: restore on IO, then invoke stale UI before Main collectors run.
+                runBlocking { withContext(Dispatchers.IO){r.replace(PendingRestore(data,r.restorePreview())){}} }
+                assertNotNull(model.editor.value)
+                model.change(draft.copy(title="不得复活"));model.submit();model.closeEditor(false)
+            }
+            withTimeout(10000){while(model.editor.value!=null)delay(20)}
+            assertTrue(db.dao().allDrafts().isEmpty());assertEquals(data.exams.size,db.dao().examCount())
+        }finally{withContext(Dispatchers.Main){store.clear()};db.close()}
+    }
+
 }

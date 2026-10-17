@@ -67,6 +67,7 @@ fun ExamWithScores.trendRecord() = TrendRecord(exam.id,exam.examDate,exam.create
                     val compare=ScoreRules.canCompareTotals(previous.record.context,previous.record.scores,last.record.context,last.record.scores)
                     Text(if(compare.comparable) "两次总分口径一致，但不代表试卷难度相同。" else "两次总分不比较：${compare.reason}")
                 }
+                ReportControls(query,subject?.id)
                 Text(stringResource(R.string.trend_values),style=MaterialTheme.typography.titleLarge)
             }
             itemsIndexed(points,key={_,p->p.record.id}) { index,point ->

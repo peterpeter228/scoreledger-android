@@ -1,0 +1,54 @@
+name: Android device acceptance
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Exact source commit or branch to test
+        required: true
+        default: main
+        type: string
+      allow_kvm:
+        description: Authorize current ephemeral runner user read/write access to /dev/kvm for this test
+        required: true
+        default: false
+        type: boolean
+permissions:
+  contents: read
+jobs:
+  aosp-device:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Verify explicit test authorization
+        run: test "${{ inputs.allow_kvm }}" = true
+      - name: Install approved SDK packages
+        run: |
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          "$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;35.0.0" "platform-tools"
+      - name: Native AOSP API 30 tests and launch
+        env:
+          ALLOW_KVM: ${{ inputs.allow_kvm }}
+        run: |
+          chmod +x gradlew
+          bash tools/emulator_smoke.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-device-evidence
+          path: |
+            app/build/reports/
+            app/build/outputs/androidTest-results/
+            app/schemas/
+            evidence/emulator-*
+            evidence/android-instrumentation.log
+            evidence/pdf-artifacts/
+          if-no-files-found: warn
+          retention-days: 14

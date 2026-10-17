@@ -24,3 +24,9 @@
 - Implemented strict bounded streaming Gson v1 JSON, native SAF and explicit replacement preview, precise import semantics and immutable pending data.
 - Added pre-delete completed internal rollback, atomic replacement, stale baseline/replay/editor protection, explicit draft discard, settings/cleanup/privacy and backup success timestamp.
 - Recorded capacity/Unicode/future-date/parser ADR. Added actual importer JVM and Room fault tests (not run). Local core63/Python46/static passed.
+
+### 2026-10-17 D07 native report and D06 hardening (unverified Android)
+- Added paginated native A4 report, scoped/core summaries and details, optional beta trend, source-row coverage/bounds checks, privacy controls, native preview/save/share and24h cache cleanup.
+- Added PdfRenderer/synthetic screenshot/layout tests and backup audit regressions; Android execution NOT_RUN.
+- Closed source review findings for rollback retention/bulk I/O, per-row parse validation, exact external backup bytes, directory sync and stale editor generation.
+- Actual local checks: core64, Python46, package static pass. Commercial purchase remains unavailable, no added account/cloud/OCR/AI/network integrations.

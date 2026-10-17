@@ -46,7 +46,7 @@
   <string name="ui_44">设置</string>
   <string name="ui_45">隐私与数据</string>
   <string name="ui_46">无需注册，数据只保存在本机。不上传孩子信息，不含广告、OCR或AI诊断。昵称即可使用，无需真实姓名。</string>
-  <string name="ui_47">卸载或清除应用数据通常会删除本地记录。备份恢复与PDF尚未接入，请勿把此开发内测作为唯一数据副本。</string>
+  <string name="ui_47">卸载应用通常会删除本机记录。请定期导出并验证备份，PDF不能用于恢复。</string>
   <string name="ui_48">帮助：缺考、未录入与0分分别记录。得分率仅反映本次已录科目，不代表能力或排名。</string>
   <string name="ui_49">趋势</string>
   <string name="ui_50">趋势图仍在开发中。已保存的原始成绩可在“记录”中查看，不会生成虚构分析。</string>
@@ -91,4 +91,15 @@
     <string name="backup_choose">选择保存位置</string>
     <string name="backup_confirm">预览并确认完整替换</string>
     <string name="backup_replace">确认替换并丢弃旧草稿</string>
+    <string name="report_export">PDF 报告</string>
+    <string name="report_warning">报告含所选范围的考试信息。默认使用匿名昵称、不含备注；考试标题等原文仍可能含身份信息，请自行检查。分享后无法控制接收方转发。</string>
+    <string name="report_anonymous">隐藏昵称，使用“孩子A”</string>
+    <string name="report_notes">包含原记录备注</string>
+    <string name="report_full">完整模板（免费内测，不是已购买）</string>
+    <string name="report_scope">使用上方与历史、趋势共用的日期、学期、类型和孩子筛选。基础明细报告永久免费，不受记录数量或购买状态限制。</string>
+    <string name="report_generate">生成分页报告</string>
+    <string name="report_save">选择位置保存 PDF</string>
+    <string name="report_share">打开系统分享面板</string>
+    <string name="report_busy">正在生成或写入 PDF…</string>
+    <string name="report_preview">用系统阅读器预览 PDF</string>
 </resources>

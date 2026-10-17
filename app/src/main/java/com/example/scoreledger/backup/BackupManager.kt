@@ -21,7 +21,10 @@ class BackupManager(private val context:Context,private val repository:ScoreRepo
             requireNotNull(context.contentResolver.openOutputStream(uri,"wt")) { "无法打开文件" }.use { output -> temp.inputStream().use { it.copyTo(output) } }
             // A reopened stream is optional for providers; if supported, validate the bytes actually saved.
             val verification=try { context.contentResolver.openInputStream(uri) } catch(_:java.io.FileNotFoundException){null} catch(_:SecurityException){null}
-            verification?.use { BackupCodec.read(it) }
+            verification?.use { actual ->
+                val expected=temp.inputStream().use(::digest)
+                check(java.security.MessageDigest.isEqual(expected,digest(actual))) { "目标文件与导出内容不一致" }
+            }
             check(preferences.edit().putLong("last_success",System.currentTimeMillis()).commit()) { "文件已写入，但无法记录备份时间" }
         } finally { temp.delete() }
     }
@@ -29,12 +32,17 @@ class BackupManager(private val context:Context,private val repository:ScoreRepo
         val data=requireNotNull(context.contentResolver.openInputStream(uri)).use { BackupCodec.read(it) }
         PendingRestore(data,repository.restorePreview())
     }
-    suspend fun restore(pending:PendingRestore)=withContext(Dispatchers.IO) { repository.replace(pending) { writeRollback(it) };runCatching { pruneRollbacks() } }
+    suspend fun restore(pending:PendingRestore)=withContext(Dispatchers.IO) { repository.replace(pending) { writeRollback(it) } }
     suspend fun baseline()=withContext(Dispatchers.IO){repository.restorePreview()}
     suspend fun clearData(baseline:RestoreBaseline)=withContext(Dispatchers.IO){repository.clearData(baseline)}
     suspend fun clearInternalCopies()=withContext(Dispatchers.IO) {
         rollbacks.listFiles()?.forEach { check(it.delete()) { "部分内部快照未能删除" } }
         File(context.cacheDir,"reports").listFiles()?.forEach { check(it.delete()) { "部分临时报告未能删除" } }
+    }
+    private fun digest(input:java.io.InputStream):ByteArray {
+        val sha=java.security.MessageDigest.getInstance("SHA-256");val buffer=ByteArray(8192);var count=0L
+        while(true) { val n=input.read(buffer);if(n<0)break;count+=n;require(count<=BackupCodec.MAX_BYTES);sha.update(buffer,0,n) }
+        return sha.digest()
     }
     private fun writeRollback(data:DataSnapshot) {
         check(rollbacks.exists() || rollbacks.mkdirs())
@@ -42,16 +50,23 @@ class BackupManager(private val context:Context,private val repository:ScoreRepo
         try {
             // Codec closes its stream; sync occurs through a non-closing wrapper before final close.
             FileOutputStream(partial).use { file ->
-                val wrapper=object:java.io.FilterOutputStream(file){override fun close(){flush()}}
+                val wrapper=object:java.io.FilterOutputStream(file){override fun close(){flush()};override fun write(b:ByteArray,off:Int,len:Int){out.write(b,off,len)}}
                 BackupCodec.write(data,wrapper);file.fd.sync()
             }
             check(partial.renameTo(completed)) { "内部回滚快照未完成" }
-            pruneRollbacks()
+            pruneRollbacks(completed)
+            check(completed.isFile && completed.length()>0) { "内部回滚快照不可用" }
+            val descriptor=android.system.Os.open(rollbacks.absolutePath,android.system.OsConstants.O_RDONLY or android.system.OsConstants.O_DIRECTORY,0)
+            try { android.system.Os.fsync(descriptor) } finally { android.system.Os.close(descriptor) }
         } finally { partial.delete() }
     }
-    private fun pruneRollbacks() {
-        val now=System.currentTimeMillis()
-        rollbacks.listFiles()?.filter{it.extension=="json"}?.sortedByDescending{it.lastModified()}?.forEachIndexed { i,file -> if(i>=3 || now-file.lastModified()>7L*24*60*60*1000)check(file.delete()) { "无法清理过期内部快照" } }
-        rollbacks.listFiles()?.filter{it.extension=="partial" && now-it.lastModified()>24L*60*60*1000}?.forEach{it.delete()}
+    private fun pruneRollbacks(protected:File?=null) = pruneRollbackFiles(rollbacks,System.currentTimeMillis(),protected)
+}
+/** Clock corrections/future mtimes must never evict the new rollback before replacement. */
+internal fun pruneRollbackFiles(directory:File,now:Long,protected:File?=null) {
+    val otherSlots=if(protected==null)3 else 2
+    directory.listFiles()?.filter{it.extension=="json" && it!=protected}?.sortedByDescending{it.lastModified()}?.forEachIndexed { i,file ->
+        if(i>=otherSlots || now-file.lastModified()>7L*24*60*60*1000)check(file.delete()) { "无法清理过期内部快照" }
     }
+    directory.listFiles()?.filter{it.extension=="partial" && now-it.lastModified()>24L*60*60*1000}?.forEach{it.delete()}
 }

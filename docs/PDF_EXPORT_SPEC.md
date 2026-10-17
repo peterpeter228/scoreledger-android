@@ -30,3 +30,5 @@ ACTION_SEND + application/pdf + ClipData + FLAG_GRANT_READ_URI_PERMISSION；使�
 保存至少：零/一/多页、长中文、20字符昵称、30科、缺考/零分/满分变化、2种阅读器打开、
 实际微信等系统分享目标、A4打印预览截图。计算报告总行数与fixture对应，查漏行/分页重复。
 当前本包仅给规格，未提供已执行的Android PDF渲染结果，不能标此模块完成。
+
+2026-10-17源码增量：PdfDocument+StaticLayout两遍分页（正文11pt、页脚8pt），原始行source ID唯一覆盖与坐标边界检查；原生系统阅读器预览、SAF保存、FileProvider只读分享/ClipData及24h缓存清理。已写PdfRenderer仪器化测试，输出synthetic-report.pdf和first-page.png到测试App外部私有pdf-evidence子目录。尚未执行真实渲染/中文截图、两种阅读器/微信分享/打印验收，不宣称已通过。

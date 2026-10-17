@@ -35,6 +35,7 @@ import com.example.scoreledger.data.*
             }
             item {
                 RecordFilters(query,model::setQuery)
+                ReportControls(query)
                 if(result.isFailure) Text(stringResource(R.string.ui_59),color=MaterialTheme.colorScheme.error)
                 Text("${visible.size}次考试",style=MaterialTheme.typography.titleMedium)
             }

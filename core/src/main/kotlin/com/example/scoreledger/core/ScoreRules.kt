@@ -86,6 +86,16 @@ object ScoreRules {
         return ScoreSummary(total, maximum, recorded.size, scores.size, rate)
     }
 
+    /** Weighted summary of scoped exams; each exam retains the 1..30 row validation. */
+    fun summarizeGroups(groups: List<List<ScoreValue>>): ScoreSummary {
+        val summaries=groups.map(::summarize)
+        val total=summaries.sumOf{it.totalScoreMinor};val maximum=summaries.sumOf{it.totalMaxMinor}
+        val recorded=summaries.sumOf{it.recordedCount};val selected=summaries.sumOf{it.selectedCount}
+        val rate=if(recorded==0)null else BigDecimal.valueOf(total).multiply(BigDecimal(100))
+            .divide(BigDecimal.valueOf(maximum),2,RoundingMode.HALF_UP)
+        return ScoreSummary(total,maximum,recorded,selected,rate)
+    }
+
     /** Difference of unrounded rational values, rounded only for display. */
     fun percentagePointChange(previous: ScoreValue, current: ScoreValue): BigDecimal? {
         validate(previous); validate(current)

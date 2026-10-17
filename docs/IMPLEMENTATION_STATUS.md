@@ -23,3 +23,5 @@
 D05增量（00:35 UTC）：原生Canvas趋势、原值模式、可访问明细、共享筛选与core序列已经实现，IMPLEMENTED_UNVERIFIED。本地core62/Python42/static通过。Android编译/设备可视与交互验收待CI，D06备份和D07 PDF仍未实现。之前表格中“趋势NOT_STARTED”已被此增量替代。
 
 D06增量（00:41 UTC）：备份/恢复/设置源码IMPLEMENTED_UNVERIFIED；实际导入器BackupCodecTest与Room替换故障测试已写，尚未运行。Gson依赖首次解析与新安卓编译待CI。core63/Python46/static真实通过，不能替代实际JSON导入器或文件提供方/设备测试。D07仍未实现。
+
+D07增量（00:49 UTC）：原生分页PDF/预览/保存/只读分享/缓存维护已实现，IMPLEMENTED_UNVERIFIED。D06审查修复也已写入。实际本地core64/Python46/static通过。新增实际Gson JVM、Room恢复及PdfRenderer/布局仪器化测试尚未运行；无新Android编译、设备渲染截图、真实分享或支付验收结论。原先表格“PDF/备份NOT_STARTED”被此源码状态替代，不代表验收完成。

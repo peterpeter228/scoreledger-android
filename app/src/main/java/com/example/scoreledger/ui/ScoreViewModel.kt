@@ -12,6 +12,8 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     val childCounts = repository.childCounts.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val children = repository.children.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val subjects = repository.subjects.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
+    private var visibleGeneration=repository.generation.value
+    private var editorGeneration:Long?=null
     private val selected = MutableStateFlow<String?>(null)
     val selectedChild = selected.asStateFlow()
     private val filter = MutableStateFlow(RecordQuery(""))
@@ -36,9 +38,12 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     // One FIFO writer: typing, exit, submit and discard cannot overtake each other.
     private val operations = Channel<suspend () -> Unit>(Channel.UNLIMITED)
     init {
-        viewModelScope.launch { repository.generation.drop(1).collect {
-            draft.value=null;persisted.value=null;conflict.value=false
-            message.value="数据已恢复或清理，旧编辑页面已关闭"
+        viewModelScope.launch { repository.generation.collect { epoch ->
+            if(epoch!=visibleGeneration) {
+                visibleGeneration=epoch;editorGeneration=null
+                draft.value=null;persisted.value=null;conflict.value=false
+                message.value="数据已恢复或清理，旧编辑页面已关闭"
+            }
         } }
 
         viewModelScope.launch { for (operation in operations) {
@@ -61,23 +66,23 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     fun openNew() = perform {
         val child=requireNotNull(selected.value)
         val d=EntryDraft(childId=child)
-        repository.putDraft(d);persisted.value=d.encode();conflict.value=false;draft.value=d
+        repository.putDraft(d);persisted.value=d.encode();conflict.value=false;draft.value=d;editorGeneration=currentCoroutineContext()[WriteGeneration]?.value
     }
     fun openDraft(row: DraftEntity) = perform {
         check(row.childId == selected.value)
         val current=requireNotNull(repository.draft(row.id,row.childId));val d=EntryDraft.decode(current)
-        persisted.value=d.encode();conflict.value=false;draft.value=d
+        persisted.value=d.encode();conflict.value=false;draft.value=d;editorGeneration=currentCoroutineContext()[WriteGeneration]?.value
     }
     fun edit(record: ExamWithScores) = perform {
         check(record.exam.childId == selected.value)
         val existing=repository.draft(record.exam.id,record.exam.childId)
         val d=existing?.let(EntryDraft::decode) ?: EntryDraft.from(record)
-        repository.putDraft(d,existing?.payloadJson);persisted.value=d.encode();conflict.value=false;draft.value=d
+        repository.putDraft(d,existing?.payloadJson);persisted.value=d.encode();conflict.value=false;draft.value=d;editorGeneration=currentCoroutineContext()[WriteGeneration]?.value
     }
     fun change(value: EntryDraft) {
-        if(busy.value || value.id != draft.value?.id || value.childId != selected.value) return
+        if(busy.value || editorGeneration!=repository.generation.value || value.id != draft.value?.id || value.childId != selected.value) return
         draft.value=value
-        val epoch=repository.generation.value
+        val epoch=requireNotNull(editorGeneration)
         operations.trySend { withContext(WriteGeneration(epoch)) { repository.putDraft(value,persisted.value);persisted.value=value.encode();conflict.value=false } }
     }
     fun closeEditor(discard: Boolean) = perform {
@@ -103,7 +108,7 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
         val current=repository.draft(d.id,d.childId)
         check(current != null) { "草稿已提交或删除。本页输入仍保留，请返回查看最新记录。" }
         val latest=EntryDraft.decode(current)
-        draft.value=latest;persisted.value=current.payloadJson;conflict.value=false
+        draft.value=latest;editorGeneration=currentCoroutineContext()[WriteGeneration]?.value;persisted.value=current.payloadJson;conflict.value=false
     }
     fun delete(record: ExamWithScores, done: () -> Unit) = perform {
         repository.deleteExam(record.exam.id,record.exam.childId);done()
@@ -111,8 +116,9 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     fun showError(text: String) { message.value=text }
     private fun perform(block: suspend () -> Unit) {
         if(busy.value) return
+        if(visibleGeneration!=repository.generation.value) { message.value="数据已改变，请重新打开页面";return }
         busy.value=true;message.value=null
-        val epoch=repository.generation.value
+        val epoch=visibleGeneration
         operations.trySend { try { withContext(WriteGeneration(epoch)) { check(epoch==repository.generation.value) { "数据已改变，请重新打开页面" };block() } } finally { busy.value=false } }
     }
 }

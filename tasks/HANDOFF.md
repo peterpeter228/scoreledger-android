@@ -57,3 +57,10 @@ ViewModel使用FIFO操作队列，自动持久化、返回保留、显式丢弃�
 设置原生SAF JSON导出/选文件预览/明确替换确认，显示旧草稿丢弃计数、日期和行数；不重新读取已预览外部URI。导出写流关闭成功、能重开则复核后才记录时间；取消无成功提示。内部回滚先写完整fsync+rename后单事务清库写回；原值直插不走新增收费/规范化逻辑。基线数据+草稿+generation比较，single-use恢复令牌防重复，旧编辑/队列generation失效。失败保留原数据/草稿；成功明确丢弃旧草稿。内部快照最多3份/7天，partial不算完成；提供清除记录/内部副本确认和隐私帮助。
 本地实际core63、Python46、静态检查通过，evidence/d06-*.log。新增BackupCodecTest五项含共享fixtures、词法恶意样本、UTF8、巨大标量早停、500emoji转义、未来日期/空白/重名精确往返、关闭错误；新增BackupReplacementTest四项含失败前写/中途事务回滚、草稿保留、过期预览、重复恢复与旧编辑generation。这些JVM Gson/Android测试尚未运行，必须等真实CI，不将Python代替实际导入器。
 D07尚未开始。源码写入暂停，等待主线程快照后继续。
+
+## 2026-10-17 00:49 UTC · D07源码阶段快照
+原生A4 595×842 PdfDocument两遍分页，StaticLayout中文换行，正文11pt/页脚8pt，文本/趋势Canvas而非截图。共享RecordQuery限定孩子/日期/学期/类型，从一次仓储快照生成。包含筛选与实际日期范围、生成时间、记录/有效/缺考/未录入计数、core加权率/覆盖、逐科原始值/满分/状态、x/y页脚。每条成绩sourceID唯一且页面坐标边界校验，不截断。默认匿名昵称/不含备注；完整模板仅localBeta免费内测，基础PDF永久免费。系统阅读器预览、SAF保存、FileProvider reports子目录只读contentURI+ClipData系统Chooser、24h缓存维护。
+D06审查修复一并纳入：保护新回滚快照不受旧文件未来mtime误删，bulk输出避免逐字节磁盘I/O，文件与目录fsync，早期scalar/row边界验证，外部导出重开SHA256精确比对，DB共享generation及编辑器打开epoch/页面观测epoch防异步collector窗口旧草稿复活。新增未来mtime JVM回归、阻塞Main collector的Room/VM恢复回归。
+本地实际core64/Python46/static通过，evidence/d07-*.log。新增3个PdfReportTest仪器化方法：长中文/多页/唯一覆盖/隐藏字段/0与缺失和不同满分、空范围拒绝/单次无重复、真实PdfRenderer打开并输出合成报告截图。全部Android/Gson/PdfRenderer测试NOT_RUN，等待CI，不把本地业务检查代替原生验证。
+若设备测试执行，截图/报告路径：/sdcard/Android/data/com.example.scoreledger.beta.debug/files/pdf-evidence/synthetic-report-first-page.png 与 synthetic-report.pdf。需要主线程收取并目视核验中文，不预先宣称成功。2阅读器、真实分享、打印、TalkBack、大字号、真机/支付仍未验收。
+源代码写入暂停，请主线程先取得不可变快照，再反馈CI编译或审查问题进行修复。没有修改workflow/emulator脚本，没有push。

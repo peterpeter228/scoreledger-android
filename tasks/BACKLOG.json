@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "currentTask": "D06",
+  "currentTask": "D07",
   "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
   "tasks": [
     {
@@ -206,7 +206,7 @@
     {
       "id": "D07",
       "title": "可打印PDF导出",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED_UNVERIFIED",
       "dependsOn": [
         "D05",
         "D06"
@@ -225,8 +225,12 @@
         "空记录、长中文、10页样例、多机阅读/打印无裁切；取消写入不报成功。",
         "生成的报告不是Web截图；真设备和阅读器验证中文字体。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d07-core.log",
+        "evidence/d07-python.log",
+        "evidence/d07-static.log"
+      ],
+      "notes": "Native A4 PdfDocument/StaticLayout paginated report with source coverage, shared query, summary/rates, anonymous/no-notes defaults, SAF and scoped share/cache cleanup. Three actual PdfRenderer/layout instrumentation tests added NOT_RUN. Core64/Python46/static passed."
     },
     {
       "id": "D08",

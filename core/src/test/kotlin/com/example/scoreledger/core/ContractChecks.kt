@@ -119,6 +119,11 @@ fun runContractChecks(): Int {
         ScoreRules.validateExactText("😀".repeat(500),500,true,true)
         ScoreRules.validateExactText("  保留空格  ",24)
     }
+    test("report grouped summary weighted and all missing") {
+        val combined=ScoreRules.summarizeGroups(listOf(listOf(value(n=8000)),listOf(value(n=9000,m=15000),missing)))
+        equal(combined.ratePercent,"68.00");check(combined.recordedCount==2 && combined.selectedCount==3)
+        check(ScoreRules.summarizeGroups(listOf(listOf(missing))).ratePercent==null)
+    }
     println("CONTRACT_CASES_PASSED=$count")
     return count
 }

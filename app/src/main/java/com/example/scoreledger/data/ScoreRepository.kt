@@ -22,7 +22,7 @@ data class ExamInput(val id: String, val childId: String, val title: String, val
 class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: Boolean,
     private val clock: Clock = Clock.systemDefaultZone(),
     private val newId: () -> String = { UUID.randomUUID().toString() }) {
-    private val generationValue=MutableStateFlow(0L)
+    private val generationValue=db.dataGeneration
     val generation=generationValue.asStateFlow()
     private suspend fun <T> transaction(block:suspend ()->T):T = db.withTransaction {
         currentCoroutineContext()[WriteGeneration]?.let { check(it.value==generationValue.value) { "数据已恢复或清理，请重新打开页面" } }
