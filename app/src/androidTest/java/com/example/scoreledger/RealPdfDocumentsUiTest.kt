@@ -30,7 +30,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.File
-import java.util.UUID
 import java.time.LocalDate
 
 /** Real CreateDocument cancellation and retry through AOSP DocumentsUI.
