@@ -14,7 +14,7 @@ class BackupTests(unittest.TestCase):
     def test_unicode_blank(self):
         self.bad(lambda x:x['children'][0].update(nickname='\u0085\u00a0'))
     def test_negative_zero_rejected(self):
-        raw=json.dumps(self.sample).replace('8000','-0',1).encode()
+        raw=json.dumps(self.sample).replace('"scoreMinor": 8000','"scoreMinor": -0',1).encode()
         with self.assertRaises(BackupError): loads(raw)
     def test_cap_and_future_preserved(self):
         self.assertEqual(MAX_BYTES,100663296)

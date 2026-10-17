@@ -18,7 +18,7 @@ class BackupCodecTest {
     }
     @Test fun strictLexicalHostileCorpus() {
         val text=fixture().toString(Charsets.UTF_8)
-        listOf("true","\"8000\"","8e3","8000.0","9223372036854775808","-0","+1","01","NaN","Infinity").forEach { rejected(text.replaceFirst("8000",it)) }
+        listOf("true","\"8000\"","8e3","8000.0","9223372036854775808","-0","+1","01","NaN","Infinity").forEach { rejected(text.replaceFirst("\"scoreMinor\": 8000", "\"scoreMinor\": $it")) }
         listOf("TRUE","FALSE","True","1","\"false\"").forEach { rejected(text.replaceFirst("false",it)) }
         rejected(text.replaceFirst("\"format\":", "\"format\":\"scoreledger-backup\",\"f\\u006frmat\":"))
         rejected(text.replaceFirst("\"note\": \"\"","\"note\": \"\\uD800\""))
