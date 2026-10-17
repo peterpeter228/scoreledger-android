@@ -153,7 +153,14 @@ def source_run(name, expected_id):
 app_source = source_run('app', app_run_id)
 test_source = source_run('test', test_run_id)
 assert app_source['head_sha'] == test_source['head_sha'] == os.environ['GITHUB_SHA'], 'Candidate app, test APK and acceptance source commits must match'
-assert app_source['conclusion'] == test_source['conclusion'] == 'success', 'Source build was not successful'
+if app_source['conclusion'] == test_source['conclusion'] == 'success':
+    build_job = None
+else:
+    # A successful prerequisite job in this same run is independently verified;
+    # the enclosing run cannot conclude until its device matrix finishes.
+    from tools.current_round_guard import verify_build_job
+    assert app_run_id == test_run_id == os.environ['GITHUB_RUN_ID'], 'Unfinished external source run forbidden'
+    build_job = verify_build_job(root, app_run_id, app_source['head_sha'])
 apks = [{'role': role, 'path': str(p), 'bytes': p.stat().st_size,
          'sha256': hashlib.sha256(p.read_bytes()).hexdigest()}
         for role, p in zip(('app', 'instrumentation'), paths)]
@@ -170,10 +177,15 @@ data = {'repository': repository, 'artifactRunId': app_run_id,
         'packageBadging': (root / 'app-badging.txt').read_text().splitlines()[0],
         'requiredManifestSha256': hashlib.sha256(pathlib.Path('tools/required_device_acceptance.json').read_bytes()).hexdigest(),
         'apks': apks,
+        'successfulPrerequisiteBuildJob': build_job,
         'sourceCompatibilityReview': 'Separate review required for mixed app/test source runs; this script verifies identities, not source equivalence.'}
 pathlib.Path(sys.argv[1]).write_text(json.dumps(data, indent=2) + '\n')
 PY
 
+# Recheck immediately before any KVM ACL grant, not just when the job starts.
+if [ -n "${CURRENT_ROUND_DEVICE_ACCEPTANCE:-}" ]; then
+  python3 tools/current_round_guard.py "$EVIDENCE/app-badging.txt"
+fi
 if ! { [ -r /dev/kvm ] && [ -w /dev/kvm ]; }; then
   if [ "${ALLOW_KVM:-false}" = true ] && [ -e /dev/kvm ] && command -v setfacl >/dev/null; then
     sudo setfacl -m "u:$(id -un):rw" /dev/kvm

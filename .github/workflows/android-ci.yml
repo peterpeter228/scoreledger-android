@@ -49,6 +49,7 @@ jobs:
       - name: Validate acceptance gate host regressions
         run: |
           python3 tools/test_acceptance_gate.py
+          python3 tools/test_current_round_guard.py
           bash -n tools/signed_emulator_acceptance.sh
       - name: Build and JVM checks (not emulator/device testing)
         env:
@@ -110,5 +111,108 @@ jobs:
             evidence/emulator-*
             evidence/android-instrumentation.log
             app/build/reports/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # ONE_ROUND_ENABLED: final literal true below is the disable switch.
+  # Only this authorized ScoreLedger 0.2.0 correction/acceptance round, expiring
+  # 2026-10-17 23:59:59 UTC. Set it false after final acceptance; no standing KVM grant.
+  current-round-device:
+    needs: internal-apk
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.internal-apk.result == 'success' && true }}
+    permissions:
+      contents: read
+      actions: read
+    strategy:
+      fail-fast: false
+      matrix:
+        api: ['30', '26', '36']
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      CURRENT_ROUND_DEVICE_ACCEPTANCE: scoreledger-0.2.0-2026-10-17
+      ARTIFACT_RUN_ID: ${{ github.run_id }}
+      TEST_ARTIFACT_RUN_ID: ${{ github.run_id }}
+      PRIOR_APP_RUN_ID: '38991766567'
+      PRIOR_TEST_RUN_ID: '38992644559'
+      PRIOR_APP_SHA256: d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92
+      ANDROID_API: ${{ matrix.api }}
+      ALLOW_KVM: 'true'
+      RUN_REINSTALL_RETENTION: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - name: Check bounded current-round authorization
+        run: python3 tools/current_round_guard.py
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      # Device jobs never receive signing credentials and never build or re-sign.
+      - uses: actions/download-artifact@v4
+        with:
+          name: scoreledger-internal-apk
+          path: signed-input/app
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-test-reports
+          path: signed-input/test
+      - uses: actions/download-artifact@v4
+        with:
+          name: scoreledger-internal-apk
+          path: signed-input/prior-app
+          repository: ${{ github.repository }}
+          run-id: '38991766567'
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-test-reports
+          path: signed-input/prior-test
+          repository: ${{ github.repository }}
+          run-id: '38992644559'
+          github-token: ${{ github.token }}
+      - name: Pin candidate bytes to trusted build artifact metadata
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, pathlib, re
+          root=pathlib.Path('signed-input/app')
+          apks=list(root.rglob('*.apk')); metadata=list(root.rglob('*.metadata.json'))
+          assert len(apks)==len(metadata)==1, 'Expected exactly one APK/metadata pair'
+          data=json.loads(metadata[0].read_text()); apk=apks[0]
+          assert data['file']==apk.name and data['sizeBytes']==apk.stat().st_size
+          assert data['signature']=='VERIFIED_BY_APKSIGNER_FIXED_INTERNAL_BETA'
+          assert data['certificateSha256']=='bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c'
+          pin=data['sha256']; assert re.fullmatch('[0-9a-f]{64}',pin)
+          assert hashlib.sha256(apk.read_bytes()).hexdigest()==pin, 'Candidate byte hash mismatch'
+          with open(os.environ['GITHUB_ENV'],'a') as output: output.write('EXPECTED_APP_SHA256='+pin+'\n')
+          PY
+      - name: Record source runs and independently successful prerequisite build
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/signed-device
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            --jq '{id,head_sha,repository:.repository.full_name,html_url,event,path,status,conclusion}' \
+            > evidence/signed-device/app-source-run.json
+          cp evidence/signed-device/app-source-run.json evidence/signed-device/test-source-run.json
+          gh api --paginate --slurp "repos/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID/jobs?per_page=100" \
+            > evidence/signed-device/current-build-jobs.json
+          for role in app test; do
+            if [ "$role" = app ]; then id="$PRIOR_APP_RUN_ID"; else id="$PRIOR_TEST_RUN_ID"; fi
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id" \
+              --jq '{id,head_sha,repository:.repository.full_name,html_url,status,conclusion}' \
+              > "evidence/signed-device/prior-$role-source-run.json"
+          done
+      - name: Execute exact signed candidate on disposable AOSP emulator
+        run: bash tools/signed_emulator_acceptance.sh
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: current-round-signed-device-api-${{ matrix.api }}
+          path: evidence/signed-device/
           if-no-files-found: warn
           retention-days: 14

@@ -28,3 +28,11 @@ Mandatory files include all named UI screenshots, rendered native PDF and its fi
 The 70-case docs/CANDIDATE_ACCEPTANCE_MAPPING.json starts every candidate case NOT_RUN, preserving historical evidence only as references. Fill candidate binding from artifact-provenance.json and write specific candidate assertion/file links, result and remaining gaps after execution. A 40-method suite is not 40 or 70 business-case passes. The historical evidence/final-acceptance-mapping.json remains historical and must not be presented as v0.2 acceptance.
 
 Local checks: python3 tools/test_acceptance_gate.py; bash -n tools/signed_emulator_acceptance.sh. These prove host parser behavior/syntax only, not Android compilation or runtime.
+
+## Bounded automatic current round
+
+The android-ci.yml current-round-device job runs the same signed-artifact gate after internal-apk succeeds, on API30/26/36 with fail-fast disabled. It has only contents:read and actions:read, receives no signing secrets, and downloads the current run's immutable artifacts. The expected candidate hash comes from build-generated signed metadata and is checked against downloaded bytes before the ordinary signature/hash gate.
+
+ONE_ROUND_ENABLED is the final literal true in that job's if expression. Change it to false after final acceptance. This enables only the authorized ScoreLedger 0.2.0 correction/test round, not future general testing. A UTC expiry guard runs at job entry and again immediately before any KVM access grant; it rejects execution on or after 2026-10-18T00:00:00Z. Only trusted main push/manual build events are accepted. Existing manual acceptance workflow remains intact.
+
+Because an enclosing workflow cannot finish before its device jobs, same-run automatic acceptance verifies GitHub's internal-apk job is completed/success and has the exact current run ID/head SHA, rather than incorrectly requiring that enclosing run already have concluded. External source runs still must be successful. Candidate app/test/acceptance commits must remain identical in both paths. The successful prerequisite job metadata is retained in artifact-provenance.json.
