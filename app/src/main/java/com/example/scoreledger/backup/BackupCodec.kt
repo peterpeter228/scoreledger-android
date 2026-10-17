@@ -13,11 +13,12 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-enum class BackupFailure { INVALID, VERSION, TOO_LARGE, ACCESS }
+enum class BackupFailure { INVALID, VERSION, TOO_LARGE, ACCESS, ROLLBACK }
 class BackupException(val reason:BackupFailure=BackupFailure.INVALID) : IOException(when(reason) {
     BackupFailure.INVALID->"备份格式无效或损坏，请重新导出完整备份"
     BackupFailure.VERSION->"不支持此备份版本，请使用版本1备份"
     BackupFailure.TOO_LARGE->"备份超过96MiB上限，请选择受支持的备份"
+    BackupFailure.ROLLBACK->"无法完成恢复前副本，未替换原记录。请检查本机存储空间；先导出备份后重试。"
     BackupFailure.ACCESS->"无法完整读取文件，请检查提供方访问权限后重试"
 })
 /** Streaming v1 only. Never reflects entities, creates a JSON DOM, or logs input diagnostics. */

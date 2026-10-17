@@ -52,7 +52,8 @@
     "com.example.scoreledger.ViewModelLocatorRecoveryTest#pendingSavedRecordNavigationClearsOnChildSwitchAndChildDeletion",
     "com.example.scoreledger.ViewModelLocatorRecoveryTest#replacementGenerationClearsEditorAndStaleLocatorFallsBackWithoutResurrectingDraft",
     "com.example.scoreledger.ReportRevisionFenceTest#changedScoreWithSameQueryRejectsOldResultButPendingSaveKeepsSnapshot",
-    "com.example.scoreledger.MainActivityDiskJourneyTest#genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline"
+    "com.example.scoreledger.MainActivityDiskJourneyTest#genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline",
+    "com.example.scoreledger.RepositoryIntegrityTest#freeChildRecordingStillEnforcesRealResourceLimitWithoutMutation"
   ],
   "requiredFiles": [
     "ui-artifacts/synthetic-01-entry-before-save.png",
@@ -73,6 +74,10 @@
     "ui-artifacts/trend-selected-earlier.png",
     "ui-artifacts/main-disk-saved-detail.png",
     "ui-artifacts/main-disk-reopened-detail.png",
-    "ui-artifacts/main-disk-integrity.json"
+    "ui-artifacts/main-disk-integrity.json",
+    "ui-artifacts/main-disk-entry-ime.png",
+    "ui-artifacts/real-saf-open-document.png",
+    "ui-artifacts/real-saf-open-document.xml",
+    "ui-artifacts/main-disk-home.png"
   ]
 }

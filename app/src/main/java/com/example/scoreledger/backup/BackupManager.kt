@@ -67,7 +67,7 @@ class BackupManager(context:Context,private val repository:ScoreRepository) {
         return sha.digest()
     }
     private fun writeRollback(data:DataSnapshot) {
-        check(rollbacks.exists() || rollbacks.mkdirs())
+        if(!(rollbacks.exists() || rollbacks.mkdirs()) || !rollbacks.isDirectory)throw BackupException(BackupFailure.ROLLBACK)
         val id=UUID.randomUUID().toString();val partial=File(rollbacks,"$id.partial");val completed=File(rollbacks,"${System.currentTimeMillis()}-$id.json")
         try {
             // Codec closes its stream; sync occurs through a non-closing wrapper before final close.
@@ -82,7 +82,7 @@ class BackupManager(context:Context,private val repository:ScoreRepository) {
             check(rollbacks.isDirectory) { "内部快照目录不可用" }
             val descriptor=android.system.Os.open(rollbacks.absolutePath,android.system.OsConstants.O_RDONLY,0)
             try { android.system.Os.fsync(descriptor) } finally { android.system.Os.close(descriptor) }
-        } finally { partial.delete() }
+        } catch(error:Exception) { throw BackupException(BackupFailure.ROLLBACK) } finally { partial.delete() }
     }
     private fun pruneRollbacks(protectedFile:File?=null) = pruneRollbackFiles(rollbacks,System.currentTimeMillis(),protectedFile)
 }

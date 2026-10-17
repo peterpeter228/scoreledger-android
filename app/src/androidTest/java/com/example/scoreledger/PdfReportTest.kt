@@ -45,9 +45,17 @@ class PdfReportTest {
             renderer.openPage(0).use{page ->
                 assertEquals(595,page.width);assertEquals(842,page.height)
                 val bitmap=Bitmap.createBitmap(1190,1684,Bitmap.Config.ARGB_8888)
-                try {page.render(bitmap,null,null,PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                try {
+                    // PdfRenderer preserves untouched pixels; production preview also initializes white.
+                    bitmap.eraseColor(android.graphics.Color.WHITE)
+                    page.render(bitmap,null,null,PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                     File(evidence,"synthetic-report-first-page.png").outputStream().use{assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG,100,it))}
-                    assertTrue(bitmap.getPixel(100,100)!=android.graphics.Color.TRANSPARENT)
+                    assertEquals(android.graphics.Color.WHITE,bitmap.getPixel(10,10))
+                    val pixels=IntArray(bitmap.width*bitmap.height)
+                    bitmap.getPixels(pixels,0,bitmap.width,0,0,bitmap.width,bitmap.height)
+                    val ink=pixels.count { color -> android.graphics.Color.alpha(color)>0 &&
+                        android.graphics.Color.red(color)<180 && android.graphics.Color.green(color)<180 && android.graphics.Color.blue(color)<180 }
+                    assertTrue("Native A4 render must contain substantial visible text/lines, not a blank white page: $ink",ink>1000)
                 }finally{bitmap.recycle()}
             }
         }

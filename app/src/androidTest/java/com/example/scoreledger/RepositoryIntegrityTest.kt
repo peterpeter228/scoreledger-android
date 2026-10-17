@@ -81,12 +81,39 @@ class RepositoryIntegrityTest {
                 values=listOf(ScoreValue(s.id,ScoreStatus.SCORED,8000,10000)))
             r.saveExam(input,false)
             repeat(2){r.saveExam(input.copy(id=UUID.randomUUID().toString()),false)}
+            // Retain the historical method ID used by the acceptance manifest. Three
+            // exams are no longer a commercial quota; basic additions remain free.
+            val three=r.snapshot()
             r.saveExam(input,false)
-            val before=r.snapshot()
-            rejected {r.saveExam(input.copy(id=UUID.randomUUID().toString()),false)}
+            assertEquals(three,r.snapshot())
+            assertEquals(3,db.dao().examCount());assertEquals(3,db.dao().scoreCount())
             rejected {r.saveExam(input.copy(values=listOf(ScoreValue(UUID.randomUUID().toString(),ScoreStatus.SCORED,8000,10000))),true)}
-            assertEquals(before,r.snapshot())
+            assertEquals(three,r.snapshot())
+            val fourth=input.copy(id=UUID.randomUUID().toString(),title="第四场免费记录")
+            r.saveExam(fourth,false)
+            assertEquals(4,db.dao().examCount());assertEquals(4,db.dao().scoreCount())
+            assertEquals(fourth.title,db.dao().exam(fourth.id)!!.title)
+            assertEquals(8000L,db.dao().scores(fourth.id).single().scoreMinor)
+            val four=r.snapshot()
+            r.saveExam(fourth,false)
+            assertEquals(four,r.snapshot())
+            rejected {r.saveExam(fourth.copy(title="同ID不同内容"),false)}
+            rejected {r.saveExam(input.copy(values=listOf(ScoreValue(UUID.randomUUID().toString(),ScoreStatus.SCORED,8000,10000))),true)}
+            assertEquals(four,r.snapshot())
         } finally {db.close()}
+    }
+    @Test fun freeChildRecordingStillEnforcesRealResourceLimitWithoutMutation() = runBlocking {
+        val db=database()
+        try {
+            val r=ScoreRepository(db,false,clock)
+            val ids=(1..20).map { r.addChild("合成资源测试$it") }
+            assertEquals(20,ids.distinct().size)
+            assertEquals(20,db.dao().childCount())
+            val before=r.snapshot()
+            rejected { r.addChild("超出资源上限的合成孩子") }
+            assertEquals(before,r.snapshot())
+            assertEquals(20,db.dao().childCount())
+        } finally { db.close() }
     }
     @Test fun scoreInsertionFailureRollsBackCreationAndEdit() = runBlocking {
         val db=database()

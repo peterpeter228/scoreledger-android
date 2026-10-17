@@ -3,6 +3,7 @@ package com.example.scoreledger
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -14,6 +15,7 @@ class RecreationHostActivity:ComponentActivity() {
     companion object { var testRepository:ScoreRepository?=null; var testServices:UiServices?=null; var testRegistryOwner:androidx.activity.result.ActivityResultRegistryOwner?=null }
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         val repository=requireNotNull(testRepository)
         val services=requireNotNull(testServices) { "Isolated UI managers are mandatory in the test host" }
         setContent {

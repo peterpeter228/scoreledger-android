@@ -1,6 +1,9 @@
 package com.example.scoreledger
 
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.graphics.Bitmap
+import android.graphics.Rect
+import android.view.accessibility.AccessibilityWindowInfo
 import android.os.Build
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
@@ -35,6 +38,23 @@ class MainActivityDiskJourneyTest {
         val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         try{file.outputStream().use{check(bitmap.compress(Bitmap.CompressFormat.PNG,100,it))}}finally{bitmap.recycle()}
     }
+    private fun assertVisibleAboveRealIme(scenario:ActivityScenario<MainActivity>,scoreTag:String) {
+        val automation=instrumentation.uiAutomation
+        val flags=automation.serviceInfo.flags
+        automation.serviceInfo=automation.serviceInfo.apply { this.flags=this.flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS }
+        try {
+            fun keyboardBounds():Rect? = automation.windows.firstOrNull { it.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+                ?.let { window->Rect().also { window.getBoundsInScreen(it) } }?.takeUnless { it.isEmpty }
+            compose.waitUntil(10000){keyboardBounds()!=null}
+            val ime=requireNotNull(keyboardBounds())
+            val offset=IntArray(2);scenario.onActivity { it.window.decorView.getLocationOnScreen(offset) }
+            val save=compose.onNodeWithTag("save-record").assertIsDisplayed().fetchSemanticsNode().boundsInWindow
+            val score=compose.onNodeWithTag(scoreTag).assertIsDisplayed().fetchSemanticsNode().boundsInWindow
+            assertTrue("Save action overlaps real IME",save.bottom+offset[1]<=ime.top+1)
+            assertTrue("Focused score overlaps real IME",score.bottom+offset[1]<=ime.top+1)
+            capture("main-disk-entry-ime")
+        } finally { automation.serviceInfo=automation.serviceInfo.apply { this.flags=flags } }
+    }
     @Test fun genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline() {
         val context=instrumentation.targetContext;val args=InstrumentationRegistry.getArguments()
         check(args.getString("realMainJourney")=="true" && args.getString("allowPersistentSyntheticData")=="true")
@@ -53,7 +73,8 @@ class MainActivityDiskJourneyTest {
         check(before.data.children.none{it.nickname==nickname})
         var ownedId:String?=null;var examId:String?=null;var verified=false
         try {
-            ActivityScenario.launch(MainActivity::class.java).use {
+            ActivityScenario.launch(MainActivity::class.java).use { scenario ->
+              try {
                 compose.onNodeWithText("设置").performClick()
                 item("settings-list",hasText("孩子档案")).performClick()
                 item("children-list",hasText("创建孩子档案")).performClick()
@@ -70,7 +91,8 @@ class MainActivityDiskJourneyTest {
                 item("entry-list",hasText("修改考试信息")).performClick()
                 item("entry-list",hasText("考试名称")).performTextReplacement(title)
                 item("entry-list",hasText("本次年级（可选）")).performTextReplacement("本次合成年级")
-                item("entry-list",hasTestTag("score-${subject.id}")).performTextReplacement("８５．５")
+                item("entry-list",hasTestTag("score-${subject.id}")).performClick().performTextReplacement("８５．５")
+                assertVisibleAboveRealIme(scenario,"score-${subject.id}")
                 compose.onNodeWithTag("save-record").performClick()
                 compose.waitUntil(10000){compose.onAllNodesWithTag("detail-list").fetchSemanticsNodes().isNotEmpty()}
                 item("detail-list",hasText(title)).assertExists()
@@ -79,9 +101,12 @@ class MainActivityDiskJourneyTest {
                 assertEquals(8550L,runBlocking{repository.snapshot()}.scores.single{it.examId==examId}.scoreMinor)
                 capture("main-disk-saved-detail")
                 item("detail-list",hasText("返回记录")).performClick()
+                compose.onNodeWithTag("home-list").assertExists()
+                capture("main-disk-home")
                 item("home-list",hasTestTag("all-records")).performClick()
                 item("history-list",hasTestTag("record-$examId")).performClick()
                 item("detail-list",hasText(title)).assertExists()
+              } catch(failure:Throwable) { runCatching { capture("main-disk-failure-recording") };throw failure }
             }
             // A fresh Room connection independently reads the actual app database.
             val disk=ScoreDatabase.create(context)
@@ -93,6 +118,7 @@ class MainActivityDiskJourneyTest {
                 assertNull(disk.dao().draft(exam.id,exam.childId))
             } } finally { disk.close() }
             ActivityScenario.launch(MainActivity::class.java).use {
+              try {
                 val originalName=before.data.children.first().nickname
                 compose.waitUntil(10000){compose.onAllNodesWithText(originalName).fetchSemanticsNodes().isNotEmpty()}
                 compose.onNodeWithText(originalName).performClick()
@@ -102,6 +128,7 @@ class MainActivityDiskJourneyTest {
                 item("detail-list",hasText(title)).assertExists()
                 item("detail-list",hasText("得分 85.5")).assertExists()
                 capture("main-disk-reopened-detail")
+              } catch(failure:Throwable) { runCatching { capture("main-disk-failure-reopen") };throw failure }
             }
             verified=true
         } finally {

@@ -58,7 +58,10 @@ class BackupDialogFailureTest {
             compose.waitUntil(10000){registry.code!=null}
             instrumentation.runOnMainSync{registry.dispatchResult(requireNotNull(registry.code),Activity.RESULT_OK,Intent().setData(Uri.fromFile(fixture)))}
             compose.waitUntil(10000){compose.onAllNodesWithText("确认替换并丢弃旧草稿").fetchSemanticsNodes().isNotEmpty()}
-            compose.onNodeWithText("确认替换并丢弃旧草稿").performClick();waitError()
+            compose.onNodeWithText("确认替换并丢弃旧草稿").performClick()
+            compose.waitUntil(10000){compose.onAllNodesWithText("无法完成恢复前副本",substring=true).fetchSemanticsNodes().isNotEmpty()}
+            compose.onNodeWithText("无法完成恢复前副本",substring=true).performScrollTo().assertIsDisplayed()
+            compose.onNodeWithText("先导出备份后重试",substring=true).assertExists()
             compose.onNodeWithText("确认替换并丢弃旧草稿").assertDoesNotExist();assertEquals(before,runBlocking{r.restorePreview()})
         }finally{db.close();isolated.cleanup()}
     }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.*
@@ -112,7 +113,18 @@ private fun valueLabel(point: TrendPoint):String = when(point.value?.status) {
     val color=MaterialTheme.colorScheme.primary;val grid=MaterialTheme.colorScheme.outlineVariant
     Column {
         Row(Modifier.fillMaxWidth().height(220.dp)) {
-            Column(Modifier.fillMaxHeight().widthIn(min=36.dp).padding(vertical=16.dp),verticalArrangement=Arrangement.SpaceBetween) { listOf("100","75","50","25","0").forEach { Text(it,style=MaterialTheme.typography.bodySmall) } }
+            // Center each label on the same grid coordinate used by the Canvas, including endpoints.
+            Layout(modifier=Modifier.fillMaxHeight().widthIn(min=36.dp),content={
+                listOf("100","75","50","25","0").forEach { Text(it,style=MaterialTheme.typography.bodySmall) }
+            }) { measurables,constraints ->
+                val labels=measurables.map { it.measure(constraints.copy(minWidth=0,minHeight=0)) }
+                val width=maxOf(constraints.minWidth,labels.maxOf { it.width })
+                val height=constraints.maxHeight
+                val margin=16.dp.roundToPx()
+                layout(width,height) { labels.forEachIndexed { index,label ->
+                    label.placeRelative(0,margin+(height-2*margin)*index/4-label.height/2)
+                } }
+            }
             Canvas(Modifier.weight(1f).fillMaxHeight().semantics { contentDescription="得分率趋势，纵轴0至100。可通过下方考试明细选择并读取每个点。" }
                 .pointerInput(points) { detectTapGestures { offset -> val width=(size.width-32.dp.toPx()).coerceAtLeast(1f)
                     pick(if(points.size==1) 0 else (((offset.x-16.dp.toPx())/width)*(points.size-1)).roundToInt().coerceIn(points.indices)) } }) {
