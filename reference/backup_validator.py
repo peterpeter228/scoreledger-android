@@ -4,7 +4,7 @@ import json, re, uuid
 from datetime import date, datetime
 from typing import Any
 
-MAX_BYTES = 20 * 1024 * 1024
+MAX_BYTES = 96 * 1024 * 1024
 class BackupError(ValueError): pass
 
 def fail(message: str) -> None:
@@ -26,6 +26,7 @@ def _integer(n: Any, low: int, high: int) -> None:
 def _text(s: Any, maximum: int, minimum: int = 0, note: bool = False) -> None:
     if type(s) is not str or not minimum <= len(s) <= maximum: fail('invalid text length')
     if minimum and not s.strip(): fail('empty required text')
+    if any(0xD800 <= ord(c) <= 0xDFFF for c in s): fail('unpaired surrogate')
     if any(ord(c) < 32 and not (note and c in '\n\t') for c in s): fail('control character')
 
 def _uuid(s: Any) -> None:
@@ -93,7 +94,7 @@ def loads(raw: bytes) -> dict:
     if not isinstance(raw,bytes) or len(raw) > MAX_BYTES: fail('backup too large or wrong input type')
     try:
         text=raw.decode('utf-8-sig')
-        value=json.loads(text,object_pairs_hook=_pairs,parse_constant=lambda _: fail('non-finite number'))
+        value=json.loads(text,object_pairs_hook=_pairs,parse_constant=lambda _: fail('non-finite number'),parse_int=lambda n: fail('negative zero') if n=='-0' else int(n))
         return validate(value)
     except (UnicodeDecodeError,json.JSONDecodeError,RecursionError) as exc:
         raise BackupError('invalid JSON/encoding/depth') from exc

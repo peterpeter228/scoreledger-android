@@ -5,6 +5,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ScoreDao {
+    @Query("SELECT * FROM drafts ORDER BY id") suspend fun allDrafts(): List<DraftEntity>
+    @Query("DELETE FROM drafts") suspend fun clearDrafts()
+    @Query("DELETE FROM scores") suspend fun clearScores()
+    @Query("DELETE FROM exams") suspend fun clearExams()
+    @Query("DELETE FROM subjects") suspend fun clearSubjects()
+    @Query("DELETE FROM children") suspend fun clearChildren()
     @Query("SELECT * FROM children ORDER BY archived, createdAt, id")
     fun observeChildren(): Flow<List<ChildEntity>>
     @Query("SELECT * FROM subjects ORDER BY sortOrder, name, id")

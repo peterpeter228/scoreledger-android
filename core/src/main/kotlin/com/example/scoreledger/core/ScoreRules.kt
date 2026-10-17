@@ -124,7 +124,20 @@ object ScoreRules {
         return date
     }
 
+    /** Exact-text import validation; never normalizes historical snapshots. */
+    fun validateExactText(value: String, maximum: Int, allowEmpty: Boolean = false, note: Boolean = false) {
+        var i=0
+        while(i<value.length) {
+            val c=value[i]
+            if(Character.isHighSurrogate(c)) { require(i+1<value.length && Character.isLowSurrogate(value[i+1])) { "包含无效字符" };i+=2 }
+            else { require(!Character.isLowSurrogate(c)) { "包含无效字符" };i++ }
+        }
+        require(value.codePointCount(0,value.length)<=maximum) { "内容过长" }
+        require(allowEmpty || value.any { !it.isWhitespace() && !Character.isSpaceChar(it) && it!='\u0085' }) { "内容不能为空" }
+        require(value.none { it.code<32 && !(note && (it=='\n' || it=='\t')) }) { "包含不支持的控制字符" }
+    }
     fun validateText(value: String, maxCodePoints: Int, allowEmpty: Boolean = false): String {
+        validateExactText(value, maxCodePoints, allowEmpty)
         val text = value.trim()
         require(allowEmpty || text.isNotEmpty()) { "内容不能为空" }
         require(text.codePointCount(0, text.length) <= maxCodePoints) { "内容过长" }

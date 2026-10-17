@@ -1,0 +1,51 @@
+test_absent_zero (test_contracts.BackupTests.test_absent_zero) ... ok
+test_bad_encoding (test_contracts.BackupTests.test_bad_encoding) ... ok
+test_bad_leap_day (test_contracts.BackupTests.test_bad_leap_day) ... ok
+test_bad_stamp (test_contracts.BackupTests.test_bad_stamp) ... ok
+test_bad_uuid (test_contracts.BackupTests.test_bad_uuid) ... ok
+test_blank_name (test_contracts.BackupTests.test_blank_name) ... ok
+test_bom_accepted (test_contracts.BackupTests.test_bom_accepted) ... ok
+test_boolean_integer (test_contracts.BackupTests.test_boolean_integer) ... ok
+test_boolean_version (test_contracts.BackupTests.test_boolean_version) ... ok
+test_cap_and_future_preserved (test_contracts.BackupTests.test_cap_and_future_preserved) ... ok
+test_control_character (test_contracts.BackupTests.test_control_character) ... ok
+test_duplicate_child (test_contracts.BackupTests.test_duplicate_child) ... ok
+test_duplicate_exam (test_contracts.BackupTests.test_duplicate_exam) ... ok
+test_duplicate_json_key (test_contracts.BackupTests.test_duplicate_json_key) ... ok
+test_duplicate_score (test_contracts.BackupTests.test_duplicate_score) ... ok
+test_duplicate_subject (test_contracts.BackupTests.test_duplicate_subject) ... ok
+test_empty (test_contracts.BackupTests.test_empty) ... ok
+test_entitlement_injection (test_contracts.BackupTests.test_entitlement_injection) ... ok
+test_float_integer (test_contracts.BackupTests.test_float_integer) ... ok
+test_missing_field (test_contracts.BackupTests.test_missing_field) ... ok
+test_missing_zero (test_contracts.BackupTests.test_missing_zero) ... ok
+test_name_limit (test_contracts.BackupTests.test_name_limit) ... ok
+test_nan (test_contracts.BackupTests.test_nan) ... ok
+test_negative (test_contracts.BackupTests.test_negative) ... ok
+test_negative_zero_rejected (test_contracts.BackupTests.test_negative_zero_rejected) ... ok
+test_no_exam_rows (test_contracts.BackupTests.test_no_exam_rows) ... ok
+test_orphan_exam (test_contracts.BackupTests.test_orphan_exam) ... ok
+test_orphan_score_exam (test_contracts.BackupTests.test_orphan_score_exam) ... ok
+test_orphan_score_subject (test_contracts.BackupTests.test_orphan_score_subject) ... ok
+test_over_max (test_contracts.BackupTests.test_over_max) ... ok
+test_oversized_collection (test_contracts.BackupTests.test_oversized_collection) ... ok
+test_oversized_file (test_contracts.BackupTests.test_oversized_file) ... ok
+test_repeat_restore_model_idempotent (test_contracts.BackupTests.test_repeat_restore_model_idempotent) ... ok
+test_roundtrip (test_contracts.BackupTests.test_roundtrip) ... ok
+test_scored_null (test_contracts.BackupTests.test_scored_null) ... ok
+test_sql_name_is_data (test_contracts.BackupTests.test_sql_name_is_data) ... ok
+test_timestamp_order (test_contracts.BackupTests.test_timestamp_order) ... ok
+test_truncated (test_contracts.BackupTests.test_truncated) ... ok
+test_unicode_blank (test_contracts.BackupTests.test_unicode_blank) ... ok
+test_unknown_status (test_contracts.BackupTests.test_unknown_status) ... ok
+test_unknown_version (test_contracts.BackupTests.test_unknown_version) ... ok
+test_unpaired_surrogates (test_contracts.BackupTests.test_unpaired_surrogates) ... ok
+test_valid (test_contracts.BackupTests.test_valid) ... ok
+test_wrong_format (test_contracts.BackupTests.test_wrong_format) ... ok
+test_zero_max (test_contracts.BackupTests.test_zero_max) ... ok
+test_zero_valid (test_contracts.BackupTests.test_zero_valid) ... ok
+
+----------------------------------------------------------------------
+Ran 46 tests in 0.034s
+
+OK

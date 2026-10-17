@@ -19,3 +19,8 @@
 - Added shared scoped filters, stable core trend records, missing/scope discontinuities, fixed percentage axis and original-value mode.
 - Added accessible ordered values and point selection, exact core changes and total-comparison explanation; no inferred ability.
 - Fixed draft conflict persistence wording. Local core62/Python42/static passed; Android/device not run for D05.
+
+### 2026-10-17 D06 backup and restore (source, CI verification pending)
+- Implemented strict bounded streaming Gson v1 JSON, native SAF and explicit replacement preview, precise import semantics and immutable pending data.
+- Added pre-delete completed internal rollback, atomic replacement, stale baseline/replay/editor protection, explicit draft discard, settings/cleanup/privacy and backup success timestamp.
+- Recorded capacity/Unicode/future-date/parser ADR. Added actual importer JVM and Room fault tests (not run). Local core63/Python46/static passed.

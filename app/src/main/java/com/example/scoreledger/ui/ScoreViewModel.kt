@@ -36,6 +36,11 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     // One FIFO writer: typing, exit, submit and discard cannot overtake each other.
     private val operations = Channel<suspend () -> Unit>(Channel.UNLIMITED)
     init {
+        viewModelScope.launch { repository.generation.drop(1).collect {
+            draft.value=null;persisted.value=null;conflict.value=false
+            message.value="数据已恢复或清理，旧编辑页面已关闭"
+        } }
+
         viewModelScope.launch { for (operation in operations) {
             try { operation() } catch(e: CancellationException) { throw e }
             catch(e: Exception) { if(e is DraftConflictException) conflict.value=true;message.value=e.message ?: "操作未完成，请重试" }
@@ -72,7 +77,8 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     fun change(value: EntryDraft) {
         if(busy.value || value.id != draft.value?.id || value.childId != selected.value) return
         draft.value=value
-        operations.trySend { repository.putDraft(value,persisted.value);persisted.value=value.encode();conflict.value=false }
+        val epoch=repository.generation.value
+        operations.trySend { withContext(WriteGeneration(epoch)) { repository.putDraft(value,persisted.value);persisted.value=value.encode();conflict.value=false } }
     }
     fun closeEditor(discard: Boolean) = perform {
         val d=requireNotNull(draft.value)
@@ -106,6 +112,7 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     private fun perform(block: suspend () -> Unit) {
         if(busy.value) return
         busy.value=true;message.value=null
-        operations.trySend { try { block() } finally { busy.value=false } }
+        val epoch=repository.generation.value
+        operations.trySend { try { withContext(WriteGeneration(epoch)) { check(epoch==repository.generation.value) { "数据已改变，请重新打开页面" };block() } } finally { busy.value=false } }
     }
 }

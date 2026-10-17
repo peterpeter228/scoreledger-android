@@ -46,6 +46,8 @@ android {
     }
     kotlinOptions { jvmTarget = "17" }
     testOptions { unitTests.isReturnDefaultValues = true }
+    sourceSets.getByName("test").resources.srcDir(rootProject.file("fixtures"))
+    sourceSets.getByName("androidTest").assets.srcDir(rootProject.file("fixtures"))
 }
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
 val verifyCommercialRelease by tasks.registering(Exec::class) {
@@ -56,6 +58,7 @@ tasks.matching { it.name == "prePlayReleaseBuild" || it.name == "preLocalBetaRel
     .configureEach { dependsOn(verifyCommercialRelease) }
 dependencies {
     implementation(project(":core"))
+    implementation("com.google.code.gson:gson:2.14.0")
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.activity:activity-compose:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")

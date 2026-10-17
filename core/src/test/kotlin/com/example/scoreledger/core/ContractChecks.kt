@@ -113,6 +113,12 @@ fun runContractChecks(): Int {
         val points=TrendRules.points(listOf(r,r.copy(id="b",context=context.copy(term="other"))),"child-a",value().subjectId)
         check(!TrendRules.connects(points[0],points[1]) && TrendRules.change(points[0],points[1])==null)
     }
+    test("reject unpaired local and imported unicode") {
+        rejects { ScoreRules.validateText("\uD800",24) };rejects { ScoreRules.validateExactText("\uDC00",30) }
+        rejects { ScoreRules.validateExactText("\u0085\u00a0",24) }
+        ScoreRules.validateExactText("😀".repeat(500),500,true,true)
+        ScoreRules.validateExactText("  保留空格  ",24)
+    }
     println("CONTRACT_CASES_PASSED=$count")
     return count
 }

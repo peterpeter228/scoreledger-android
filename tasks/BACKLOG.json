@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "currentTask": "D05",
+  "currentTask": "D06",
   "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
   "tasks": [
     {
@@ -173,7 +173,7 @@
     {
       "id": "D06",
       "title": "备份恢复和安全设置",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED_UNVERIFIED",
       "dependsOn": [
         "D01",
         "D04"
@@ -196,8 +196,12 @@
         "新安装恢复逐表相等；损坏/超限/取消/存储满/重复恢复/事务故障用例通过。",
         "JSON不含权益、密钥、标识或文件路径；拒绝未确认覆盖。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d06-core.log",
+        "evidence/d06-python.log",
+        "evidence/d06-static.log"
+      ],
+      "notes": "Strict streamed Gson2.14.0 backup codec, SAF preview/replace/settings, completed internal rollback and transactional replacement, stale/repeat protection. Core63/Python46/static passed; actual parser/JVM and Room Android tests NOT_RUN pending CI."
     },
     {
       "id": "D07",

@@ -48,7 +48,7 @@ fun StarterScreen(model: ScoreViewModel) {
                     item { Text(stringResource(R.string.ui_44),style=MaterialTheme.typography.headlineMedium) }
                     item { Button(onClick={page="孩子"},modifier=Modifier.fillMaxWidth()){Text("孩子档案 · ${children.size}/20")}}
                     item { OutlinedButton(onClick={page="科目"},modifier=Modifier.fillMaxWidth()){Text("科目管理 · ${subjects.size}/100")}}
-                    item { Text(stringResource(R.string.ui_45),style=MaterialTheme.typography.titleLarge);Text(stringResource(R.string.ui_46)) }
+                    item { BackupSettings() }
                     item { Text(stringResource(R.string.ui_47)) }
                     item { Text("${BuildConfig.VERSION_NAME} · ${if(BuildConfig.INTERNAL_BETA) "免费内测，未开通付费" else "开发版，购买不可用"}") }
                     item { Text(stringResource(R.string.ui_48)) }

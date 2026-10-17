@@ -79,4 +79,16 @@
     <string name="trend_scope_note">横轴按考试顺序排列，同日考试分别展示。缺考、未录入、未选科和范围变化处断线；不平滑、不预测。得分率不是能力评价，试卷难度和范围可能不同。</string>
     <string name="trend_values">可访问的原值明细</string>
     <string name="trend_chart_description">考试顺序趋势图。点按查看记录；全部日期、考试名、分数和缺失状态见下方原值明细。</string>
+    <string name="backup_title">备份、恢复与数据管理</string>
+    <string name="backup_export">导出 JSON 备份（免费）</string>
+    <string name="backup_restore">选择备份并预览恢复（免费）</string>
+    <string name="backup_privacy">隐私：记录仅保存在本机，不注册、不云同步、不使用广告分析，不申请全盘访问权限。JSON备份为明文，不是加密文件。通过系统选择器选定云盘或分享目标，是你主动将文件交给该服务。</string>
+    <string name="backup_help">帮助：卸载通常会删除本机数据，请定期导出并保管备份。PDF无法恢复数据。系统或厂商换机不能替代备份。恢复仅完整替换，不合并；备份不含草稿或购买权益。内部快照最多保留3份、7天，仅用于本机回滚准备，不是丢机或卸载后的备份。</string>
+    <string name="backup_clear">清除本机全部记录</string>
+    <string name="backup_cleanup">清理内部快照与临时报告</string>
+    <string name="backup_busy">正在处理，请勿重复操作…</string>
+    <string name="backup_warning">备份含全部孩子昵称和成绩，为未加密明文。请在系统选择器选择可信位置；选择第三方文件提供方会将文件交给该服务。备份不包含草稿和购买权益。</string>
+    <string name="backup_choose">选择保存位置</string>
+    <string name="backup_confirm">预览并确认完整替换</string>
+    <string name="backup_replace">确认替换并丢弃旧草稿</string>
 </resources>

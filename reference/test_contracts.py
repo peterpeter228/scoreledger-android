@@ -8,6 +8,19 @@ class BackupTests(unittest.TestCase):
     def bad(self, change):
         x=copy.deepcopy(self.sample);change(x)
         with self.assertRaises(BackupError): validate(x)
+    def test_unpaired_surrogates(self):
+        self.bad(lambda x:x['children'][0].update(nickname='\ud800'))
+        self.bad(lambda x:x['exams'][0].update(note='\udc00'))
+    def test_unicode_blank(self):
+        self.bad(lambda x:x['children'][0].update(nickname='\u0085\u00a0'))
+    def test_negative_zero_rejected(self):
+        raw=json.dumps(self.sample).replace('8000','-0',1).encode()
+        with self.assertRaises(BackupError): loads(raw)
+    def test_cap_and_future_preserved(self):
+        self.assertEqual(MAX_BYTES,100663296)
+        self.sample['exams'][0]['examDate']='2099-12-31'
+        self.sample['children'][0]['nickname']='  保留空格  '
+        self.assertEqual(loads(json.dumps(self.sample).encode()),self.sample)
     def test_valid(self): self.assertEqual(len(validate(self.sample)['exams']),3)
     def test_roundtrip(self): self.assertEqual(loads(json.dumps(self.sample,ensure_ascii=False).encode()),self.sample)
     def test_empty(self): self.assertEqual(loads((ROOT/'fixtures/backup-empty.json').read_bytes())['exams'],[])
