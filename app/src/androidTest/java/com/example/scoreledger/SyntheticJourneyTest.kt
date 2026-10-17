@@ -145,21 +145,42 @@ class SyntheticJourneyTest {
         try { ActivityScenario.launch(RecreationHostActivity::class.java).use { scenario ->
             try {
             awaitScreen("home-list")
-            compose.onNodeWithTag("first-nickname").performClick().performTextInput("合成孩子甲")
+            compose.onNodeWithTag("first-nickname").performClick()
+            // Inject text only after the real keyboard/input session is ready. Sending an
+            // edit during IME startup can race its initial empty InputConnection snapshot.
+            val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
+            val priorFlags=automation.serviceInfo.flags
+            automation.serviceInfo=automation.serviceInfo.apply {
+                flags=flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+            }
+            try {
+                compose.waitUntil(10000) {
+                    var visible=false
+                    scenario.onActivity {
+                        val insets=ViewCompat.getRootWindowInsets(it.window.decorView)
+                        visible=insets?.isVisible(WindowInsetsCompat.Type.ime())==true &&
+                            (insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)>0
+                    }
+                    visible && automation.windows.any { window ->
+                        window.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD &&
+                            Rect().also { window.getBoundsInScreen(it) }.let { !it.isEmpty && it.height()>0 }
+                    } && compose.onAllNodes(hasTestTag("first-nickname") and isFocused()).fetchSemanticsNodes().size==1
+                }
+                compose.onNodeWithTag("first-nickname").assertIsFocused().performTextInput("合成孩子甲")
+                compose.onNodeWithTag("first-nickname").assert(hasText("合成孩子甲",substring=false))
+                compose.onNodeWithTag("new-record").assertIsEnabled()
+            } finally { automation.serviceInfo=automation.serviceInfo.apply { flags=priorFlags } }
             // A real Back closes the nickname keyboard for the default-layout evidence only.
             // The later score-typing checkpoint explicitly opens and verifies the IME again.
-            compose.waitUntil(10000) {
-                var visible=false
-                scenario.onActivity { visible=ViewCompat.getRootWindowInsets(it.window.decorView)?.isVisible(WindowInsetsCompat.Type.ime())==true }
-                visible
-            }
             InstrumentationRegistry.getInstrumentation().sendKeyDownUpSync(android.view.KeyEvent.KEYCODE_BACK)
             compose.waitUntil(10000) {
                 var visible=true
                 scenario.onActivity { visible=ViewCompat.getRootWindowInsets(it.window.decorView)?.isVisible(WindowInsetsCompat.Type.ime())==true }
                 !visible
             }
-            compose.onNodeWithTag("new-record").performClick()
+            // Never repair lost input by retyping: retain the exact local value across Back.
+            compose.onNodeWithTag("first-nickname").assert(hasText("合成孩子甲",substring=false))
+            compose.onNodeWithTag("new-record").assertIsEnabled().performClick()
             compose.waitUntil(10000){runBlocking{db.dao().childCount()==1 && db.dao().subjectCount()==3}}
             awaitEditorReady()
             val subjects=runBlocking{db.dao().subjects()}.associateBy{it.name}

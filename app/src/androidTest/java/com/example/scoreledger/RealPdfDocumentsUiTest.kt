@@ -68,23 +68,45 @@ class RealPdfDocumentsUiTest {
         evidence("real-pdf-app-return-timeout-$stage")
         error("App did not return with the required result within ${timeoutMillis}ms at $stage")
     }
-    private fun click(node:AccessibilityNodeInfo) {
-        check(node.refresh() && node.isEnabled && node.isVisibleToUser) { "DocumentsUI target became stale" }
+    private fun click(predicate:(AccessibilityNodeInfo)->Boolean) {
+        val deadline=SystemClock.uptimeMillis()+15000
+        while(SystemClock.uptimeMillis()<deadline) {
+            val root=instrumentation.uiAutomation.rootInActiveWindow
+            if(root?.packageName?.toString()?.contains("documentsui")==true) {
+                val node=nodes(root).firstOrNull { it.packageName?.toString()?.contains("documentsui")==true && it.isEnabled && it.isVisibleToUser && predicate(it) }
+                // Drawer population can replace a node between acquisition and refresh.
+                // Re-acquire the SAME control only before any action has been attempted.
+                if(node!=null && dispatchIfFresh(node,predicate))return
+            }
+            SystemClock.sleep(100)
+        }
+        evidence("real-pdf-stale-target-$stage")
+        error("No fresh matching DocumentsUI control before dispatch at $stage")
+    }
+    private fun dispatchIfFresh(node:AccessibilityNodeInfo,predicate:(AccessibilityNodeInfo)->Boolean):Boolean {
+        if(!node.refresh() || !node.isEnabled || !node.isVisibleToUser || !predicate(node))return false
+        val root=instrumentation.uiAutomation.rootInActiveWindow ?: return false
+        if(root.packageName?.toString()?.contains("documentsui")!=true || node.windowId!=root.windowId)return false
         check(node.packageName?.toString()?.contains("documentsui")==true)
         var current:AccessibilityNodeInfo?=node
         while(current!=null && current.packageName?.toString()?.contains("documentsui")==true) {
             val target=current
+            if(!target.refresh() || target.windowId!=root.windowId)return false
             if(target.isEnabled && target.isVisibleToUser && target.actionList.any { it.id==AccessibilityNodeInfo.ACTION_CLICK }) {
+                // No exception/result after dispatch is retried: its outcome may be uncertain.
                 check(target.performAction(AccessibilityNodeInfo.ACTION_CLICK)) { "DocumentsUI click action rejected; not replayed" }
-                return
+                return true
             }
             current=target.parent
         }
         // DocumentsUI RecyclerView document rows can use gesture handling without
         // advertising an accessibility CLICK ancestor. Tap this exact matched file's
         // visible bounds, not a guessed coordinate or a mocked activity result.
+        if(!node.refresh() || !node.isEnabled || !node.isVisibleToUser || !predicate(node))return false
+        val active=instrumentation.uiAutomation.rootInActiveWindow ?: return false
+        if(active.packageName?.toString()?.contains("documentsui")!=true || active.windowId!=node.windowId)return false
         val bounds=Rect();node.getBoundsInScreen(bounds)
-        val window=Rect();requireNotNull(instrumentation.uiAutomation.rootInActiveWindow).getBoundsInScreen(window)
+        val window=Rect();active.getBoundsInScreen(window)
         check(!bounds.isEmpty && window.contains(bounds.centerX(),bounds.centerY())) { "File target outside active window" }
         val downTime=SystemClock.uptimeMillis()
         val down=MotionEvent.obtain(downTime,downTime,MotionEvent.ACTION_DOWN,bounds.exactCenterX(),bounds.exactCenterY(),0).apply { source=InputDevice.SOURCE_TOUCHSCREEN }
@@ -94,6 +116,7 @@ class RealPdfDocumentsUiTest {
             SystemClock.sleep(80)
             check(instrumentation.uiAutomation.injectInputEvent(up,true)) { "DocumentsUI touch up rejected" }
         } finally { down.recycle();up.recycle() }
+        return true
     }
     /** Diagnostic XML is limited to this synthetic app and real DocumentsUI; other text is redacted. */
     private fun evidence(name:String) {
@@ -161,10 +184,10 @@ class RealPdfDocumentsUiTest {
     private fun selectDownloads() {
         // A label in an open roots drawer is NOT evidence that its directory was selected.
         if(!drawerOpen()) {
-            click(awaitNode { it.contentDescription?.toString() in setOf("Show roots","Open navigation drawer","显示根目录","打开导航抽屉") })
+            click { it.contentDescription?.toString() in setOf("Show roots","Open navigation drawer","显示根目录","打开导航抽屉") }
             awaitState("open roots drawer"){drawerOpen()}
         }
-        click(awaitNode { it.text?.toString()=="Downloads" && belongsToRoots(it) })
+        click { it.text?.toString()=="Downloads" && belongsToRoots(it) }
         awaitState("Downloads with roots drawer closed") {
             !drawerOpen() && nodes(instrumentation.uiAutomation.rootInActiveWindow).any {
                 it.isVisibleToUser && it.text?.toString()=="Downloads" && !belongsToRoots(it)
@@ -199,7 +222,9 @@ class RealPdfDocumentsUiTest {
             it.isEnabled && it.isVisibleToUser && it.packageName?.toString()?.contains("documentsui")==true &&
                 (it.text?.toString() in setOf("Cancel","CANCEL","取消") || it.contentDescription?.toString() in setOf("Close","关闭"))
         }
-        if(cancel!=null)click(cancel) else backFromVerifiedPicker()
+        if(cancel!=null)click {
+            it.text?.toString() in setOf("Cancel","CANCEL","取消") || it.contentDescription?.toString() in setOf("Close","关闭")
+        } else backFromVerifiedPicker()
     }
     private fun filename(value:String) {
         val input=awaitNode { it.className?.toString()=="android.widget.EditText" }
@@ -281,7 +306,7 @@ class RealPdfDocumentsUiTest {
                 selectDownloads();filename(savedName)
                 instrumentation.uiAutomation.waitForIdle(200,5000)
                 capture("real-pdf-save-picker")
-                click(awaitNode { it.viewIdResourceName?.endsWith("/menu_save")==true || it.text?.toString()?.equals("Save",true)==true })
+                click { it.viewIdResourceName?.endsWith("/menu_save")==true || it.text?.toString()?.equals("Save",true)==true }
                 awaitAppText("保存PDF",20000)
                 compose.onNodeWithText("关闭预览").performClick()
                 awaitAppText("PDF已保存（已回读校验）",20000)
