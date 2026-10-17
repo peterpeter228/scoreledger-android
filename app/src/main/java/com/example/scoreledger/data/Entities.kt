@@ -33,3 +33,11 @@ data class ExamWithScores(
     @Embedded val exam: ExamEntity,
     @Relation(parentColumn = "id", entityColumn = "examId") val scores: List<ScoreEntity>
 )
+
+@Entity(tableName = "drafts", foreignKeys = [ForeignKey(
+    entity = ChildEntity::class, parentColumns = ["id"], childColumns = ["childId"],
+    onDelete = ForeignKey.RESTRICT
+)], indices = [Index("childId")])
+data class DraftEntity(@PrimaryKey val id: String, val childId: String, val payloadJson: String, val updatedAt: Long)
+
+data class ChildExamCount(val childId: String, val examCount: Int)

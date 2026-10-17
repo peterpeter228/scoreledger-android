@@ -18,6 +18,7 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
     private val dao = db.dao()
     private fun timestamp(): Long = clock.millis().also { require(it in 0..4102444800000L) { "设备时间超出支持范围，请检查系统日期" } }
     private fun identifier(): String = newId().also { require(UUID.fromString(it).toString() == it) { "记录标识无效" } }
+    val childCounts = dao.observeChildCounts()
     val children = dao.observeChildren()
     val subjects = dao.observeSubjects()
     fun exams(childId: String) = dao.observeExams(childId)
@@ -31,6 +32,51 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
                 SubjectEntity(identifier(), name, 10000, index, false, now, now)
             })
         }
+    }
+    // Templates are explicitly requested, never seeded on app launch or after deletion.
+    suspend fun addSubjectTemplate(names: List<String>) = db.withTransaction {
+        val existing = dao.subjects()
+        val additions = names.distinct().filter { name -> existing.none { it.name == name } }
+        check(existing.size + additions.size <= 100) { "已达到100个科目的上限" }
+        additions.forEachIndexed { i, name -> saveSubject(null, name, 10000, existing.size + i) }
+    }
+    fun drafts(childId: String) = dao.observeDrafts(childId)
+    suspend fun draft(id: String, childId: String) = dao.draft(id, childId)
+    suspend fun putDraft(draft: EntryDraft, expectedPayload: String? = null) = db.withTransaction {
+        require(UUID.fromString(draft.id).toString() == draft.id)
+        requireNotNull(dao.child(draft.childId)) { "孩子档案不存在" }
+        val old = dao.draftById(draft.id)
+        check(old == null || old.childId == draft.childId) { "草稿不属于当前孩子" }
+        require(draft.rows.size <= 30 && draft.rows.map { it.subjectId }.distinct().size == draft.rows.size)
+        val payload = draft.encode()
+        if (old?.payloadJson != expectedPayload && old?.payloadJson != payload) throw DraftConflictException()
+        require(payload.length <= 100000) { "草稿内容过长" }
+        dao.putDraft(DraftEntity(draft.id,draft.childId,payload,timestamp()))
+    }
+    suspend fun discardDraft(id: String, childId: String, expectedPayload: String?) = db.withTransaction {
+        val old = dao.draftById(id)
+        check(old == null || old.childId == childId) { "草稿不属于当前孩子" }
+        if (old != null && old.payloadJson != expectedPayload) throw DraftConflictException()
+        dao.deleteDraft(id,childId)
+    }
+    suspend fun submitDraft(draft: EntryDraft) = db.withTransaction {
+        val persisted = dao.draftById(draft.id)
+        check(persisted == null || persisted.childId == draft.childId) { "草稿不属于当前孩子" }
+        // A retry after commit uses the exam id; stale or different drafts cannot be cleared.
+        if (persisted != null && persisted.payloadJson != draft.encode()) throw DraftConflictException()
+        val input = draft.input()
+        if (persisted == null) {
+            // Only an exact already-committed payload is a valid retry. An old editor must
+            // never overwrite a newer committed edit after its draft has been removed.
+            val old = dao.exam(draft.id)
+            val same = old != null && old.childId == input.childId && old.title == input.title.trim() &&
+                old.examDate == input.date && old.kind == input.kind.name && old.term == input.term.trim() &&
+                old.note == input.note.trim() && dao.scores(draft.id).map { it.toValue() }.toSet() == input.values.toSet()
+            if (!same) throw DraftConflictException()
+            return@withTransaction
+        }
+        saveExam(input,draft.editing)
+        dao.deleteDraft(draft.id,draft.childId)
     }
     suspend fun addChild(rawNickname: String, grade: String = ""): String = db.withTransaction {
         val nickname = ScoreRules.validateText(rawNickname, 24)
@@ -49,6 +95,7 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
     }
     suspend fun deleteChild(id: String) = db.withTransaction {
         requireNotNull(dao.child(id)) { "孩子档案不存在" }
+        dao.deleteChildDrafts(id)
         dao.deleteChildExams(id)
         check(dao.deleteChild(id) == 1)
     }
@@ -114,7 +161,10 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
         }
     }
     suspend fun deleteExam(id: String, childId: String) = db.withTransaction {
+        dao.deleteDraft(id,childId)
         check(dao.deleteExam(id,childId)==1) { "记录不存在或不属于当前孩子" }
     }
 }
 fun ScoreEntity.toValue() = ScoreValue(subjectId,ScoreStatus.valueOf(status),scoreMinor,maxMinor)
+
+class DraftConflictException : IllegalStateException("草稿已在另一处更新。本页输入仍保留；可重试，或确认后重新载入最新草稿。")

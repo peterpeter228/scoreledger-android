@@ -1,20 +1,21 @@
 # 实现状态与交付边界
-此包是供 dot 继续开发的 PRD + 工程启动包，不是完整成品，没有附 APK。
 
-| 范围 | 当前状态 | 后续动作 |
+截至2026-10-17：D00已有真实debug APK，但不能把起步APK说成新功能完整成品。
+
+| 范围 | 当前状态 | 证据/后续动作 |
 |---|---|---|
-| PRD/规则/架构/UI/隐私/发行/测试文档 | 已编写 | 开发中变更需记录决策 |
-| Kotlin核心计算与额度规则 | 已提供可执行源码和CLI/JUnit适配测试 | 真实执行结果见 evidence/validation_summary.json |
-| Python备份契约参考校验/测试 | 已提供 | 安卓还需Kotlin导入实现和Room故障测试 |
-| JSON Schema/虚构fixtures | 已提供 | 与Kotlin实现交叉验证 |
-| 原生Compose+Room起步纵切 | 源码已提供、Android编译未执行 | D00先编译；不可称已可安装 |
-| 完整档案/科目管理、草稿/编辑、导航 | 未完成 | D01–D04 |
-| 趋势页面、PDF、备份恢复 | 未实现 | D05–D07 |
-| 真实商店付费 | 未实现/渠道未配置 | D08；不阻断离线内测开发 |
-| CI定义/引导脚本/发布门禁 | 已提供，CI未实际触发 | 授权本项目仓库后运行 |
-| 真机、模拟器、Room仪器化 | NOT_RUN | dot拥有对应环境后执行 |
-| 商业上架/签名与账号 | BLOCKED | 用户正式批准和真实资料 |
+| Kotlin核心计算与额度规则 | 本地59断言、CI核心JUnit通过 | evidence/d00-android-build.json；evidence/d02-d04-core.log |
+| Python备份契约参考校验 | 本地42测试通过 | evidence/d02-d04-python.log；安卓导入器尚未实现 |
+| 起步Compose+Room Android构建 | VERIFIED | CI38985168690，提交1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d；真实APK及schema1 |
+| D01数据库事务和仓储 | 源码及首版编译通过，仪器化执行待主线程核实 | 不据测试文件存在宣称PASS |
+| D02孩子/科目管理 | IMPLEMENTED_UNVERIFIED | 昵称/年级、归档、显式删除、科目排序、主动建议模板 |
+| D03草稿/录入/编辑 | IMPLEMENTED_UNVERIFIED | Room2显式迁移、孩子绑定JSON、FIFO保存、原子提交清理、显式1–30科 |
+| D04历史/详情/筛选/导航 | IMPLEMENTED_UNVERIFIED | RecordQuery共享查询范围、快照详情、确认删除、记录/趋势/设置 |
+| 趋势页面、PDF、备份恢复 | NOT_STARTED | 页面明确告知未接入；无假数据、无伪完成按钮 |
+| 真实商店付费 | NOT_IMPLEMENTED | 商业发布保持阻断，localBeta不等于已购买 |
+| 新源码Android编译、Room schema2 | NOT_RUN | 由下一CI真实生成并提取，不手写schema2 |
+| 新增8项Room草稿测试及1项Compose流程 | NOT_RUN | 待connectedLocalBetaDebugAndroidTest |
+| 真机、API26/36、2倍字体、TalkBack、性能 | NOT_RUN | D09/D10实际设备验收 |
 
-起步UI只是验证新增孩子、录入与读取记录的源码，不是最终设计稿；使用测试数据，不存真实孩子成绩。
-已防护切换孩子时旧列表暂存显示；完整持久草稿、编辑和跨孩子草稿交互仍由D03完成。
-包内所有测试结论均应查看原始日志，不要仅因存在test文件就标PASS。
+静态检查、Python、纯Kotlin通过不等同于新Android源码编译通过，也不等同于设备验收。
+未实现项目仍继续开发；当前所有测试仅使用虚构数据。

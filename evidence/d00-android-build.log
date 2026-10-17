@@ -1,0 +1,150 @@
+Downloading https://services.gradle.org/distributions/gradle-8.13-bin.zip
+.............10%.............20%.............30%.............40%.............50%.............60%.............70%.............80%.............90%.............100%
+
+Welcome to Gradle 8.13!
+
+Here are the highlights of this release:
+ - Daemon JVM auto-provisioning
+ - Enhancements for Scala plugin and JUnit testing
+ - Improvements for build authors and plugin developers
+
+For more details see https://docs.gradle.org/8.13/release-notes.html
+
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+
+> Configure project :app
+w: file:///home/runner/work/scoreledger-android/scoreledger-android/app/build.gradle.kts:47:21: 'jvmTarget: String' is deprecated. Please migrate to the compilerOptions DSL. More details are here: https://kotl.in/u1r8ln
+
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preLocalBetaDebugBuild UP-TO-DATE
+> Task :app:generateLocalBetaDebugBuildConfig
+> Task :core:compileKotlin
+> Task :core:compileJava NO-SOURCE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar
+> Task :core:compileTestKotlin
+> Task :core:compileTestJava NO-SOURCE
+> Task :core:processTestResources NO-SOURCE
+> Task :core:testClasses UP-TO-DATE
+> Task :app:checkLocalBetaDebugAarMetadata
+> Task :app:processLocalBetaDebugNavigationResources
+> Task :app:compileLocalBetaDebugNavigationResources
+> Task :app:generateLocalBetaDebugResValues
+> Task :app:mapLocalBetaDebugSourceSetPaths
+> Task :app:generateLocalBetaDebugResources
+> Task :core:test
+> Task :app:mergeLocalBetaDebugResources
+> Task :app:packageLocalBetaDebugResources
+> Task :app:createLocalBetaDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksLocalBetaDebug
+> Task :app:parseLocalBetaDebugLocalResources
+> Task :app:processLocalBetaDebugMainManifest
+> Task :app:processLocalBetaDebugManifest
+> Task :app:processLocalBetaDebugManifestForPackage
+> Task :app:javaPreCompileLocalBetaDebug
+> Task :app:preLocalBetaDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileLocalBetaDebugUnitTest
+> Task :app:preLocalBetaDebugAndroidTestBuild SKIPPED
+> Task :app:generateLocalBetaDebugAndroidTestResValues
+> Task :app:extractProguardFiles
+> Task :app:mergeLocalBetaDebugNativeDebugMetadata NO-SOURCE
+> Task :app:mergeLocalBetaDebugShaders
+> Task :app:compileLocalBetaDebugShaders NO-SOURCE
+> Task :app:generateLocalBetaDebugAssets UP-TO-DATE
+> Task :app:mergeLocalBetaDebugAssets
+> Task :app:compressLocalBetaDebugAssets
+> Task :app:processLocalBetaDebugResources
+> Task :app:checkLocalBetaDebugDuplicateClasses
+> Task :app:desugarLocalBetaDebugFileDependencies
+> Task :app:kaptGenerateStubsLocalBetaDebugKotlin
+> Task :app:mergeExtDexLocalBetaDebug
+> Task :app:mergeLibDexLocalBetaDebug
+> Task :app:mergeLocalBetaDebugJniLibFolders
+> Task :app:mergeLocalBetaDebugNativeLibs
+
+> Task :app:stripLocalBetaDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+
+> Task :app:validateSigningLocalBetaDebug
+> Task :app:writeLocalBetaDebugAppMetadata
+> Task :app:writeLocalBetaDebugSigningConfigVersions
+> Task :app:kaptLocalBetaDebugKotlin
+> Task :app:processLocalBetaDebugAndroidTestManifest
+> Task :app:generateLocalBetaDebugAndroidTestBuildConfig
+> Task :app:checkLocalBetaDebugAndroidTestAarMetadata
+> Task :app:processLocalBetaDebugAndroidTestNavigationResources
+> Task :app:compileLocalBetaDebugAndroidTestNavigationResources
+> Task :app:mapLocalBetaDebugAndroidTestSourceSetPaths
+> Task :app:generateLocalBetaDebugAndroidTestResources
+> Task :app:mergeLocalBetaDebugAndroidTestResources
+> Task :app:processLocalBetaDebugAndroidTestResources
+> Task :app:javaPreCompileLocalBetaDebugAndroidTest
+> Task :app:mergeLocalBetaDebugAndroidTestShaders
+> Task :app:compileLocalBetaDebugAndroidTestShaders NO-SOURCE
+> Task :app:generateLocalBetaDebugAndroidTestAssets UP-TO-DATE
+> Task :app:mergeLocalBetaDebugAndroidTestAssets
+> Task :app:compressLocalBetaDebugAndroidTestAssets
+> Task :app:checkLocalBetaDebugAndroidTestDuplicateClasses
+> Task :app:desugarLocalBetaDebugAndroidTestFileDependencies
+> Task :app:compileLocalBetaDebugKotlin
+> Task :app:mergeExtDexLocalBetaDebugAndroidTest
+> Task :app:compileLocalBetaDebugJavaWithJavac
+> Task :app:bundleLocalBetaDebugClassesToRuntimeJar
+> Task :app:bundleLocalBetaDebugClassesToCompileJar
+> Task :app:processLocalBetaDebugJavaRes
+> Task :app:kaptGenerateStubsLocalBetaDebugUnitTestKotlin
+> Task :app:generateLocalBetaDebugAndroidTestLintModel
+> Task :app:generateLocalBetaDebugLintReportModel
+> Task :app:generateLocalBetaDebugUnitTestLintModel
+
+> Task :app:kaptLocalBetaDebugUnitTestKotlin
+warning: The following options were not recognized by any processor: '[room.schemaLocation, kapt.kotlin.generated]'
+
+> Task :app:compileLocalBetaDebugUnitTestKotlin
+> Task :app:compileLocalBetaDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processLocalBetaDebugUnitTestJavaRes
+> Task :app:testLocalBetaDebugUnitTest
+> Task :app:lintAnalyzeLocalBetaDebugAndroidTest
+> Task :app:lintAnalyzeLocalBetaDebugUnitTest
+> Task :app:lintAnalyzeLocalBetaDebug
+> Task :app:dexBuilderLocalBetaDebug
+> Task :app:mergeLocalBetaDebugGlobalSynthetics
+> Task :app:mergeLocalBetaDebugJavaResource
+> Task :app:mergeProjectDexLocalBetaDebug
+> Task :app:packageLocalBetaDebug
+> Task :app:createLocalBetaDebugApkListingFileRedirect
+> Task :app:assembleLocalBetaDebug
+> Task :app:kaptGenerateStubsLocalBetaDebugAndroidTestKotlin
+
+> Task :app:kaptLocalBetaDebugAndroidTestKotlin
+warning: The following options were not recognized by any processor: '[room.schemaLocation, kapt.kotlin.generated]'
+
+> Task :app:compileLocalBetaDebugAndroidTestKotlin
+> Task :app:compileLocalBetaDebugAndroidTestJavaWithJavac
+> Task :app:mergeLibDexLocalBetaDebugAndroidTest
+> Task :app:dexBuilderLocalBetaDebugAndroidTest
+> Task :app:mergeLocalBetaDebugAndroidTestGlobalSynthetics
+> Task :app:processLocalBetaDebugAndroidTestJavaRes
+> Task :app:mergeLocalBetaDebugAndroidTestJavaResource
+> Task :app:mergeProjectDexLocalBetaDebugAndroidTest
+> Task :app:mergeLocalBetaDebugAndroidTestJniLibFolders
+> Task :app:mergeLocalBetaDebugAndroidTestNativeLibs NO-SOURCE
+> Task :app:stripLocalBetaDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :app:validateSigningLocalBetaDebugAndroidTest
+> Task :app:writeLocalBetaDebugAndroidTestSigningConfigVersions
+> Task :app:packageLocalBetaDebugAndroidTest
+> Task :app:createLocalBetaDebugAndroidTestApkListingFileRedirect
+> Task :app:assembleLocalBetaDebugAndroidTest
+
+> Task :app:lintReportLocalBetaDebug
+Wrote HTML report to file:///home/runner/work/scoreledger-android/scoreledger-android/app/build/reports/lint-results-localBetaDebug.html
+
+> Task :app:lintLocalBetaDebug
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1792195893839.json
+
+BUILD SUCCESSFUL in 5m 13s
+94 actionable tasks: 94 executed

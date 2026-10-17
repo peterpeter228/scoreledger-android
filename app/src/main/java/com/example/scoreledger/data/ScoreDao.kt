@@ -12,6 +12,15 @@ interface ScoreDao {
     @Transaction
     @Query("SELECT * FROM exams WHERE childId = :childId ORDER BY examDate DESC, createdAt DESC, id DESC")
     fun observeExams(childId: String): Flow<List<ExamWithScores>>
+    @Query("SELECT childId, COUNT(*) AS examCount FROM exams GROUP BY childId")
+    fun observeChildCounts(): Flow<List<ChildExamCount>>
+    @Query("SELECT * FROM drafts WHERE childId = :childId ORDER BY updatedAt DESC, id")
+    fun observeDrafts(childId: String): Flow<List<DraftEntity>>
+    @Query("SELECT * FROM drafts WHERE id = :id AND childId = :childId") suspend fun draft(id: String, childId: String): DraftEntity?
+    @Query("SELECT * FROM drafts WHERE id = :id") suspend fun draftById(id: String): DraftEntity?
+    @Upsert suspend fun putDraft(draft: DraftEntity)
+    @Query("DELETE FROM drafts WHERE id = :id AND childId = :childId") suspend fun deleteDraft(id: String, childId: String)
+    @Query("DELETE FROM drafts WHERE childId = :childId") suspend fun deleteChildDrafts(childId: String)
     @Query("SELECT * FROM children WHERE id = :id LIMIT 1") suspend fun child(id: String): ChildEntity?
     @Query("SELECT * FROM children ORDER BY createdAt, id") suspend fun children(): List<ChildEntity>
     @Query("SELECT * FROM subjects ORDER BY sortOrder, id") suspend fun subjects(): List<SubjectEntity>

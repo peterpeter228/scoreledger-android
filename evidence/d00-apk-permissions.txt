@@ -1,0 +1,3 @@
+package: com.example.scoreledger.beta.debug
+permission: com.example.scoreledger.beta.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION
+uses-permission: name='com.example.scoreledger.beta.debug.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION'

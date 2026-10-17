@@ -33,3 +33,16 @@ SDK 最新 CLI 23 的自动 Android CLI 下载遇连接拒绝，已改用官方�
 00:13 UTC：源码提交1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d、树12c6a55c73bbf9630d81da163c12cfc75ba703d8已验证推送。CI38985168690/job117254833533执行中；不要重复创建仓库或误报APK。下一步读CI终态、修复编译、取真实schema/APK，再启用准备好的AOSP API30仪器化脚本（tools/emulator_smoke.sh和本地workflow改动尚未推送）。
 
 00:18 UTC：CI38985168690成功，真实APK10,997,249字节/SHA256 8a9cba634603d572d9de83c9c1c6d9940a627f9c623d7510824e3573fcec35cb。JVM两个JUnit方法通过，其中core含59子断言；lint无阻断但有升级等warning。Room自动schema1已从artifact复制入app/schemas。设备仪器化仅编译，尚未执行；下一提交启用AOSP API30模拟器安装与6项Room测试。详细evidence/d00-android-build.json。
+
+## 2026-10-17 00:25 UTC · D02–D04源代码交接（未验收）
+D00首个APK已真实构建：CI38985168690成功，提交1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d；原始Room v1 schema已生成。不要把这些旧产物说成以下新源码的验证结果。
+新增原生孩子昵称/年级编辑、归档/恢复/显式关联删除；科目新增/修改/排序/归档与用户主动添加的小初高建议模板。没有启动自动补种或take(30)截断。
+录入支持显式选1–30科、日期选择、类型/学期/备注、分数/缺考/未录入、历史编辑。草稿JSON绑定孩子及UUID，Room v2添加drafts表，显式MIGRATION_1_2；严禁补写假schema2。
+ViewModel使用FIFO操作队列，自动持久化、返回保留、显式丢弃、保存禁用输入；提交与清草稿同事务，失败保留，重复提交复用同UUID。界面显示草稿落盘状态。进程恢复后从对应孩子的“继续草稿”进入，不假称最后尚未落盘的按键一定保留。
+历史按共享RecordQuery的孩子/闭区间日期/精确学期/类型筛选、稳定倒序、按月分组；详情保留快照和状态、完整覆盖率、确认删除。导航为记录/趋势/设置；趋势、PDF、备份明确未接入，不能称整产品完成。
+静态标签集中到strings.xml；原创矢量/adaptive launcher icon；无新增库和权限。大字号、TalkBack、键盘、真机性能仍待实际验收。
+新增DraftIntegrityTest共8项：持久化重开/隔离、幂等/编辑、失败回滚保留、清草稿失败回滚、过期草稿拒绝/关联删除、由真实v1 schema建库迁移、筛选/模板归档。另EntryNavigationTest为Compose孩子切换隔离+恢复草稿流程。均仅源码，尚未执行。
+本地真实执行：python3 tools/verify_package.py（0）；Python unittest42（0）；PATH=.toolchains/kotlinc/bin:$PATH bash tools/test_core.sh（59断言，0）。日志evidence/d02-d04-{static,python,core}.log。未尝试被拒绝的Maven或绕路。
+下一步由主线程快照推送本项目CI：:app:assembleLocalBetaDebug :app:assembleLocalBetaDebugAndroidTest :app:lintLocalBetaDebug :core:test，模拟器connectedLocalBetaDebugAndroidTest。取真实schema2纳入仓库，修复CI实际错误，然后再更新验证状态。D05–D07未实现。
+
+00:29 UTC并发审查修复：草稿写入/返回/丢弃在仓储事务内比较expectedPayload；VM使用最后确认落盘的payload，不再无条件覆盖。相同payload允许幂等重试；不同编辑器的旧payload拒绝且本地输入保留，提供重试和需确认的重新载入。已提交后无草稿的submit仅允许与现有考试完全相同的幂等重试，拒绝旧编辑覆盖新提交。新增双ViewModel自动保存/提交/返回/提交后再提交回归，待Android执行。RecordQuery严格四位ISO日期，允许未来结束筛选，拒绝+10000年份。Activity重建/独立进程恢复仍未执行；Room迁移不证明不同CI签名APK可以覆盖升级。

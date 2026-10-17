@@ -6,8 +6,12 @@ test -n "$SDK_ROOT"
 SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
 AVDMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/avdmanager"
 "$SDKMANAGER" "emulator" "system-images;android-30;default;x86_64"
+export ANDROID_AVD_HOME="${RUNNER_TEMP:-$PWD/.toolchains}/scoreledger-avd"
+export ANDROID_USER_HOME="${RUNNER_TEMP:-$PWD/.toolchains}/scoreledger-android-user"
+mkdir -p "$ANDROID_AVD_HOME" "$ANDROID_USER_HOME"
 AVD_NAME="scoreledger_ci_${GITHUB_RUN_ID:-local}"
 printf 'no\n' | "$AVDMANAGER" create avd -n "$AVD_NAME" -k 'system-images;android-30;default;x86_64' --device pixel_2
+"$SDK_ROOT/emulator/emulator" -list-avds | grep -Fx "$AVD_NAME"
 mkdir -p evidence
 ACCEL=off
 if [ -r /dev/kvm ] && [ -w /dev/kvm ]; then ACCEL=on; fi
@@ -16,10 +20,11 @@ if [ -r /dev/kvm ] && [ -w /dev/kvm ]; then ACCEL=on; fi
 EMU_PID=$!
 trap 'kill "$EMU_PID" 2>/dev/null || true' EXIT
 export PATH="$SDK_ROOT/platform-tools:$PATH"
-timeout 180 adb -s emulator-5554 wait-for-device
+adb start-server
 BOOTED=false
 for i in $(seq 1 120); do
-  if [ "$(adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ]; then BOOTED=true; break; fi
+  kill -0 "$EMU_PID" 2>/dev/null || { tail -50 evidence/emulator-runtime.log; echo 'EMULATOR_EXITED'; exit 1; }
+  if [ "$(timeout 10 adb -s emulator-5554 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r' || true)" = 1 ]; then BOOTED=true; break; fi
   sleep 5
 done
 [ "$BOOTED" = true ] || { echo 'EMULATOR_BOOT_TIMEOUT'; exit 1; }

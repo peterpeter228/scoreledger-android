@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T00:12:51.849725+00:00",
-  "stage": "D00_first_apk_built_emulator_pending",
+  "asOf": "2026-10-17T00:25:51.443697+00:00",
+  "stage": "D02_D04_source_ready_android_verification_pending",
   "androidBuild": "VERIFIED",
   "deviceTests": "NOT_RUN",
   "billing": "NOT_IMPLEMENTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "D00",
+  "nextTask": "D02_D04_CI",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -50,7 +50,9 @@
       "targetSdk": 36,
       "signature": "Android Debug; apksigner verification passed"
     },
-    "roomSchema": "GENERATED_V1"
+    "roomSchema": "GENERATED_V1; V2_PENDING_REAL_KAPT",
+    "entryHistorySlice": "IMPLEMENTED_UNVERIFIED: Room v2 migration, draft transaction, native management/entry/history; new Android build and instrumentation NOT_RUN",
+    "localSliceChecks": "static pass; Python42 pass; core59 pass; evidence/d02-d04-*.log"
   },
   "blockers": [
     {

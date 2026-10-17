@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "currentTask": "D00",
+  "currentTask": "D02",
   "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
   "tasks": [
     {
@@ -61,7 +61,7 @@
     {
       "id": "D02",
       "title": "孩子和科目管理",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED_UNVERIFIED",
       "dependsOn": [
         "D01"
       ],
@@ -79,13 +79,17 @@
       "acceptance": [
         "FR01–03对应用例通过；空库/全归档/删除当前孩子有明确回退。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d02-d04-static.log",
+        "evidence/d02-d04-python.log",
+        "evidence/d02-d04-core.log"
+      ],
+      "notes": "Source implemented. New Android compilation, generated Room v2 schema, instrumentation and device UX acceptance pending CI. Static/Python42/core59 are passed, not Android evidence."
     },
     {
       "id": "D03",
       "title": "录入、编辑与持久草稿",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED_UNVERIFIED",
       "dependsOn": [
         "D01",
         "D02"
@@ -105,13 +109,17 @@
       "acceptance": [
         "连点、杀进程、切孩子、所有缺失、满分变更、编辑历史全部通过。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d02-d04-static.log",
+        "evidence/d02-d04-python.log",
+        "evidence/d02-d04-core.log"
+      ],
+      "notes": "Source implemented. New Android compilation, generated Room v2 schema, instrumentation and device UX acceptance pending CI. Static/Python42/core59 are passed, not Android evidence."
     },
     {
       "id": "D04",
       "title": "历史、详情和筛选",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED_UNVERIFIED",
       "dependsOn": [
         "D03"
       ],
@@ -128,8 +136,12 @@
       "acceptance": [
         "没有跨孩子混入；筛选语义与PDF/趋势使用同一查询对象。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d02-d04-static.log",
+        "evidence/d02-d04-python.log",
+        "evidence/d02-d04-core.log"
+      ],
+      "notes": "Source implemented. New Android compilation, generated Room v2 schema, instrumentation and device UX acceptance pending CI. Static/Python42/core59 are passed, not Android evidence."
     },
     {
       "id": "D05",
