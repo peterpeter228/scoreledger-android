@@ -73,10 +73,12 @@ class SyntheticJourneyTest {
             item("detail-list",hasText("返回记录")).performClick()
             // Create another synthetic child in the same isolated repository; exercise UI scope switch.
             runBlocking{repository.addChild("合成孩子乙")}
+            compose.onNodeWithText("合成孩子甲").performClick()
             compose.waitUntil(10000){compose.onAllNodesWithText("合成孩子乙").fetchSemanticsNodes().isNotEmpty()}
             compose.onNodeWithText("合成孩子乙").performClick()
             compose.onNodeWithText("合成纠正标题").assertDoesNotExist()
             captureSyntheticUi("03-child-isolation")
+            compose.onNodeWithText("合成孩子乙").performClick()
             compose.onNodeWithText("合成孩子甲").performClick()
             item("home-list",hasText("合成纠正标题")).assertExists()
             compose.onNodeWithTag("new-record").performClick()

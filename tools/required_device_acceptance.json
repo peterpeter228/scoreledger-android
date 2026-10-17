@@ -51,7 +51,8 @@
     "com.example.scoreledger.ViewModelLocatorRecoveryTest#recreatedViewModelRestoresConfirmedDraftAndOwnerNotFailedUnsavedPayload",
     "com.example.scoreledger.ViewModelLocatorRecoveryTest#pendingSavedRecordNavigationClearsOnChildSwitchAndChildDeletion",
     "com.example.scoreledger.ViewModelLocatorRecoveryTest#replacementGenerationClearsEditorAndStaleLocatorFallsBackWithoutResurrectingDraft",
-    "com.example.scoreledger.ReportRevisionFenceTest#changedScoreWithSameQueryRejectsOldResultButPendingSaveKeepsSnapshot"
+    "com.example.scoreledger.ReportRevisionFenceTest#changedScoreWithSameQueryRejectsOldResultButPendingSaveKeepsSnapshot",
+    "com.example.scoreledger.MainActivityDiskJourneyTest#genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline"
   ],
   "requiredFiles": [
     "ui-artifacts/synthetic-01-entry-before-save.png",
@@ -69,6 +70,9 @@
     "upgrade-provenance.json",
     "process-death.txt",
     "external-process-death-verify.txt",
-    "ui-artifacts/trend-selected-earlier.png"
+    "ui-artifacts/trend-selected-earlier.png",
+    "ui-artifacts/main-disk-saved-detail.png",
+    "ui-artifacts/main-disk-reopened-detail.png",
+    "ui-artifacts/main-disk-integrity.json"
   ]
 }

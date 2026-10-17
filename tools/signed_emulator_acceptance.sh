@@ -299,7 +299,7 @@ printf 'PASS: externally force-stopped process; persisted business snapshot and 
 adb -s "$SERIAL" shell pm list instrumentation | tr -d '\r' > "$EVIDENCE/instrumentation-target.txt"
 grep -Fx "instrumentation:$RUNNER (target=$PACKAGE)" "$EVIDENCE/instrumentation-target.txt"
 set +e
-timeout 900 adb -s "$SERIAL" shell am instrument -w -r -e class "$(python3 tools/acceptance_gate.py --selection)" "$RUNNER" 2>&1 | tee "$EVIDENCE/full-instrumentation.txt"
+timeout 900 adb -s "$SERIAL" shell am instrument -w -r -e class "$(python3 tools/acceptance_gate.py --selection)" -e realMainJourney true -e allowPersistentSyntheticData true -e upgradeNonce "$NONCE" "$RUNNER" 2>&1 | tee "$EVIDENCE/full-instrumentation.txt"
 INSTRUMENT_EXIT=${PIPESTATUS[0]}
 set -e
 [ "$INSTRUMENT_EXIT" = 0 ] || { echo "Instrumentation transport/timeout failure: $INSTRUMENT_EXIT"; exit 1; }

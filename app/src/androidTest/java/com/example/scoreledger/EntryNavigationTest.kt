@@ -29,9 +29,11 @@ class EntryNavigationTest {
         val model=ScoreViewModel(repository)
         compose.setContent { ScoreLedgerTheme { StarterScreen(model,isolated.services(repository)) } }
         compose.waitUntil(10000) { compose.onAllNodesWithText("继续草稿：甲专属草稿").fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("虚构甲").performClick()
         compose.onNodeWithText("虚构乙").performClick()
         compose.waitUntil(10000) { model.selectedChild.value==ids.second }
         compose.onNodeWithText("继续草稿：甲专属草稿").assertDoesNotExist()
+        compose.onNodeWithText("虚构乙").performClick()
         compose.onNodeWithText("虚构甲").performClick()
         compose.waitUntil(10000) { compose.onAllNodesWithText("继续草稿：甲专属草稿").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("继续草稿：甲专属草稿").performClick()
