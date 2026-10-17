@@ -56,6 +56,19 @@ class EvidenceCollectionTests(unittest.TestCase):
             output = evidence / 'ui-artifacts/synthetic.png'
             return result, output.read_bytes() if output.exists() else None
 
+    def test_systemui_readiness_requires_live_started_quiescent_service(self):
+        code=SCRIPT.split("<<'PYSYSTEMUI'\n",1)[1].split('\nPYSYSTEMUI',1)[0]
+        ready='ACTIVITY MANAGER SERVICES\n  * ServiceRecord{abc u0 com.android.systemui/.SystemUIService}\n    app=ProcessRecord{abc 123:com.android.systemui/u0a1}\n    startRequested=true\n'
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'services.txt'
+            for text,expected in [(ready,0),(ready+'    executeNesting=1 executingStart=-10s\n',1),
+                (ready.replace('app=ProcessRecord{abc 123:com.android.systemui/u0a1}','app=null'),1),
+                (ready.replace('startRequested=true','startRequested=false'),1),('',1),
+                (ready.replace('.SystemUIService}', '.OtherService}'),1)]:
+                path.write_text(text)
+                result=subprocess.run(['python3','-',str(path)],input=code,text=True,capture_output=True)
+                self.assertEqual(result.returncode,expected,result.stderr)
+
     def test_version_diagnostic_reads_metadata_without_starting_emulator(self):
         self.assertNotIn('"$SDK_ROOT/emulator/emulator" -version',SCRIPT)
         start=SCRIPT.index('if [ -r "$SDK_ROOT/emulator/source.properties" ]; then')

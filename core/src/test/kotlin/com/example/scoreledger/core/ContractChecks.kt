@@ -140,6 +140,14 @@ fun runContractChecks(): Int {
         equal(ScoreRules.summarize(listOf(value(n=10000,m=30000))).ratePercent,"33.33")
         equal(ScoreRules.summarizeGroups(listOf(listOf(value(n=10000,m=30000)))).ratePercent,"33.33")
     }
+    test("fractional percentage-point delta never subtracts rounded displays") {
+        val before=value(n=1,m=3);val after=value(n=2,m=3)
+        equal(ScoreRules.percent(before),"33.33")
+        equal(ScoreRules.percent(after),"66.67")
+        // Rounded displays differ by33.34; the exact rational change is33.33.
+        equal(ScoreRules.percentagePointChange(before,after),"33.33")
+        equal(ScoreRules.percentagePointChange(after,before),"-33.33")
+    }
     test("all absent grouped aggregate is null not zero") {
         val result=ScoreRules.summarizeGroups(listOf(listOf(absent),listOf(absent)))
         check(result.ratePercent==null && result.recordedCount==0 && result.selectedCount==2 && !result.isComplete)

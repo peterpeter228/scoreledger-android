@@ -59,6 +59,7 @@ PACKAGE=com.example.scoreledger.beta.debug
 TEST_PACKAGE="$PACKAGE.test"
 RUNNER="$TEST_PACKAGE/androidx.test.runner.AndroidJUnitRunner"
 EMU_PID=''
+HEALTH_LOG_PID=''
 SERIAL=emulator-5580
 export PATH="$SDK_ROOT/platform-tools:$PATH"
 # Read only the app's own evidence as its debuggable UID. Shell's direct adb
@@ -116,6 +117,16 @@ PYEVIDENCE
   return 1
 }
 
+# Read-only continuous system evidence and fail-closed phase checkpoints.
+health_checkpoint() {
+  local phase="$1"
+  [[ "$phase" =~ ^[a-z0-9-]+$ ]] || return 1
+  kill -0 "$HEALTH_LOG_PID" 2>/dev/null || { echo 'HEALTH_LOG_STREAM_STOPPED'; return 1; }
+  timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/health-$phase-logcat.txt"
+  cat "$EVIDENCE/continuous-system-logcat.txt" "$EVIDENCE/health-$phase-logcat.txt" > "$EVIDENCE/health-latest-logcat.txt"
+  check_boot_health "$EVIDENCE/health-latest-logcat.txt" | tee "$EVIDENCE/health-$phase.txt"
+}
+
 capture_input_diagnostics() {
   local phase="$1"
   case "$phase" in pre-install|final) ;; *) return 1;; esac
@@ -138,6 +149,10 @@ collect_and_stop() {
     [ -d "$EVIDENCE/ui-artifacts" ] || collect_app_evidence ui-evidence ui-artifacts
     kill "$EMU_PID" 2>/dev/null
     wait "$EMU_PID" 2>/dev/null
+  fi
+  if [ -n "$HEALTH_LOG_PID" ]; then
+    kill "$HEALTH_LOG_PID" 2>/dev/null
+    wait "$HEALTH_LOG_PID" 2>/dev/null
   fi
   printf 'acceptance_exit_code=%s\n' "$result" > "$EVIDENCE/result.txt"
   exit "$result"
@@ -266,13 +281,13 @@ assert cpus>0
 available=int(re.search(r'^MemAvailable:\s+(\d+) kB$',(root/'host-meminfo.txt').read_text(),re.M)[1])
 cores=min(4,cpus);memory=4096 if available>=6*1024*1024 else 2560
 (root/'emulator-launch-options.json').write_text(json.dumps({'hostNproc':cpus,'hostMemAvailableKiB':available,
-    'cores':cores,'memoryMiB':memory,'gpu':'swiftshader','accel':'on','hardwareKeyboard':False,
+    'cores':cores,'memoryMiB':memory,'gpu':'swiftshader','disabledFeatures':['Vulkan'],'accel':'on','hardwareKeyboard':False,
     'scope':'Disposable test fixture; resource modernization is not proof of prior crash cause.'},indent=2)+'\n')
 print(cores,memory)
 PYRESOURCES
 )
 [[ "$EMULATOR_CORES" =~ ^[1-4]$ ]] && [[ "$EMULATOR_MEMORY" =~ ^(2560|4096)$ ]]
-"$SDK_ROOT/emulator/emulator" -avd "$AVD_NAME" -port 5580 -no-window -no-audio -no-boot-anim -no-snapshot -wipe-data -gpu swiftshader -cores "$EMULATOR_CORES" -memory "$EMULATOR_MEMORY" -accel on > "$EVIDENCE/emulator-runtime.log" 2>&1 &
+"$SDK_ROOT/emulator/emulator" -avd "$AVD_NAME" -port 5580 -no-window -no-audio -no-boot-anim -no-snapshot -wipe-data -gpu swiftshader -feature -Vulkan -cores "$EMULATOR_CORES" -memory "$EMULATOR_MEMORY" -accel on > "$EVIDENCE/emulator-runtime.log" 2>&1 &
 EMU_PID=$!
 DEADLINE=$((SECONDS + 600))
 READY=false
@@ -286,6 +301,41 @@ while [ "$SECONDS" -lt "$DEADLINE" ]; do
   sleep 3
 done
 [ "$READY" = true ] || { echo 'BOOT_OR_PACKAGE_MANAGER_TIMEOUT'; exit 1; }
+adb -s "$SERIAL" logcat -v threadtime > "$EVIDENCE/continuous-system-logcat.txt" 2> "$EVIDENCE/continuous-system-logcat.stderr" &
+HEALTH_LOG_PID=$!
+# Event-based boot readiness: SystemUI service must exist in a live process,
+# have finished its executing startup callbacks, and package/window must respond.
+# Android ServiceRecord omits executeNesting when zero; nonzero means still busy.
+SYSTEMUI_READY=false
+SYSTEMUI_DEADLINE=$((SECONDS + 180))
+sample=0
+while [ "$SECONDS" -lt "$SYSTEMUI_DEADLINE" ]; do
+  health_checkpoint "startup-$sample"
+  timeout 15 adb -s "$SERIAL" shell dumpsys activity services com.android.systemui > "$EVIDENCE/systemui-startup-$sample.txt"
+  if python3 - "$EVIDENCE/systemui-startup-$sample.txt" <<'PYSYSTEMUI'
+import pathlib,re,sys
+text=pathlib.Path(sys.argv[1]).read_text()
+blocks=re.split(r'(?m)^\s*\* ServiceRecord\{',text)
+service=next((b for b in blocks[1:] if re.search(r'com\.android\.systemui/(?:\.SystemUIService|com\.android\.systemui\.SystemUIService)(?=[}\s])',b.splitlines()[0])),None)
+ready=bool(service and re.search(r'app=ProcessRecord\{[^}]*com\.android\.systemui',service)
+    and 'startRequested=true' in service
+    and not any(int(n)!=0 for n in re.findall(r'executeNesting=(\d+)',service))
+    and 'destroying=true' not in service)
+sys.exit(0 if ready else 1)
+PYSYSTEMUI
+  then
+    if timeout 5 adb -s "$SERIAL" shell pm path android | grep -q '^package:' && \
+       timeout 5 adb -s "$SERIAL" shell service check window | grep -q 'found'; then
+      SYSTEMUI_READY=true
+      cp "$EVIDENCE/systemui-startup-$sample.txt" "$EVIDENCE/systemui-ready.txt"
+      health_checkpoint startup-ready
+      break
+    fi
+  fi
+  sample=$((sample + 1))
+  sleep 2
+done
+[ "$SYSTEMUI_READY" = true ] || { echo 'SYSTEMUI_STARTUP_NOT_QUIESCENT'; exit 1; }
 # Preserve boot diagnostics before installing either old or candidate APK. Never
 # dismiss an ANR or treat a blocked system window as successful UI coverage.
 timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/pre-install-logcat.txt"
@@ -300,6 +350,7 @@ printf 'Verified package manager ready; com.google.android.gms absent.\n' > "$EV
 
   retention_phase() {
     local mode="$1" method="$2"
+    health_checkpoint "before-retention-$mode"
     set +e
     timeout 180 adb -s "$SERIAL" shell am instrument -w -r \
       -e class "com.example.scoreledger.UpgradeRetentionTest#$method" \
@@ -308,6 +359,7 @@ printf 'Verified package manager ready; com.google.android.gms absent.\n' > "$EV
     local status=${PIPESTATUS[0]}
     set -e
     [ "$status" = 0 ] || return 1
+    health_checkpoint "after-retention-$mode"
     check_instrumentation "$EVIDENCE/retention-$mode.txt"
     # Require exactly one completed selected method. An assumption is NOT proof.
     python3 - "$EVIDENCE/retention-$mode.txt" "$method" <<'PYRETENTION'
@@ -352,6 +404,7 @@ for role in ('app','test'):
  sources[role]=source
 (root/'upgrade-provenance.json').write_text(json.dumps({'oldAppSha256':old_hash,'oldTestSha256':sha(sys.argv[3]),'newAppSha256':new_hash,'oldVersionCode':version('prior-app'),'newVersionCode':version('app'),'oldSources':sources},indent=2)+'\n')
 PYUPGRADE
+health_checkpoint before-prior-install
 timeout 120 adb -s "$SERIAL" install "$OLD_APP" | tee "$EVIDENCE/prior-app-install.txt"
 timeout 120 adb -s "$SERIAL" install "$OLD_TEST" | tee "$EVIDENCE/prior-test-install.txt"
 NONCE=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
@@ -375,10 +428,12 @@ printf 'PASS: externally force-stopped process; persisted business snapshot and 
 # the full-suite allowlist, where their phase assumptions would be skips.
 external_draft_phase() {
   local phase="$1" method="$2"
+  health_checkpoint "before-draft-$phase"
   timeout 180 adb -s "$SERIAL" shell am instrument -w -r \
     -e class "com.example.scoreledger.ExternalDraftResumeTest#$method" \
     -e externalDraftResume "$phase" -e allowPersistentSyntheticData true \
     -e upgradeNonce "$NONCE" "$RUNNER" 2>&1 | tee "$EVIDENCE/external-draft-$phase.txt"
+  health_checkpoint "after-draft-$phase"
   python3 - "$EVIDENCE/external-draft-$phase.txt" "$method" <<'PYDRAFTPHASE'
 import pathlib,sys
 from tools.acceptance_gate import verify_methods
@@ -405,10 +460,12 @@ assert marker['nonce']==sys.argv[2] and marker['phase']=='completed', 'External 
 PYDRAFTDONE
 adb -s "$SERIAL" shell pm list instrumentation | tr -d '\r' > "$EVIDENCE/instrumentation-target.txt"
 grep -Fx "instrumentation:$RUNNER (target=$PACKAGE)" "$EVIDENCE/instrumentation-target.txt"
+health_checkpoint before-full-suite
 set +e
 timeout 900 adb -s "$SERIAL" shell am instrument -w -r -e class "$(python3 tools/acceptance_gate.py --selection)" -e realMainJourney true -e allowPersistentSyntheticData true -e upgradeNonce "$NONCE" "$RUNNER" 2>&1 | tee "$EVIDENCE/full-instrumentation.txt"
 INSTRUMENT_EXIT=${PIPESTATUS[0]}
 set -e
+health_checkpoint after-full-suite
 [ "$INSTRUMENT_EXIT" = 0 ] || { echo "Instrumentation transport/timeout failure: $INSTRUMENT_EXIT"; exit 1; }
 python3 tools/acceptance_gate.py --log "$EVIDENCE/full-instrumentation.txt"
 timeout 30 adb -s "$SERIAL" shell am start -W -n "$PACKAGE/com.example.scoreledger.MainActivity" > "$EVIDENCE/launch.txt"

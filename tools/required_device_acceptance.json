@@ -56,7 +56,9 @@
     "com.example.scoreledger.RepositoryIntegrityTest#freeChildRecordingStillEnforcesRealResourceLimitWithoutMutation",
     "com.example.scoreledger.RealPdfDocumentsUiTest#realPdfPickerCancelRetrySavesSamePreviewSnapshotAndPreservesDatabase",
     "com.example.scoreledger.SyntheticJourneyTest#multiSelectAndCustomSubjectSaveReopenAndIsolatePopulatedChildren",
-    "com.example.scoreledger.SyntheticJourneyTest#narrow320dpDoubleFontEntryCanScrollTypeSaveAndReopen"
+    "com.example.scoreledger.SyntheticJourneyTest#narrow320dpDoubleFontEntryCanScrollTypeSaveAndReopen",
+    "com.example.scoreledger.EmptyRestoreUiTest#controlledPickerEmptyRestoreCancelPreservesDraftsAndConfirmProtectsOriginal",
+    "com.example.scoreledger.ChildManagementUiTest#archiveAndCancelThenConfirmChildDeletionPreservesOtherChildAndAllTheirRows"
   ],
   "requiredFiles": [
     "ui-artifacts/synthetic-01-entry-before-save.png",
@@ -104,7 +106,15 @@
     "external-draft-resume.txt",
     "external-draft-stop.txt",
     "external-draft-pre-stop-pid.txt",
-    "external-draft-completed-marker.json"
+    "external-draft-completed-marker.json",
+    "ui-artifacts/empty-restore-warning.png",
+    "ui-artifacts/empty-restore-cancelled.png",
+    "ui-artifacts/empty-restore-confirmed.png",
+    "ui-artifacts/empty-restore-recovered.png",
+    "ui-artifacts/empty-restore-result.json",
+    "ui-artifacts/child-delete-confirmation.png",
+    "ui-artifacts/child-delete-survivor-detail.png",
+    "ui-artifacts/child-management-integrity.json"
   ],
   "requiredPhaseLogs": [
     {
