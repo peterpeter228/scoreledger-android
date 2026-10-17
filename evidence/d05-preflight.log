@@ -1,0 +1,42 @@
+{
+  "timestampUtc": "2026-10-17T00:34:40.839693+00:00",
+  "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+  "python": "3.12.14",
+  "tools": {
+    "java": {
+      "exitCode": 0,
+      "summary": [
+        "openjdk version \"21.0.12.1\" 2026-08-18",
+        "OpenJDK Runtime Environment (build 21.0.12.1+1-1-deb13u1-Debian)",
+        "OpenJDK 64-Bit Server VM (build 21.0.12.1+1-1-deb13u1-Debian, mixed mode, sharing)"
+      ]
+    },
+    "javac": {
+      "status": "NOT_FOUND"
+    },
+    "kotlinc": {
+      "status": "NOT_FOUND"
+    },
+    "gradle": {
+      "status": "NOT_FOUND"
+    },
+    "adb": {
+      "status": "NOT_FOUND"
+    },
+    "git": {
+      "exitCode": 0,
+      "summary": [
+        "git version 2.52.0"
+      ]
+    }
+  },
+  "androidSdk": {
+    "configured": false,
+    "exists": false
+  },
+  "freeDiskGiB": 26.41,
+  "network": "NOT_PROBED",
+  "githubAuthorization": "NOT_PROBED",
+  "deviceInstallation": "NOT_RUN",
+  "secrets": "not read or included"
+}

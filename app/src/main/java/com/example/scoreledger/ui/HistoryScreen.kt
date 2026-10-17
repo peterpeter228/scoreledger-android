@@ -9,16 +9,15 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.scoreledger.R
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.scoreledger.core.*
 import com.example.scoreledger.data.*
 
 @Composable fun HistoryScreen(model: ScoreViewModel,selected: String?,child: ChildEntity?,records: List<ExamWithScores>,drafts: List<DraftEntity>,busy: Boolean,open: (String)->Unit,manage: ()->Unit) {
-    var filters by rememberSaveable(selected){mutableStateOf(false)}
-    var from by rememberSaveable(selected){mutableStateOf("")};var through by rememberSaveable(selected){mutableStateOf("")}
-    var term by rememberSaveable(selected){mutableStateOf("")};var kind by rememberSaveable(selected){mutableStateOf<String?>(null)}
-    val query=RecordQuery(selected.orEmpty(),from,through,term,kind?.let(ExamKind::valueOf))
+    val sharedQuery by model.recordQuery.collectAsStateWithLifecycle()
+    val query=sharedQuery.copy(childId=selected.orEmpty())
     val result=runCatching { query.apply(records) }
     val visible=result.getOrDefault(emptyList())
     val listState=key(selected) { rememberLazyListState() }
@@ -34,14 +33,8 @@ import com.example.scoreledger.data.*
                 val title=runCatching { EntryDraft.decode(d).title }.getOrDefault("")
                 OutlinedButton(onClick={model.openDraft(d)},enabled=!busy,modifier=Modifier.fillMaxWidth()){Text("继续草稿：${title.ifBlank { "未命名考试" }}")}
             }
-            item { TextButton(onClick={filters=!filters}){Text(if(filters) "收起筛选" else "筛选记录")}
-                if(filters) {
-                    OutlinedTextField(from,{from=it},label={Text(stringResource(R.string.ui_55))},singleLine=true,modifier=Modifier.fillMaxWidth())
-                    OutlinedTextField(through,{through=it},label={Text(stringResource(R.string.ui_56))},singleLine=true,modifier=Modifier.fillMaxWidth())
-                    OutlinedTextField(term,{term=it},label={Text(stringResource(R.string.ui_57))},singleLine=true,modifier=Modifier.fillMaxWidth())
-                    KindPicker(kind?.let(ExamKind::valueOf),all=true){kind=it?.name}
-                }
-                if(from.isNotEmpty() || through.isNotEmpty() || term.isNotEmpty() || kind!=null) TextButton(onClick={from="";through="";term="";kind=null}){Text(stringResource(R.string.ui_58))}
+            item {
+                RecordFilters(query,model::setQuery)
                 if(result.isFailure) Text(stringResource(R.string.ui_59),color=MaterialTheme.colorScheme.error)
                 Text("${visible.size}次考试",style=MaterialTheme.typography.titleMedium)
             }

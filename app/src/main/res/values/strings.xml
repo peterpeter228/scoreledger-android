@@ -70,4 +70,13 @@
   <string name="draft_reload_title">重新载入最新草稿？</string>
   <string name="draft_reload_warning">这会用本机最新草稿替换本页尚未保存的输入。取消可继续保留本页输入。</string>
   <string name="draft_reload_confirm">确认重新载入</string>
+    <string name="filter_toggle">筛选范围（记录、趋势与报告共用）</string>
+    <string name="trend_title">单科趋势</string>
+    <string name="trend_empty">当前范围没有可展示的科目，请录入成绩或调整筛选。</string>
+    <string name="trend_rate">得分率</string>
+    <string name="trend_raw">原始分</string>
+    <string name="trend_axis">得分率纵轴固定 0–100%</string>
+    <string name="trend_scope_note">横轴按考试顺序排列，同日考试分别展示。缺考、未录入、未选科和范围变化处断线；不平滑、不预测。得分率不是能力评价，试卷难度和范围可能不同。</string>
+    <string name="trend_values">可访问的原值明细</string>
+    <string name="trend_chart_description">考试顺序趋势图。点按查看记录；全部日期、考试名、分数和缺失状态见下方原值明细。</string>
 </resources>

@@ -54,7 +54,7 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
                 TextButton(onClick={model.retryDraft()},enabled=!busy){Text(stringResource(R.string.draft_retry))}
                 TextButton(onClick={reloadConfirm=true},enabled=!busy){Text(stringResource(R.string.draft_reload))}
             }
-            Text(if(persisted==draft.encode()) "草稿已保存到本机" else "正在保存草稿…",style=MaterialTheme.typography.bodySmall)
+            Text(if(conflict) "草稿有冲突，本页输入尚未保存；请重试或重新载入。" else if(persisted==draft.encode()) "草稿已保存到本机" else "正在保存草稿…",style=MaterialTheme.typography.bodySmall)
         }
         item {
             OutlinedTextField(draft.title,{model.change(draft.copy(title=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text(stringResource(R.string.ui_25))})

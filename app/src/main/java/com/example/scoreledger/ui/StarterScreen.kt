@@ -55,7 +55,7 @@ fun StarterScreen(model: ScoreViewModel) {
                 }
                 else -> {
                     ChildSelector(children,selected,busy,{model.selectChild(it)},{page="孩子"})
-                    if(destination=="趋势") Column(Modifier.padding(20.dp)) { Text(stringResource(R.string.ui_49),style=MaterialTheme.typography.headlineMedium);Text(stringResource(R.string.ui_50)) }
+                    if(destination=="趋势") TrendScreen(model,selected,exams,subjects)
                     else HistoryScreen(model,selected,children.firstOrNull { it.id==selected },exams,drafts,busy,{detail=it},{page="孩子"})
                 }
             }

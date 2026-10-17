@@ -14,3 +14,8 @@
 - Local static checks, Python42 and core59 passed. Android compilation and runtime acceptance for this slice are not yet verified.
 - Review fix: transaction-bound expected-payload compare-and-swap for draft autosave/close/discard/submit; two independent ViewModel stale-write regression added. Conflicts preserve local fields and require explicit confirmation before reloading.
 - Filters now enforce exact four-digit ISO dates while allowing a future upper bound.
+
+### 2026-10-17 D05 native trends (source, device verification pending)
+- Added shared scoped filters, stable core trend records, missing/scope discontinuities, fixed percentage axis and original-value mode.
+- Added accessible ordered values and point selection, exact core changes and total-comparison explanation; no inferred ability.
+- Fixed draft conflict persistence wording. Local core62/Python42/static passed; Android/device not run for D05.

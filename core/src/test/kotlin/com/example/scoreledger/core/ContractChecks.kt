@@ -94,6 +94,25 @@ fun runContractChecks(): Int {
     test("reject whitespace nickname") { rejects { ScoreRules.validateText("  ",24) } }
     test("reject control character") { rejects { ScoreRules.validateText("a\nb",24) } }
     test("reject long text") { rejects { ScoreRules.validateText("a".repeat(25),24) } }
+    test("trend stable order and child isolation") {
+        fun record(id:String,child:String="a",at:Long=1)=TrendRecord(id,"2026-01-01",at,id,context.copy(childId=child),listOf(value()))
+        val points=TrendRules.points(listOf(record("z"),record("b",at=0),record("a"),record("foreign","b")),"a","math")
+        check(points.map{it.record.id}==listOf("b","a","z"))
+    }
+    test("zero plotted missing breaks and absent subject retained") {
+        val rows=listOf(value(n=0),ScoreValue("math",ScoreStatus.MISSING,null,10000),value(n=1))
+        val records=rows.mapIndexed{i,v->TrendRecord("$i","2026-01-01",i.toLong(),"test",context,listOf(v))}
+        val points=TrendRules.points(records,"child-a",rows.first().subjectId)
+        check(points[0].rate?.signum()==0 && points[1].rate==null)
+        check(!TrendRules.connects(points[0],points[1]) && !TrendRules.connects(points[1],points[2]))
+        check(TrendRules.points(records,"child-a","unselected").size==3)
+        check(TrendRules.points(records,"child-a","unselected").all{it.value==null})
+    }
+    test("trend scope change disconnects") {
+        val r=TrendRecord("a","2026-01-01",0,"A",context,listOf(value()))
+        val points=TrendRules.points(listOf(r,r.copy(id="b",context=context.copy(term="other"))),"child-a",value().subjectId)
+        check(!TrendRules.connects(points[0],points[1]) && TrendRules.change(points[0],points[1])==null)
+    }
     println("CONTRACT_CASES_PASSED=$count")
     return count
 }

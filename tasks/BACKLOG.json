@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "currentTask": "D02",
+  "currentTask": "D05",
   "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
   "tasks": [
     {
@@ -146,7 +146,7 @@
     {
       "id": "D05",
       "title": "趋势与客观统计",
-      "status": "NOT_STARTED",
+      "status": "IMPLEMENTED_UNVERIFIED",
       "dependsOn": [
         "D04"
       ],
@@ -163,8 +163,12 @@
       "acceptance": [
         "每个样本与core golden数值一致；缺考不是0；不同分母比较提示明确。"
       ],
-      "evidence": [],
-      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+      "evidence": [
+        "evidence/d05-core.log",
+        "evidence/d05-python.log",
+        "evidence/d05-static.log"
+      ],
+      "notes": "Native Canvas trend and accessible value rows, shared RecordQuery filters, core stable ordering and missing/scope discontinuities. CLI core62/Python42/static passed; Android build/device NOT_RUN for this source."
     },
     {
       "id": "D06",

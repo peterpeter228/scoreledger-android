@@ -46,3 +46,8 @@ ViewModel使用FIFO操作队列，自动持久化、返回保留、显式丢弃�
 下一步由主线程快照推送本项目CI：:app:assembleLocalBetaDebug :app:assembleLocalBetaDebugAndroidTest :app:lintLocalBetaDebug :core:test，模拟器connectedLocalBetaDebugAndroidTest。取真实schema2纳入仓库，修复CI实际错误，然后再更新验证状态。D05–D07未实现。
 
 00:29 UTC并发审查修复：草稿写入/返回/丢弃在仓储事务内比较expectedPayload；VM使用最后确认落盘的payload，不再无条件覆盖。相同payload允许幂等重试；不同编辑器的旧payload拒绝且本地输入保留，提供重试和需确认的重新载入。已提交后无草稿的submit仅允许与现有考试完全相同的幂等重试，拒绝旧编辑覆盖新提交。新增双ViewModel自动保存/提交/返回/提交后再提交回归，待Android执行。RecordQuery严格四位ISO日期，允许未来结束筛选，拒绝+10000年份。Activity重建/独立进程恢复仍未执行；Room迁移不证明不同CI签名APK可以覆盖升级。
+
+## 2026-10-17 00:35 UTC · D05源码阶段快照
+原生Canvas单科趋势与可访问逐条原值明细已接入；默认0–100得分率轴，可选原始分（明确最大满分轴及口径）。所有同日考试按日期/创建时间/ID有序；缺考/未录入/未选此科均保留位置并断线，学期/年级/类型变化也断线。不做平滑、插值或能力判断。点按图表可查看原值；等价文本始终可访问。
+记录与趋势共享ViewModel的RecordQuery筛选，选中孩子在显示端再次覆盖防止Flow短暂旧孩子状态。core统一序列、断线与精确百分点变化；两次总分口径门禁显示不可比较原因。草稿冲突提示不再误称已保存。
+本地实际core62、Python42、静态检查通过，日志evidence/d05-{core,python,static}.log；预检evidence/d05-preflight.log。未运行本快照Android编译、Canvas点击/TalkBack/2倍字体设备验收。D06/D07仍未开始。写入暂停，等待主线程取得快照后继续D06。

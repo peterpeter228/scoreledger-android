@@ -14,6 +14,11 @@ class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
     val subjects = repository.subjects.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     private val selected = MutableStateFlow<String?>(null)
     val selectedChild = selected.asStateFlow()
+    private val filter = MutableStateFlow(RecordQuery(""))
+    val recordQuery = combine(selected, filter) { id, query -> query.copy(childId=id.orEmpty()) }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, RecordQuery(""))
+    fun setQuery(query: RecordQuery) { filter.value=query }
+
     val exams = selected.flatMapLatest { id -> if(id == null) flowOf(emptyList()) else repository.exams(id).onStart { emit(emptyList()) } }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val drafts = selected.flatMapLatest { id -> if(id == null) flowOf(emptyList()) else repository.drafts(id).onStart { emit(emptyList()) } }

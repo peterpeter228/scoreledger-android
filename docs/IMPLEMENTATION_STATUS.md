@@ -19,3 +19,5 @@
 
 静态检查、Python、纯Kotlin通过不等同于新Android源码编译通过，也不等同于设备验收。
 未实现项目仍继续开发；当前所有测试仅使用虚构数据。
+
+D05增量（00:35 UTC）：原生Canvas趋势、原值模式、可访问明细、共享筛选与core序列已经实现，IMPLEMENTED_UNVERIFIED。本地core62/Python42/static通过。Android编译/设备可视与交互验收待CI，D06备份和D07 PDF仍未实现。之前表格中“趋势NOT_STARTED”已被此增量替代。
