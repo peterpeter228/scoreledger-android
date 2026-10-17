@@ -1,0 +1,111 @@
+{
+  "asOf": "2026-10-17",
+  "executedAtUtc": "2026-10-16T16:55:43.757005+00:00",
+  "artifact": "development handoff kit, not a finished Android app",
+  "kotlinCore": {
+    "status": "PASS",
+    "cases": 58,
+    "command": "python3 tools/test_core.py",
+    "log": "evidence/kit_kotlin_contracts.log",
+    "compilerUsed": "kotlinc-jvm 1.9.0; JRE21. Gradle project declares Kotlin2.2.20/JDK17, not yet built under that toolchain."
+  },
+  "pythonBackupContracts": {
+    "status": "PASS",
+    "tests": 42,
+    "command": "python3 -m unittest discover -s reference -p 'test_*.py' -v",
+    "log": "evidence/kit_python_contracts.log"
+  },
+  "checks": [
+    {
+      "name": "preflight",
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/preflight.py",
+        "--out",
+        "evidence/kit_environment.json"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "status": "PASS",
+      "log": "evidence/kit_preflight.log"
+    },
+    {
+      "name": "static_check",
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/verify_package.py"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "status": "PASS",
+      "log": "evidence/kit_static_check.log"
+    },
+    {
+      "name": "release_block",
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/release_guard.py"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "status": "PASS",
+      "log": "evidence/kit_release_block.log"
+    },
+    {
+      "name": "reject_missing_apk",
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/collect_artifacts.py",
+        "does-not-exist.apk"
+      ],
+      "exitCode": 1,
+      "expectedExitCode": 1,
+      "status": "PASS",
+      "log": "evidence/kit_reject_missing_apk.log"
+    },
+    {
+      "name": "bootstrap_help",
+      "command": [
+        "/opt/pyvenv/bin/python3",
+        "tools/gradle_bootstrap.py",
+        "--bootstrap-help"
+      ],
+      "exitCode": 0,
+      "expectedExitCode": 0,
+      "status": "PASS",
+      "log": "evidence/kit_bootstrap_help.log"
+    },
+    {
+      "name": "json_schema",
+      "status": "PASS",
+      "details": "Draft 2020-12 schema and both fixtures, including format checks."
+    },
+    {
+      "name": "workflow_yaml_parse",
+      "status": "PASS",
+      "details": "YAML syntax only. GitHub Actions NOT_RUN."
+    },
+    {
+      "name": "python_syntax",
+      "status": "PASS",
+      "fileCount": 8
+    }
+  ],
+  "android": {
+    "compilation": "NOT_RUN",
+    "reason": "Android SDK and Gradle not installed in kit-authoring environment",
+    "deviceTests": "NOT_RUN",
+    "instrumentation": "NOT_RUN",
+    "apk": "NOT_PRODUCED",
+    "pdfExport": "NOT_IMPLEMENTED",
+    "androidBackupRestore": "NOT_IMPLEMENTED",
+    "billing": "NOT_IMPLEMENTED",
+    "githubCI": "NOT_RUN",
+    "commercialRelease": "BLOCKED"
+  },
+  "acceptanceCases": {
+    "total": 70,
+    "status": "NOT_RUN",
+    "note": "Core/contract checks are not completion of the 70 end-to-end acceptance cases."
+  }
+}

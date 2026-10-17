@@ -1,0 +1,50 @@
+{
+  "project": "ScoreLedger Android",
+  "kitVersion": "1.0",
+  "asOf": "2026-10-17T00:08:52.630691+00:00",
+  "stage": "D00_sdk_install_and_first_ci",
+  "androidBuild": "BLOCKED",
+  "deviceTests": "NOT_RUN",
+  "billing": "NOT_IMPLEMENTED",
+  "commercialRelease": "BLOCKED",
+  "nextTask": "D00",
+  "repository": "https://github.com/peterpeter228/scoreledger-android",
+  "decisionsFile": "tasks/DECISIONS.md",
+  "handoffFile": "tasks/HANDOFF.md",
+  "evidenceDirectory": "evidence",
+  "constraints": [
+    "local-first",
+    "no-AI-or-OCR",
+    "no-accounts-or-cloud-sync",
+    "one-time-purchase",
+    "do-not-lock-existing-data"
+  ],
+  "kitValidation": {
+    "kotlinCoreChecksPassed": 58,
+    "pythonContractTestsPassed": 42,
+    "evidence": "evidence/validation_summary.json"
+  },
+  "productAcceptance": {
+    "total": 70,
+    "executed": 0
+  },
+  "currentEvidence": {
+    "archiveSha256": "50f7ae72d08a64dc13ed592a45733fd615ead83be20099c47cede35b170981ff",
+    "integrityFiles": 95,
+    "pythonTestsPassed": 42,
+    "kotlinTests": "58 baseline passed; 59 after regression fix",
+    "sdkLicense": "USER_APPROVED Sentinel_51a93471c0588191a3c9737e23794112",
+    "repository": "NEW_PRIVATE_REPOSITORY_CONFIRMED",
+    "wrapper": "VERIFIED_GENERATED",
+    "dataLayer": "D01 source and five instrumentation cases prepared, Android compilation/device execution NOT_RUN",
+    "gradleCoreCompile": "PASSED (real JVM compilation; Android not compiled)",
+    "gradleCoreTest": "BLOCKED_MISSING_JUNIT"
+  },
+  "blockers": [
+    {
+      "id": "BUILD_NETWORK",
+      "status": "BLOCKED_ENVIRONMENT",
+      "detail": "repo.maven.apache.org dependency download denied by policy; escalation executor failed before command execution; offline Gradle lacks junit 4.13.2 jar"
+    }
+  ]
+}

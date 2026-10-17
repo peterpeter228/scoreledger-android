@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_title">分数记录</string>
+    <string name="beta_notice">内测骨架 · 未开通付费</string>
+    <string name="privacy_brief">记录保存在本机。首次开发验收前请只输入测试数据。</string>
+</resources>

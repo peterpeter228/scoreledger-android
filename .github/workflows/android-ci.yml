@@ -1,0 +1,65 @@
+name: Android internal build
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  internal-apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.13'
+      - name: Python contract checks
+        run: |
+          python3 tools/verify_package.py
+          python3 -m unittest discover -s reference -p 'test_*.py' -v
+      - name: Check Android SDK and install declared packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          test -n "$SDK_ROOT" || { echo "No Android SDK configured"; exit 1; }
+          SDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$SDKMANAGER" || { echo "sdkmanager missing; configure an official SDK installation"; exit 1; }
+          # Hosted runner normally has license acceptance. Do not bypass it.
+          "$SDKMANAGER" "platforms;android-36" "build-tools;35.0.0" "platform-tools"
+      - name: Build and JVM checks (not emulator/device testing)
+        run: |
+          set -o pipefail
+          chmod +x gradlew
+          ./gradlew --no-daemon :core:test :app:testLocalBetaDebugUnitTest :app:lintLocalBetaDebug :app:assembleLocalBetaDebug :app:assembleLocalBetaDebugAndroidTest 2>&1 | tee evidence/android-ci-build.log
+      - name: Collect real APK
+        run: python3 tools/collect_artifacts.py app/build/outputs/apk/localBeta/debug/app-localBeta-debug.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scoreledger-internal-apk
+          path: out/
+          if-no-files-found: error
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-test-reports
+          path: |
+            core/build/reports/
+            core/build/test-results/
+            app/build/test-results/
+            app/schemas/
+            evidence/android-ci-build.log
+            app/build/outputs/androidTest/
+            app/build/reports/
+          if-no-files-found: warn
+          retention-days: 14

@@ -1,0 +1,319 @@
+{
+  "schemaVersion": 1,
+  "currentTask": "D00",
+  "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
+  "tasks": [
+    {
+      "id": "D00",
+      "title": "先让起步工程真实构建",
+      "status": "BLOCKED",
+      "dependsOn": [],
+      "priority": "P0",
+      "fileScope": [
+        "build.gradle.kts",
+        "app/build.gradle.kts",
+        "gradle*",
+        "tools/*",
+        ".github/workflows/android-ci.yml"
+      ],
+      "steps": [
+        "检查文件实际可读、JDK17/SDK36/Gradle8.13和网络；缺工具按真实权限处理。",
+        "运行静态、Python、Kotlin业务测试；在SDK环境修复构建问题，不降级成网页。",
+        "生成标准Gradle wrapper并保留分发校验；提交Room自动生成schema，不捏造。",
+        "若能执行设备测试，安装内测APK启动并截图；缺少设备分开标记。"
+      ],
+      "acceptance": [
+        "真实assembleLocalBetaDebug成功并存在非空APK；或有不可执行原因与可恢复工作树。",
+        "记录依赖最终解析版本、构建命令/日志/sha256；禁止只跑纯Kotlin就算安卓通过。"
+      ],
+      "evidence": [
+        "evidence/d00-checksums.log",
+        "evidence/d00-python.log",
+        "evidence/d00-first-build.log"
+      ],
+      "notes": "SDK license confirmation pending; Maven Central request blocked, elevated executor initialization failed. Baseline CLI 58 Kotlin and 42 Python passed, 59 Kotlin after regression. Standard wrapper generated. Android NOT_RUN/UNVERIFIED; D01 source prepared while blocked, not accepted."
+    },
+    {
+      "id": "D01",
+      "title": "数据库与仓储完整性",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D00"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/data/*",
+        "app/schemas/*",
+        "app/src/androidTest/*"
+      ],
+      "steps": [
+        "补齐更新、归档、删除、快照读取API；明确外键/唯一约束。",
+        "全部写入事务化；按childId做防护、UUID幂等、上限约束。",
+        "引入可测试Clock/IDProvider；建立v1→v2迁移测试策略；schema变更必须显式migration。"
+      ],
+      "acceptance": [
+        "重复保存、外键、修改快照、跨孩子访问、删除、事务故障用例通过。",
+        "不得fallbackToDestructiveMigration；Room导出schema真实生成。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D02",
+      "title": "孩子和科目管理",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D01"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/ui/children/*",
+        "app/**/ui/subjects/*",
+        "app/**/data/*"
+      ],
+      "steps": [
+        "新建/编辑昵称年级，归档与删除；活跃孩子切换时不闪出上一人的数据。",
+        "科目预设和自定义、排序、归档；历史名称与满分快照不随设置修改。",
+        "显示数量限制；免费权益不能阻止查看已恢复的多孩子档案。"
+      ],
+      "acceptance": [
+        "FR01–03对应用例通过；空库/全归档/删除当前孩子有明确回退。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D03",
+      "title": "录入、编辑与持久草稿",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D01",
+        "D02"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/ui/entry/*",
+        "app/**/data/*",
+        "core/*"
+      ],
+      "steps": [
+        "单屏多科输入、日期选择、考试类型/学期、0/缺考/未录入区分。",
+        "每个草稿绑定childId和draftId；落盘/旋转/进程恢复，不能将A草稿误记给B。",
+        "保存幂等UUID；提交与草稿清理协调，失败保留；编辑不增计数。",
+        "可退出/丢弃/继续草稿；键盘Next与保存可达。"
+      ],
+      "acceptance": [
+        "连点、杀进程、切孩子、所有缺失、满分变更、编辑历史全部通过。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D04",
+      "title": "历史、详情和筛选",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D03"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/ui/history/*",
+        "app/**/ui/navigation/*"
+      ],
+      "steps": [
+        "按孩子/日期/学期/类型过滤和排序；同日多个考试稳定显示。",
+        "详情显示原始值、快照和状态；删除范围说明与确认。",
+        "历史入口、归档孩子、空结果清除筛选及滚动位置恢复。"
+      ],
+      "acceptance": [
+        "没有跨孩子混入；筛选语义与PDF/趋势使用同一查询对象。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D05",
+      "title": "趋势与客观统计",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D04"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "core/*",
+        "app/**/ui/trends/*"
+      ],
+      "steps": [
+        "直接复用core，不在Canvas/PDF重复一套百分率算法。",
+        "0–100轴、缺失断点、同日考试区分；不平滑，不伪造百分位。",
+        "可比性检查、覆盖计数、TalkBack等价数据表；如用第三方图表先核验维护与许可。"
+      ],
+      "acceptance": [
+        "每个样本与core golden数值一致；缺考不是0；不同分母比较提示明确。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D06",
+      "title": "备份恢复和安全设置",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D01",
+        "D04"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/backup/*",
+        "app/**/ui/settings/*",
+        "app/**/data/*",
+        "contracts/*",
+        "reference/*"
+      ],
+      "steps": [
+        "将Python参考校验器的约束移植为Kotlin导入器，共用fixtures并加恶意输入测试。",
+        "SAF主动导出/导入、字节上限、重复键/引用/版本检查。",
+        "完整替换预览、用户确认、替换前内部快照、单事务；任何失败不清原库。",
+        "记录最近成功备份时间；说明JSON明文、卸载丢失、OEM迁移边界。"
+      ],
+      "acceptance": [
+        "新安装恢复逐表相等；损坏/超限/取消/存储满/重复恢复/事务故障用例通过。",
+        "JSON不含权益、密钥、标识或文件路径；拒绝未确认覆盖。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D07",
+      "title": "可打印PDF导出",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D05",
+        "D06"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/export/*",
+        "app/**/ui/export/*"
+      ],
+      "steps": [
+        "PdfDocument逐页渲染、原生中文文本、页面尺寸/边距/换行/字体缩放独立处理。",
+        "摘要一页+明细分页，筛选口径/范围/缺失计数/页码；基础导出不锁。",
+        "按需隐藏昵称备注，SAF保存、FileProvider临时只读分享，清理过期缓存。"
+      ],
+      "acceptance": [
+        "空记录、长中文、10页样例、多机阅读/打印无裁切；取消写入不报成功。",
+        "生成的报告不是Web截图；真设备和阅读器验证中文字体。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D08",
+      "title": "真实渠道付费（商业门禁）",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D04",
+        "D06"
+      ],
+      "priority": "P0_COMMERCIAL_GATE",
+      "fileScope": [
+        "app/src/play/*",
+        "app/**/billing/*",
+        "release/*"
+      ],
+      "steps": [
+        "先保持localBeta与正式版隔离，不默认接GMS。",
+        "在获授权渠道/商品配置后接一次性付费，返回本地化价格，处理pending/canceled/purchased。",
+        "验证购买、防重复grant/ack、恢复、退款/撤销/离线缓存；按渠道规则评估最小后端。",
+        "没有渠道/主体配置时标BLOCKED_EXTERNAL；其他离线开发继续，不造VIP开关。"
+      ],
+      "acceptance": [
+        "商店真实测试购买/恢复/取消/退款证据；状态机不会因回调假成功解锁。",
+        "旧数据不锁；没有真实配置正式release仍被阻断。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D09",
+      "title": "界面收口、隐私和无障碍",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D05",
+        "D06",
+        "D07"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/**/ui/*",
+        "app/src/main/res/*",
+        "docs/UI_UX.md",
+        "release/*"
+      ],
+      "steps": [
+        "替换显式骨架页面为PRD完整导航，删除开发占位但保留内测标志。",
+        "统一string资源、深浅色、48dp、2倍字体、空/错误/加载状态、IME/返回手势。",
+        "权限与依赖SDK审查，离线包无网络；隐私说明必须与实包一致。"
+      ],
+      "acceptance": [
+        "指定设备矩阵截图/录屏及TalkBack证据；无死按钮、无假数据装成果。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D10",
+      "title": "P0回归与内测交付",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D09"
+      ],
+      "priority": "P0",
+      "fileScope": [
+        "app/src/test/*",
+        "app/src/androidTest/*",
+        "evidence/*",
+        "tasks/*",
+        "tools/*"
+      ],
+      "steps": [
+        "逐条AC用例标记结果；性能样本与故障注入；未执行明确not_run。",
+        "收集真实debug APK、构建日志、sha256、版本/包名、安装步骤及未完成表。",
+        "只使用假数据/受控设备；不自动卸载用户现有安装。"
+      ],
+      "acceptance": [
+        "FR01–12/14合格；真实可用内测交付，商业状态仍独立。",
+        "仅有构建而无设备测试时交付标“安装/使用待测”，不宣传完整验收。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    },
+    {
+      "id": "D11",
+      "title": "商业发行准备",
+      "status": "NOT_STARTED",
+      "dependsOn": [
+        "D08",
+        "D10"
+      ],
+      "priority": "P0_COMMERCIAL_GATE",
+      "fileScope": [
+        "release/*",
+        ".github/workflows/*",
+        "evidence/*"
+      ],
+      "steps": [
+        "核实最终应用ID/名称/主体/备案适用性/隐私网址/商店要求。",
+        "用户控制签名密钥安全备份；确认为同一正式应用更新路径。",
+        "按真实证据解锁release_guard，不删除门禁；商店上架和收费需用户明确批准。"
+      ],
+      "acceptance": [
+        "签名/支付/法律/测试/身份信息齐备并独立复核。",
+        "正式AAB/APK与已测版本匹配；无用户授权不执行发布。"
+      ],
+      "evidence": [],
+      "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
+    }
+  ]
+}

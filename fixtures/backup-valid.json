@@ -1,0 +1,156 @@
+{
+  "format": "scoreledger-backup",
+  "schemaVersion": 1,
+  "exportedAt": "2026-10-16T16:00:00Z",
+  "children": [
+    {
+      "id": "0d0a9818-52e0-5b72-9410-a2018b5fbd6f",
+      "nickname": "孩子A（示例）",
+      "gradeLabel": "初一",
+      "archived": false,
+      "createdAt": 1792108800000,
+      "updatedAt": 1792108800000
+    }
+  ],
+  "subjects": [
+    {
+      "id": "145a9d6a-10cf-5f23-90e1-58ac3c5478fc",
+      "name": "语文",
+      "defaultMaxMinor": 10000,
+      "sortOrder": 0,
+      "archived": false,
+      "createdAt": 1792108800000,
+      "updatedAt": 1792108800000
+    },
+    {
+      "id": "0b5b6672-2554-58ef-98eb-bf828793d15b",
+      "name": "数学",
+      "defaultMaxMinor": 15000,
+      "sortOrder": 1,
+      "archived": false,
+      "createdAt": 1792108800000,
+      "updatedAt": 1792108800000
+    },
+    {
+      "id": "aac01ba1-3497-5cca-805f-85a0ac2352b3",
+      "name": "英语",
+      "defaultMaxMinor": 10000,
+      "sortOrder": 2,
+      "archived": false,
+      "createdAt": 1792108800000,
+      "updatedAt": 1792108800000
+    }
+  ],
+  "exams": [
+    {
+      "id": "17d17db0-4158-5b1f-93e3-27bd387aca99",
+      "childId": "0d0a9818-52e0-5b72-9410-a2018b5fbd6f",
+      "title": "九月记录（示例）",
+      "examDate": "2026-09-15",
+      "kind": "MONTHLY",
+      "term": "2026秋",
+      "gradeSnapshot": "初一",
+      "note": "",
+      "createdAt": 1792108800000,
+      "updatedAt": 1792108800000
+    },
+    {
+      "id": "e2750330-7310-5a20-88a4-0e5de4296019",
+      "childId": "0d0a9818-52e0-5b72-9410-a2018b5fbd6f",
+      "title": "十月记录（示例）",
+      "examDate": "2026-10-01",
+      "kind": "MONTHLY",
+      "term": "2026秋",
+      "gradeSnapshot": "初一",
+      "note": "",
+      "createdAt": 1792108800001,
+      "updatedAt": 1792108800001
+    },
+    {
+      "id": "2d50c40e-8045-553c-aef6-a68febfd8dc4",
+      "childId": "0d0a9818-52e0-5b72-9410-a2018b5fbd6f",
+      "title": "补充记录（示例）",
+      "examDate": "2026-10-10",
+      "kind": "MONTHLY",
+      "term": "2026秋",
+      "gradeSnapshot": "初一",
+      "note": "",
+      "createdAt": 1792108800002,
+      "updatedAt": 1792108800002
+    }
+  ],
+  "scores": [
+    {
+      "examId": "17d17db0-4158-5b1f-93e3-27bd387aca99",
+      "subjectId": "145a9d6a-10cf-5f23-90e1-58ac3c5478fc",
+      "subjectNameSnapshot": "语文",
+      "status": "SCORED",
+      "scoreMinor": 8000,
+      "maxMinor": 10000
+    },
+    {
+      "examId": "17d17db0-4158-5b1f-93e3-27bd387aca99",
+      "subjectId": "0b5b6672-2554-58ef-98eb-bf828793d15b",
+      "subjectNameSnapshot": "数学",
+      "status": "SCORED",
+      "scoreMinor": 9000,
+      "maxMinor": 15000
+    },
+    {
+      "examId": "17d17db0-4158-5b1f-93e3-27bd387aca99",
+      "subjectId": "aac01ba1-3497-5cca-805f-85a0ac2352b3",
+      "subjectNameSnapshot": "英语",
+      "status": "MISSING",
+      "scoreMinor": null,
+      "maxMinor": 10000
+    },
+    {
+      "examId": "e2750330-7310-5a20-88a4-0e5de4296019",
+      "subjectId": "145a9d6a-10cf-5f23-90e1-58ac3c5478fc",
+      "subjectNameSnapshot": "语文",
+      "status": "SCORED",
+      "scoreMinor": 9000,
+      "maxMinor": 12000
+    },
+    {
+      "examId": "e2750330-7310-5a20-88a4-0e5de4296019",
+      "subjectId": "0b5b6672-2554-58ef-98eb-bf828793d15b",
+      "subjectNameSnapshot": "数学",
+      "status": "SCORED",
+      "scoreMinor": 11000,
+      "maxMinor": 15000
+    },
+    {
+      "examId": "e2750330-7310-5a20-88a4-0e5de4296019",
+      "subjectId": "aac01ba1-3497-5cca-805f-85a0ac2352b3",
+      "subjectNameSnapshot": "英语",
+      "status": "SCORED",
+      "scoreMinor": 9500,
+      "maxMinor": 10000
+    },
+    {
+      "examId": "2d50c40e-8045-553c-aef6-a68febfd8dc4",
+      "subjectId": "145a9d6a-10cf-5f23-90e1-58ac3c5478fc",
+      "subjectNameSnapshot": "语文",
+      "status": "SCORED",
+      "scoreMinor": 0,
+      "maxMinor": 10000
+    },
+    {
+      "examId": "2d50c40e-8045-553c-aef6-a68febfd8dc4",
+      "subjectId": "0b5b6672-2554-58ef-98eb-bf828793d15b",
+      "subjectNameSnapshot": "数学",
+      "status": "ABSENT",
+      "scoreMinor": null,
+      "maxMinor": 15000
+    },
+    {
+      "examId": "2d50c40e-8045-553c-aef6-a68febfd8dc4",
+      "subjectId": "aac01ba1-3497-5cca-805f-85a0ac2352b3",
+      "subjectNameSnapshot": "英语",
+      "status": "MISSING",
+      "scoreMinor": null,
+      "maxMinor": 10000
+    }
+  ]
+}
