@@ -74,16 +74,32 @@ fun runContractChecks(): Int {
     test("changed maxima comparison denied") { check(!ScoreRules.canCompareTotals(context,listOf(value()),context,listOf(value(m=15000))).comparable) }
     test("changed subject comparison denied") { check(!ScoreRules.canCompareTotals(context,listOf(value()),context,listOf(value(id="chinese"))).comparable) }
     test("incomplete comparison denied") { check(!ScoreRules.canCompareTotals(context,listOf(value(),missing),context,listOf(value(),missing)).comparable) }
+    test("unknown context is not proven comparable") {
+        val unknown=context.copy(term="",gradeSnapshot="")
+        val result=ScoreRules.canCompareTotals(unknown,listOf(value()),unknown,listOf(value()))
+        check(!result.comparable && result.status==Comparability.UNKNOWN)
+        check(ScoreRules.canCompareTotals(unknown,listOf(value()),context,listOf(value())).status==Comparability.UNKNOWN)
+    }
+    test("known differences remain different even with unknown context") {
+        val unknown=context.copy(term="")
+        check(ScoreRules.canCompareTotals(unknown,listOf(value()),unknown,listOf(value(m=15000))).status==Comparability.DIFFERENT)
+    }
+    test("same context is explicitly same") {
+        check(ScoreRules.canCompareTotals(context,listOf(value()),context,listOf(value())).status==Comparability.SAME)
+    }
+    test("different scales report negative twenty percentage points") {
+        equal(ScoreRules.percentagePointChange(value(n=8000,m=10000),value(n=9000,m=15000)),"-20.00")
+    }
     test("subject order irrelevant") {
         val a = listOf(value("a"),value("b")); check(ScoreRules.canCompareTotals(context,a,context,a.reversed()).comparable)
     }
-    test("free has three retained exams") { check(TrialPolicy.canAddExam(false,2) && !TrialPolicy.canAddExam(false,3)) }
-    test("restored oversized dataset stays blocked only for additions") {
-        check(!TrialPolicy.canAddExam(false,100));check(TrialPolicy.canAccessExistingData() && TrialPolicy.canExportBasic() && TrialPolicy.canRestoreBackup())
+    test("basic recording has no commercial exam cap") { check(TrialPolicy.canAddExam(false,3) && TrialPolicy.canAddExam(false,9999)) }
+    test("restored dataset remains free to record and export") {
+        check(TrialPolicy.canAddExam(false,100));check(TrialPolicy.canAccessExistingData() && TrialPolicy.canExportBasic() && TrialPolicy.canRestoreBackup())
     }
     test("pro permits additions") { check(TrialPolicy.canAddExam(true,100)) }
-    test("deletion releases quota") { check(TrialPolicy.canAddExam(false,2)) }
-    test("free active child limit") { check(TrialPolicy.canAddChild(false,0) && !TrialPolicy.canAddChild(false,1)) }
+    test("basic additions do not depend on purchases") { check(TrialPolicy.canAddExam(false,2)) }
+    test("basic recording has no commercial child cap") { check(TrialPolicy.canAddChild(false,1) && TrialPolicy.canAddChild(false,19)) }
     test("reject invalid count") { rejects { TrialPolicy.canAddExam(false,-1) } }
     test("valid leap day") { check(ScoreRules.validateExamDate("2024-02-29",LocalDate.of(2026,10,17)).dayOfMonth==29) }
     test("invalid leap day") { rejects { ScoreRules.validateExamDate("2025-02-29",LocalDate.of(2026,10,17)) } }
@@ -118,6 +134,15 @@ fun runContractChecks(): Int {
         rejects { ScoreRules.validateExactText("\u0085\u00a0",24) }
         ScoreRules.validateExactText("😀".repeat(500),500,true,true)
         ScoreRules.validateExactText("  保留空格  ",24)
+    }
+    test("one hundred of three hundred rounds once at display") {
+        equal(ScoreRules.percent(value(n=10000,m=30000)),"33.33")
+        equal(ScoreRules.summarize(listOf(value(n=10000,m=30000))).ratePercent,"33.33")
+        equal(ScoreRules.summarizeGroups(listOf(listOf(value(n=10000,m=30000)))).ratePercent,"33.33")
+    }
+    test("all absent grouped aggregate is null not zero") {
+        val result=ScoreRules.summarizeGroups(listOf(listOf(absent),listOf(absent)))
+        check(result.ratePercent==null && result.recordedCount==0 && result.selectedCount==2 && !result.isComplete)
     }
     test("report grouped summary weighted and all missing") {
         val combined=ScoreRules.summarizeGroups(listOf(listOf(value(n=8000)),listOf(value(n=9000,m=15000),missing)))

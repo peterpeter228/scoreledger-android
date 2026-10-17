@@ -23,3 +23,10 @@ Backup audit hardening (D07 checkpoint): protect the just-completed rollback fro
 ## 2026-10-17 beta PDF resource boundary
 A single PDF is limited to 200 measured A4 pages. Planning fails explicitly before creating a PDF when this limit is exceeded; direct write also checks the limit before allocating PdfDocument. No rows or notes are silently truncated. The UI suggests narrowing date/term/type scope or omitting notes, without guaranteeing that every same-scope large dataset can be split by these filters. This is a deliberate beta requirement limitation, not full maximum-scale PDF acceptance or a performance claim. Storage/import limits (100,000 score rows / 10,000 exams) and complete JSON backup are unchanged.
 Generation is serialized by a process-wide mutex across ReportManager instances, runs on IO, and checks coroutine cancellation during record/text planning, page writing, and before publication. An active native page is finished in finally before closing PdfDocument. Cancelled/failed writes remove partial and unpublished target files. Native writeTo is synchronous and cannot be interrupted inside the platform call; checks run immediately before and after it. New boundary/cancellation instrumentation remains NOT_RUN until CI/device evidence.
+
+## ADR-2026-10-17-Review revision 0.2.0
+采用独立审查的清楚、安静家庭档案方案；保留 Kotlin/Compose/Room 和原有数据安全边界，局部修复而非推倒。取消3场/1活跃孩子的商业限制，完整标准PDF免费；取代ADR-003及旧PRD权益描述。理由是降低首录及持续记录成本，不通过锁住历史增加购买意愿。资源上限和商业发布门禁不变。尚未做真实家长价值验证，不宣称付费成立。
+用户最新允许云真机不可用时以实际安卓模拟器验收交付。API26/30/36、实际UI/SAF/进程重启/旧新版本升级/视觉矩阵分别取证；未测真机、OEM和真人研究仍单列。Argon按10元本轮上限做脱敏设计/源码/证据审查，模型意见不是执行证据。
+
+### 本轮行顺序范围说明
+既有ScoreEntity和备份v1未保存每场自定义科目顺序；本轮沿用上一场科目及满分，但按当前科目管理sortOrder显示。不会声称已实现任意历史自定义顺序精确复原。该项作为T06剩余限制列出，避免为非核心排序扩张Room/备份版本并引入数据迁移风险；编辑/历史的稳定排序需在实际UI验收核对。

@@ -46,6 +46,10 @@ jobs:
           umask 077
           printf '%s' "$INTERNAL_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/internal-beta.p12"
           test -s "$RUNNER_TEMP/internal-beta.p12"
+      - name: Validate acceptance gate host regressions
+        run: |
+          python3 tools/test_acceptance_gate.py
+          bash -n tools/signed_emulator_acceptance.sh
       - name: Build and JVM checks (not emulator/device testing)
         env:
           SCORELEDGER_REQUIRE_INTERNAL_SIGNING: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && 'true' || 'false' }}

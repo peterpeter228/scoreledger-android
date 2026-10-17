@@ -12,9 +12,22 @@ on:
         default: ''
         type: string
       expected_app_sha256:
-        description: Optional SHA-256 pin for the exact delivered app APK (64 hexadecimal characters)
-        required: false
+        description: Required SHA-256 pin for the exact candidate app APK (64 hexadecimal characters)
+        required: true
         default: ''
+        type: string
+      prior_app_run_id:
+        description: Older same-signer app artifact run (required for real upgrade)
+        required: true
+        type: string
+      prior_test_run_id:
+        description: Older compatible test artifact run containing UpgradeRetentionTest
+        required: true
+        type: string
+      prior_app_sha256:
+        description: Pinned older app SHA-256
+        required: true
+        default: d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92
         type: string
       api:
         description: Disposable AOSP emulator API
@@ -48,10 +61,16 @@ jobs:
           ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
           TEST_ARTIFACT_RUN_ID: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
           EXPECTED_APP_SHA256: ${{ inputs.expected_app_sha256 }}
+          PRIOR_APP_RUN_ID: ${{ inputs.prior_app_run_id }}
+          PRIOR_TEST_RUN_ID: ${{ inputs.prior_test_run_id }}
+          PRIOR_APP_SHA256: ${{ inputs.prior_app_sha256 }}
         run: |
+          [[ "$PRIOR_APP_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          [[ "$PRIOR_TEST_RUN_ID" =~ ^[1-9][0-9]*$ ]]
+          [[ "$PRIOR_APP_SHA256" =~ ^[a-fA-F0-9]{64}$ ]]
           [[ "$ARTIFACT_RUN_ID" =~ ^[1-9][0-9]*$ ]]
           [[ "$TEST_ARTIFACT_RUN_ID" =~ ^[1-9][0-9]*$ ]]
-          [[ -z "$EXPECTED_APP_SHA256" || "$EXPECTED_APP_SHA256" =~ ^[a-fA-F0-9]{64}$ ]]
+          [[ "$EXPECTED_APP_SHA256" =~ ^[a-fA-F0-9]{64}$ ]]
       - name: Record separate artifact source runs
         env:
           GH_TOKEN: ${{ github.token }}
@@ -85,11 +104,41 @@ jobs:
           repository: ${{ github.repository }}
           run-id: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
           github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: scoreledger-internal-apk
+          path: signed-input/prior-app
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.prior_app_run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-test-reports
+          path: signed-input/prior-test
+          repository: ${{ github.repository }}
+          run-id: ${{ inputs.prior_test_run_id }}
+          github-token: ${{ github.token }}
+      - name: Record prior artifact sources
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PRIOR_APP_RUN_ID: ${{ inputs.prior_app_run_id }}
+          PRIOR_TEST_RUN_ID: ${{ inputs.prior_test_run_id }}
+        run: |
+          set -euo pipefail
+          for role in app test; do
+            if [ "$role" = app ]; then id="$PRIOR_APP_RUN_ID"; else id="$PRIOR_TEST_RUN_ID"; fi
+            gh api "repos/$GITHUB_REPOSITORY/actions/runs/$id" \
+              --jq '{id,head_sha,repository:.repository.full_name,html_url,status,conclusion}' \
+              > "evidence/signed-device/prior-$role-source-run.json"
+          done
       - name: Test exact downloaded fixed-signed APKs
         env:
           ARTIFACT_RUN_ID: ${{ inputs.artifact_run_id }}
           TEST_ARTIFACT_RUN_ID: ${{ inputs.test_artifact_run_id || inputs.artifact_run_id }}
           EXPECTED_APP_SHA256: ${{ inputs.expected_app_sha256 }}
+          PRIOR_APP_RUN_ID: ${{ inputs.prior_app_run_id }}
+          PRIOR_TEST_RUN_ID: ${{ inputs.prior_test_run_id }}
+          PRIOR_APP_SHA256: ${{ inputs.prior_app_sha256 }}
           ANDROID_API: ${{ inputs.api }}
           ALLOW_KVM: ${{ inputs.allow_kvm }}
           RUN_REINSTALL_RETENTION: ${{ inputs.run_reinstall_retention }}

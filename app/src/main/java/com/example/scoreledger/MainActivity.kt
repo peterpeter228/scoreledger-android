@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.createSavedStateHandle
+import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.scoreledger.ui.*
 
@@ -16,8 +18,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             val model: ScoreViewModel = viewModel(factory = object : ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
-                override fun <T : ViewModel> create(modelClass: Class<T>): T =
-                    ScoreViewModel((application as ScoreLedgerApplication).repository) as T
+                override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T =
+                    ScoreViewModel((application as ScoreLedgerApplication).repository, extras.createSavedStateHandle()) as T
             })
             ScoreLedgerTheme { StarterScreen(model) }
         }

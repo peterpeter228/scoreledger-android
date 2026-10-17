@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T02:10:20.689119+00:00",
-  "stage": "FIRST_INTERNAL_BETA_DELIVERED",
-  "androidBuild": "VERIFIED_EXACT_BUSINESS58",
-  "deviceTests": "AOSP_API26_30_36_PASSED",
+  "asOf": "2026-10-17T08:19:00Z",
+  "stage": "REVIEW_REVISION_IMPLEMENTING",
+  "androidBuild": "NEW_SOURCE_NOT_YET_COMPILED",
+  "deviceTests": "NEW_APK_NOT_RUN",
   "billing": "NOT_IMPLEMENTED_NOT_TESTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "Collect real-device feedback and plan remaining full-acceptance work; commercial gates remain blocked",
+  "nextTask": "Implement review T01–T17, compile 0.2.0-beta, actual AOSP26/30/36 UI and upgrade acceptance, Argon independent review",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -38,9 +38,9 @@
   },
   "blockers": [
     {
-      "id": "FULL_ACCEPTANCE",
-      "status": "PARTIAL_NOT_BLOCKING_FIRST_INTERNAL_BETA",
-      "detail": "Physical/OEM, full-scale performance, real external providers and commercial acceptance remain separate; see currentLimitations."
+      "id": "NEW_APK_ACCEPTANCE",
+      "status": "IN_PROGRESS",
+      "detail": "No new build or device pass asserted. Human research/payment/physical OEM remain independent."
     }
   ],
   "ci": {
@@ -61,48 +61,10 @@
     "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38985168690"
   },
   "deliveryCandidate": {
-    "businessCommit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
-    "testDiagnosticsCommit": "e0c971eaf125c133bc110f5d714f82854085c27c",
-    "buildRunId": 38991766567,
+    "versionName": "0.2.0-beta",
+    "versionCode": 2,
     "package": "com.example.scoreledger.beta.debug",
-    "versionName": "0.1.0-beta",
-    "apkSha256": "d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92",
-    "certificateSha256": "bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c",
-    "networkPermission": "ABSENT_VERIFIED_BY_AAPT",
-    "googleServices": "ABSENT_IN_TESTED_AOSP_IMAGES",
-    "deviceMatrix": [
-      {
-        "api": 26,
-        "runId": 38992438499,
-        "normalPassed": 34,
-        "normalExpectedSkips": 2,
-        "retentionSeedPassed": 1,
-        "retentionVerifyPassed": 1,
-        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992438499"
-      },
-      {
-        "api": 30,
-        "runId": 38992023617,
-        "normalPassed": 34,
-        "normalExpectedSkips": 2,
-        "retentionSeedPassed": 1,
-        "retentionVerifyPassed": 1,
-        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992023617"
-      },
-      {
-        "api": 36,
-        "runId": 38992477045,
-        "normalPassed": 34,
-        "normalExpectedSkips": 2,
-        "retentionSeedPassed": 1,
-        "retentionVerifyPassed": 1,
-        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992477045"
-      }
-    ],
-    "delivered": true,
-    "visualCaptureRunId": 38993300734,
-    "visualReview": "SAMPLE_PASSED_NOT_EXHAUSTIVE",
-    "deliveryEvidence": "APK and completeZIP attachment send accepted2026-10-17T02:09:27Z; user download not confirmed"
+    "delivered": false
   },
   "currentLimitations": [
     "Physical phones/OEM keyboards/TalkBack not verified",
@@ -173,5 +135,58 @@
       "repair": "Test reads absent index array as empty, retains all actual declared indexes and adds exam/score preservation + index-name assertions. NOT_RUN after repair."
     },
     "upgradeRetention": "Opt-in seed/verify instrumentation source added, DEBUG/localBeta/exact package/emulator hardware/nonce/explicit flag guards, empty DB prerequisite, no cleanup. Requires separate signed APK install -r run; NOT_RUN."
+  },
+  "previousDelivery": {
+    "businessCommit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+    "testDiagnosticsCommit": "e0c971eaf125c133bc110f5d714f82854085c27c",
+    "buildRunId": 38991766567,
+    "package": "com.example.scoreledger.beta.debug",
+    "versionName": "0.1.0-beta",
+    "apkSha256": "d2bb25d9b192bc12853148fbf3b0ec208c4842b874f77a2e3b08e356844f1a92",
+    "certificateSha256": "bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c",
+    "networkPermission": "ABSENT_VERIFIED_BY_AAPT",
+    "googleServices": "ABSENT_IN_TESTED_AOSP_IMAGES",
+    "deviceMatrix": [
+      {
+        "api": 26,
+        "runId": 38992438499,
+        "normalPassed": 34,
+        "normalExpectedSkips": 2,
+        "retentionSeedPassed": 1,
+        "retentionVerifyPassed": 1,
+        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992438499"
+      },
+      {
+        "api": 30,
+        "runId": 38992023617,
+        "normalPassed": 34,
+        "normalExpectedSkips": 2,
+        "retentionSeedPassed": 1,
+        "retentionVerifyPassed": 1,
+        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992023617"
+      },
+      {
+        "api": 36,
+        "runId": 38992477045,
+        "normalPassed": 34,
+        "normalExpectedSkips": 2,
+        "retentionSeedPassed": 1,
+        "retentionVerifyPassed": 1,
+        "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38992477045"
+      }
+    ],
+    "delivered": true,
+    "visualCaptureRunId": 38993300734,
+    "visualReview": "SAMPLE_PASSED_NOT_EXHAUSTIVE",
+    "deliveryEvidence": "APK and completeZIP attachment send accepted2026-10-17T02:09:27Z; user download not confirmed"
+  },
+  "review": {
+    "baseline": "bbb48dd08691ded0cb2d872d876821752e101844",
+    "implementationBase": "64d2e012ff195859581af82650066f77f8383cec",
+    "conversation": "https://chatgpt.com/c/6ad312f9-194c-83ee-b3db-ecf07227bfb1",
+    "findings": 23,
+    "tasks": 20,
+    "argonBudgetCny": 10,
+    "emulatorAcceptedIfCloudPhysicalUnavailable": true
   }
 }

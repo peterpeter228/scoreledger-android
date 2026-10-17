@@ -102,8 +102,8 @@ collect_and_stop() {
     timeout 15 adb -s "$SERIAL" exec-out screencap -p > "$EVIDENCE/final-screen.png"
     timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/logcat.txt"
     timeout 10 adb -s "$SERIAL" shell getprop > "$EVIDENCE/device-properties.txt"
-    collect_app_evidence pdf-evidence pdf-artifacts
-    collect_app_evidence ui-evidence ui-artifacts
+    [ -d "$EVIDENCE/pdf-artifacts" ] || collect_app_evidence pdf-evidence pdf-artifacts
+    [ -d "$EVIDENCE/ui-artifacts" ] || collect_app_evidence ui-evidence ui-artifacts
     kill "$EMU_PID" 2>/dev/null
     wait "$EMU_PID" 2>/dev/null
   fi
@@ -152,11 +152,13 @@ def source_run(name, expected_id):
     return run
 app_source = source_run('app', app_run_id)
 test_source = source_run('test', test_run_id)
+assert app_source['head_sha'] == test_source['head_sha'] == os.environ['GITHUB_SHA'], 'Candidate app, test APK and acceptance source commits must match'
+assert app_source['conclusion'] == test_source['conclusion'] == 'success', 'Source build was not successful'
 apks = [{'role': role, 'path': str(p), 'bytes': p.stat().st_size,
          'sha256': hashlib.sha256(p.read_bytes()).hexdigest()}
         for role, p in zip(('app', 'instrumentation'), paths)]
 pin = os.getenv('EXPECTED_APP_SHA256', '').lower()
-assert not pin or re.fullmatch(r'[a-f0-9]{64}', pin), 'Invalid app APK SHA-256 pin'
+assert re.fullmatch(r'[a-f0-9]{64}', pin), 'Required app APK SHA-256 pin missing/invalid'
 assert not pin or apks[0]['sha256'] == pin, 'App APK does not match expected SHA-256'
 data = {'repository': repository, 'artifactRunId': app_run_id,
         'appArtifactRunId': app_run_id, 'testArtifactRunId': test_run_id,
@@ -164,7 +166,9 @@ data = {'repository': repository, 'artifactRunId': app_run_id,
         'mixedArtifactRuns': app_run_id != test_run_id,
         'expectedAppSha256': pin or None, 'appHashPinVerified': bool(pin),
         'acceptanceRunId': os.getenv('GITHUB_RUN_ID'), 'acceptanceSourceSha': os.getenv('GITHUB_SHA'),
-        'api': int(sys.argv[4]), 'certificateSha256': sys.argv[5], 'rebuilt': False,
+        'api': int(sys.argv[4]), 'variant': 'localBetaDebug', 'package': 'com.example.scoreledger.beta.debug', 'certificateSha256': sys.argv[5], 'rebuilt': False,
+        'packageBadging': (root / 'app-badging.txt').read_text().splitlines()[0],
+        'requiredManifestSha256': hashlib.sha256(pathlib.Path('tools/required_device_acceptance.json').read_bytes()).hexdigest(),
         'apks': apks,
         'sourceCompatibilityReview': 'Separate review required for mixed app/test source runs; this script verifies identities, not source equivalence.'}
 pathlib.Path(sys.argv[1]).write_text(json.dumps(data, indent=2) + '\n')
@@ -207,28 +211,6 @@ if grep -q '^package:com.google.android.gms$' "$EVIDENCE/gms-packages.txt"; then
 fi
 printf 'Verified package manager ready; com.google.android.gms absent.\n' > "$EVIDENCE/aosp-verification.txt"
 
-# Only this new AVD is modified. No uninstall, clear, or physical-device commands.
-timeout 120 adb -s "$SERIAL" install "$APP_APK" | tee "$EVIDENCE/app-install.txt"
-timeout 120 adb -s "$SERIAL" install "$TEST_APK" | tee "$EVIDENCE/test-install.txt"
-adb -s "$SERIAL" shell pm list instrumentation | tr -d '\r' > "$EVIDENCE/instrumentation-target.txt"
-grep -Fx "instrumentation:$RUNNER (target=$PACKAGE)" "$EVIDENCE/instrumentation-target.txt"
-set +e
-timeout 900 adb -s "$SERIAL" shell am instrument -w -r "$RUNNER" 2>&1 | tee "$EVIDENCE/full-instrumentation.txt"
-INSTRUMENT_EXIT=${PIPESTATUS[0]}
-set -e
-[ "$INSTRUMENT_EXIT" = 0 ] || { echo "Instrumentation transport/timeout failure: $INSTRUMENT_EXIT"; exit 1; }
-check_instrumentation "$EVIDENCE/full-instrumentation.txt"
-timeout 30 adb -s "$SERIAL" shell am start -W -n "$PACKAGE/com.example.scoreledger.MainActivity" > "$EVIDENCE/launch.txt"
-sleep 3
-timeout 10 adb -s "$SERIAL" shell pidof "$PACKAGE" > "$EVIDENCE/app-pid.txt"
-test -s "$EVIDENCE/app-pid.txt"
-timeout 15 adb -s "$SERIAL" exec-out screencap -p > "$EVIDENCE/launch-screen.png"
-test -s "$EVIDENCE/launch-screen.png"
-if [ "${RUN_REINSTALL_RETENTION:-false}" = true ]; then
-  # This opt-in only writes guarded synthetic data to the disposable emulator.
-  # It deliberately fails rather than clearing any pre-existing database content.
-  NONCE=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
-  printf 'RUNNING: same-APK reinstall retention, nonce=%s\n' "$NONCE" > "$EVIDENCE/reinstall-retention.txt"
   retention_phase() {
     local mode="$1" method="$2"
     set +e
@@ -256,10 +238,78 @@ PYRETENTION
     timeout 15 adb -s "$SERIAL" shell run-as "$PACKAGE" cat "no_backup/upgrade-retention-$NONCE.json" > "$EVIDENCE/retention-$mode-marker.json"
     test -s "$EVIDENCE/retention-$mode-marker.json"
   }
-  retention_phase seed seedPersistentSyntheticData
+# Only this new AVD is modified. No uninstall, clear, or physical-device commands.
+mapfile -d '' OLD_APPS < <(find signed-input/prior-app -type f -name '*.apk' -print0)
+mapfile -d '' OLD_TESTS < <(find signed-input/prior-test -type f -name '*androidTest.apk' -print0)
+[ "${#OLD_APPS[@]}" = 1 ] && [ "${#OLD_TESTS[@]}" = 1 ]
+OLD_APP="${OLD_APPS[0]}"; OLD_TEST="${OLD_TESTS[0]}"
+verify_apk "$OLD_APP" prior-app "$PACKAGE"
+verify_apk "$OLD_TEST" prior-test "$TEST_PACKAGE"
+python3 - "$EVIDENCE" "$OLD_APP" "$OLD_TEST" "$APP_APK" <<'PYUPGRADE'
+import hashlib,json,os,pathlib,re,sys
+root=pathlib.Path(sys.argv[1])
+def sha(p): return hashlib.sha256(pathlib.Path(p).read_bytes()).hexdigest()
+old_hash=sha(sys.argv[2]); new_hash=sha(sys.argv[4])
+assert old_hash == os.environ['PRIOR_APP_SHA256'].lower(), 'Older APK hash mismatch'
+assert old_hash != new_hash, 'Same APK reinstall is not upgrade'
+def version(role):
+ text=(root/(role+'-badging.txt')).read_text()
+ return int(re.search(r"versionCode='(\d+)'",text)[1])
+assert version('app') > version('prior-app'), 'Candidate versionCode must strictly increase'
+sources={}
+for role in ('app','test'):
+ source=json.loads((root/('prior-'+role+'-source-run.json')).read_text())
+ assert str(source['id'])==os.environ['PRIOR_'+role.upper()+'_RUN_ID']
+ assert source['repository']==os.environ['GITHUB_REPOSITORY'] and source['conclusion']=='success'
+ assert re.fullmatch('[0-9a-f]{40}',source['head_sha'])
+ sources[role]=source
+(root/'upgrade-provenance.json').write_text(json.dumps({'oldAppSha256':old_hash,'oldTestSha256':sha(sys.argv[3]),'newAppSha256':new_hash,'oldVersionCode':version('prior-app'),'newVersionCode':version('app'),'oldSources':sources},indent=2)+'\n')
+PYUPGRADE
+timeout 120 adb -s "$SERIAL" install "$OLD_APP" | tee "$EVIDENCE/prior-app-install.txt"
+timeout 120 adb -s "$SERIAL" install "$OLD_TEST" | tee "$EVIDENCE/prior-test-install.txt"
+NONCE=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
+retention_phase seed seedPersistentSyntheticData
+timeout 120 adb -s "$SERIAL" install -r "$APP_APK" | tee "$EVIDENCE/app-install.txt"
+timeout 120 adb -s "$SERIAL" install -r "$TEST_APK" | tee "$EVIDENCE/test-install.txt"
+retention_phase verify verifyPersistentSyntheticData
+cmp "$EVIDENCE/retention-seed-marker.json" "$EVIDENCE/retention-verify-marker.json"
+cp "$EVIDENCE/retention-verify.txt" "$EVIDENCE/version-upgrade-verify.txt"
+printf 'PASS: distinct older APK upgraded to candidate with strictly greater versionCode and identical fixed signer; complete canonical business snapshot and stored drafts matched.\n' > "$EVIDENCE/version-upgrade.txt"
+# Independent shell process termination; ActivityScenario.recreate is not used.
+adb -s "$SERIAL" shell am start -W -n "$PACKAGE/com.example.scoreledger.MainActivity" > "$EVIDENCE/pre-kill-launch.txt"
+adb -s "$SERIAL" shell pidof "$PACKAGE" > "$EVIDENCE/pre-kill-pid.txt"
+test -s "$EVIDENCE/pre-kill-pid.txt"
+adb -s "$SERIAL" shell am force-stop "$PACKAGE"
+if adb -s "$SERIAL" shell pidof "$PACKAGE"; then echo 'Process still alive'; exit 1; fi
+retention_phase verify verifyPersistentSyntheticData
+cp "$EVIDENCE/retention-verify.txt" "$EVIDENCE/external-process-death-verify.txt"
+printf 'PASS: externally force-stopped process; persisted business snapshot and draft verified on restart. UI editor restoration and mid-I/O death NOT covered.\n' > "$EVIDENCE/process-death.txt"
+adb -s "$SERIAL" shell pm list instrumentation | tr -d '\r' > "$EVIDENCE/instrumentation-target.txt"
+grep -Fx "instrumentation:$RUNNER (target=$PACKAGE)" "$EVIDENCE/instrumentation-target.txt"
+set +e
+timeout 900 adb -s "$SERIAL" shell am instrument -w -r -e class "$(python3 tools/acceptance_gate.py --selection)" "$RUNNER" 2>&1 | tee "$EVIDENCE/full-instrumentation.txt"
+INSTRUMENT_EXIT=${PIPESTATUS[0]}
+set -e
+[ "$INSTRUMENT_EXIT" = 0 ] || { echo "Instrumentation transport/timeout failure: $INSTRUMENT_EXIT"; exit 1; }
+python3 tools/acceptance_gate.py --log "$EVIDENCE/full-instrumentation.txt"
+timeout 30 adb -s "$SERIAL" shell am start -W -n "$PACKAGE/com.example.scoreledger.MainActivity" > "$EVIDENCE/launch.txt"
+sleep 3
+timeout 10 adb -s "$SERIAL" shell pidof "$PACKAGE" > "$EVIDENCE/app-pid.txt"
+test -s "$EVIDENCE/app-pid.txt"
+timeout 15 adb -s "$SERIAL" exec-out screencap -p > "$EVIDENCE/launch-screen.png"
+test -s "$EVIDENCE/launch-screen.png"
+if [ "${RUN_REINSTALL_RETENTION:-false}" = true ]; then
+  # This opt-in only writes guarded synthetic data to the disposable emulator.
+  # It deliberately fails rather than clearing any pre-existing database content.
+  printf 'RUNNING: same-APK reinstall retention, nonce=%s\n' "$NONCE" > "$EVIDENCE/reinstall-retention.txt"
+
   timeout 120 adb -s "$SERIAL" install -r "$APP_APK" | tee "$EVIDENCE/reinstall.txt"
   retention_phase verify verifyPersistentSyntheticData
   cmp "$EVIDENCE/retention-seed-marker.json" "$EVIDENCE/retention-verify-marker.json"
   printf 'PASSED: same downloaded fixed-signed APK reinstalled with install -r; guarded synthetic data verified. NOT a version upgrade.\n' > "$EVIDENCE/reinstall-retention.txt"
 fi
-echo 'SIGNED_ARTIFACT_DEVICE_ACCEPTANCE_PASSED; physical devices and version upgrades NOT tested.'
+# Collection is mandatory on the success path, not a best-effort EXIT side effect.
+collect_app_evidence pdf-evidence pdf-artifacts
+collect_app_evidence ui-evidence ui-artifacts
+python3 tools/acceptance_gate.py --log "$EVIDENCE/full-instrumentation.txt" --evidence "$EVIDENCE"
+echo 'SIGNED_ARTIFACT_REQUIRED_METHODS_AND_EVIDENCE_PASSED; business-case coverage and visual review remain separate.' 

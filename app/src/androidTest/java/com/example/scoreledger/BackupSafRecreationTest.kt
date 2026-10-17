@@ -26,7 +26,7 @@ class BackupSafRecreationTest {
     @get:Rule val compose=createEmptyComposeRule()
     private fun setting(text:String):SemanticsNodeInteraction {
         compose.onNodeWithTag("settings-list").performScrollToNode(hasText(text))
-        return compose.onNodeWithText(text)
+        return compose.onNodeWithText(text).performScrollTo()
     }
     @Test fun exportAndRestorePickerResultsSurviveRecreation() {
         val instrumentation=InstrumentationRegistry.getInstrumentation();val isolated=IsolatedUiContext(instrumentation.targetContext)
@@ -47,8 +47,8 @@ class BackupSafRecreationTest {
                 instrumentation.runOnMainSync{assertTrue(registry.dispatchResult(exportCode,Activity.RESULT_OK,Intent().setData(Uri.fromFile(target))))}
                 compose.waitUntil(15000){target.isFile && target.length()>0}
                 setting("导出 JSON 备份（免费）").assertExists()
-                compose.waitUntil(15000){compose.onAllNodesWithText("备份已保存，请妥善保管明文文件").fetchSemanticsNodes().isNotEmpty()}
-                setting("备份已保存，请妥善保管明文文件").assertIsDisplayed()
+                compose.waitUntil(15000){compose.onAllNodesWithText("备份已保存并回读校验，请妥善保管明文文件").fetchSemanticsNodes().isNotEmpty()}
+                setting("备份已保存并回读校验，请妥善保管明文文件").assertIsDisplayed()
                 val exported=target.inputStream().use{BackupCodec.read(it)}
                 assertEquals("合成备份重建",exported.children.single().nickname)
                 registry.code=null

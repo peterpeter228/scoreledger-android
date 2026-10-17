@@ -17,8 +17,15 @@ import kotlinx.coroutines.sync.withLock
 import java.io.File
 import java.util.UUID
 
-class ReportFile internal constructor(internal val file:File,val pageCount:Int,val scoreRows:Int)
-class ReportManager(private val context:Context,private val repository:ScoreRepository) {
+class ReportFile internal constructor(internal val file:File,val pageCount:Int,val scoreRows:Int,val textPages:List<String> = emptyList())
+data class ReportScope(val childName:String,val exams:List<Pair<String,String>>,val subjects:List<Pair<String,String>> )
+class ReportManager(context:Context,private val repository:ScoreRepository) {
+    private val context=context.applicationContext
+    suspend fun scope(query:RecordQuery,examIds:Set<String>?=null):ReportScope=withContext(Dispatchers.IO) {
+        val data=repository.snapshot();val byExam=data.scores.groupBy{it.examId}
+        val records=query.apply(data.exams.map{com.example.scoreledger.data.ExamWithScores(it,byExam[it.id].orEmpty())}).reversed().filter{examIds==null || it.exam.id in examIds}
+        ReportScope(data.children.firstOrNull{it.id==query.childId}?.nickname ?: "未选择孩子",records.map{it.exam.id to "${it.exam.examDate} · ${it.exam.title}"},records.flatMap{it.scores}.distinctBy{it.subjectId}.map{it.subjectId to it.subjectNameSnapshot}.sortedBy{it.second})
+    }
     private val directory=File(context.cacheDir,"reports")
     companion object { private val generationMutex=Mutex() }
     suspend fun generate(query:RecordQuery,options:ReportOptions):ReportFile=withContext(Dispatchers.IO) {
@@ -26,7 +33,7 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
         generationMutex.withLock {
             caller.ensureActive()
             cleanup()
-            val plan=PdfReport.plan(repository.snapshot(),query,options.copy(full=options.full && BuildConfig.INTERNAL_BETA),checkCancelled={caller.ensureActive()})
+            val plan=PdfReport.plan(repository.snapshot(),query,options,checkCancelled={caller.ensureActive()})
             writePrepared(plan){caller.ensureActive()}
         }
     }
@@ -43,7 +50,7 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
             check(partial.length()>0 && partial.renameTo(target)) { "报告未生成完成" }
             checkCancelled()
             published=true
-            return ReportFile(target,plan.pages.size,plan.scoreRows)
+            return ReportFile(target,plan.pages.size,plan.scoreRows,plan.pages.map{p->p.blocks.filter{it.trend==null}.joinToString("\n"){it.text}})
         } finally { partial.delete();if(!published)target.delete() }
     }
     /** Only the opaque generated ID is saved across SAF recreation, never an arbitrary path. */
@@ -55,10 +62,19 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
         require(file.canonicalFile.parentFile==directory.canonicalFile && file.isFile && file.length()>0) { "报告已清理，请重新生成；目标文件尚未写入" }
         // Validate the existing file before opening/truncating the user's selected destination.
         requireNotNull(context.contentResolver.openOutputStream(uri,"wt")).use { out -> file.inputStream().use{it.copyTo(out)} }
+        verifySaved(file,uri)
     }
-    suspend fun save(report:ReportFile,uri:Uri)=withContext(Dispatchers.IO) {
-        require(report.file.isFile) { "报告已清理，请重新生成" }
-        requireNotNull(context.contentResolver.openOutputStream(uri,"wt")).use { out -> report.file.inputStream().use { it.copyTo(out) } }
+    suspend fun save(report:ReportFile,uri:Uri)=savePending(reportId(report),uri)
+    private fun verifySaved(file:File,uri:Uri):Boolean {
+        val input=try{context.contentResolver.openInputStream(uri)}catch(_:SecurityException){null}catch(_:java.io.FileNotFoundException){null}
+        if(input==null)return false
+        fun digest(stream:java.io.InputStream):ByteArray {
+            val hash=java.security.MessageDigest.getInstance("SHA-256");val bytes=ByteArray(8192);var total=0L
+            while(true){val n=stream.read(bytes);if(n<0)break;total+=n;check(total<=file.length()){ "目标文件长度不一致" };hash.update(bytes,0,n)}
+            check(total==file.length()){ "目标文件长度不一致" };return hash.digest()
+        }
+        input.use{actual->check(java.security.MessageDigest.isEqual(file.inputStream().use(::digest),digest(actual))){ "目标内容校验不一致" }}
+        return true
     }
     suspend fun previewIntent(report:ReportFile):Intent = withContext(Dispatchers.IO) {
         require(report.file.isFile) { "报告已清理，请重新生成" }
@@ -95,10 +111,10 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
             }
         }
     }
-    suspend fun maintenance()=withContext(Dispatchers.IO){cleanup()}
+    suspend fun maintenance()=withContext(Dispatchers.IO){generationMutex.withLock{cleanup()}}
     private fun cleanup() {
         val cutoff=System.currentTimeMillis()-24L*60*60*1000
-        directory.listFiles()?.filter{it.lastModified()<cutoff}?.forEach{check(it.delete()){ "无法清理过期报告" }}
+        directory.listFiles()?.filter{it.extension=="partial" || it.lastModified()<cutoff}?.forEach{check(it.delete()){ "无法清理过期报告" }}
     }
 }
 

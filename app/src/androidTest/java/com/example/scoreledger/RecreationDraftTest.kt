@@ -28,11 +28,12 @@ class RecreationDraftTest {
                 compose.waitUntil(10000){compose.onAllNodesWithText("继续草稿：重建前标题").fetchSemanticsNodes().isNotEmpty()}
                 compose.onNodeWithText("继续草稿：重建前标题").performClick()
                 compose.waitUntil(10000){compose.onAllNodesWithText("重建前标题").fetchSemanticsNodes().isNotEmpty()}
-                compose.onNodeWithText("重建前标题").performTextReplacement("旋转后仍保留")
+                compose.onNodeWithText("修改考试信息").performClick()
+                compose.onNodeWithText("考试名称").performTextReplacement("旋转后仍保留")
                 compose.waitUntil(10000){runBlocking{repository.draft(draft.id,draft.childId)?.let(EntryDraft::decode)?.title=="旋转后仍保留"}}
                 scenario.recreate()
                 compose.waitUntil(10000){compose.onAllNodesWithText("旋转后仍保留").fetchSemanticsNodes().isNotEmpty()}
-                compose.onNodeWithText("旋转后仍保留").assertExists()
+                compose.onAllNodesWithText("旋转后仍保留").onFirst().assertExists()
                 compose.onNodeWithText("草稿已保存到本机").assertExists()
                 assertEquals(draft.id,runBlocking{repository.draft(draft.id,draft.childId)}?.id)
                 assertEquals(0,runBlocking{db.dao().examCount()})

@@ -29,7 +29,9 @@ data class ScoreSummary(
     val ratePercent: BigDecimal?
 ) { val isComplete: Boolean get() = selectedCount > 0 && recordedCount == selectedCount }
 
-data class Comparison(val comparable: Boolean, val reason: String?)
+enum class Comparability { SAME, DIFFERENT, UNKNOWN }
+data class Comparison(val comparable: Boolean, val reason: String?,
+    val status: Comparability = if(comparable) Comparability.SAME else Comparability.DIFFERENT)
 
 object ScoreRules {
     const val MAX_MINOR: Long = 1_000_000L // 10,000.00 points.
@@ -115,7 +117,8 @@ object ScoreRules {
     ): Comparison {
         validateRows(before); validateRows(after)
         if (previous.childId != current.childId) return Comparison(false, "不同孩子")
-        if (previous.term != current.term || previous.gradeSnapshot != current.gradeSnapshot ||
+        if ((previous.term.isNotBlank() && current.term.isNotBlank() && previous.term != current.term) ||
+            (previous.gradeSnapshot.isNotBlank() && current.gradeSnapshot.isNotBlank() && previous.gradeSnapshot != current.gradeSnapshot) ||
             previous.kind != current.kind) return Comparison(false, "考试范围不同")
         if (before.any { it.status != ScoreStatus.SCORED } || after.any { it.status != ScoreStatus.SCORED })
             return Comparison(false, "存在缺考或未录入")
@@ -123,6 +126,8 @@ object ScoreRules {
             return Comparison(false, "科目集合不同")
         if (before.associate { it.subjectId to it.maxMinor } != after.associate { it.subjectId to it.maxMinor })
             return Comparison(false, "满分不同")
+        if (previous.term.isBlank() || current.term.isBlank() || previous.gradeSnapshot.isBlank() || current.gradeSnapshot.isBlank())
+            return Comparison(false, "学期或年级未知，不能确认同口径", Comparability.UNKNOWN)
         return Comparison(true, null)
     }
 
@@ -156,17 +161,17 @@ object ScoreRules {
     }
 }
 
-/** Deliberately not a DRM system: deleting records releases the free quota. */
+/** Basic recording is free. Repository resource limits remain independent of entitlements. */
 object TrialPolicy {
-    const val FREE_EXAMS = 3
-    const val FREE_ACTIVE_CHILDREN = 1
+    const val FREE_EXAMS = Int.MAX_VALUE
+    const val FREE_ACTIVE_CHILDREN = Int.MAX_VALUE
     fun canAddExam(pro: Boolean, retainedExams: Int): Boolean {
         require(retainedExams >= 0)
-        return pro || retainedExams < FREE_EXAMS
+        return true
     }
     fun canAddChild(pro: Boolean, activeChildren: Int): Boolean {
         require(activeChildren >= 0)
-        return pro || activeChildren < FREE_ACTIVE_CHILDREN
+        return true
     }
     fun canAccessExistingData(): Boolean = true
     fun canExportBasic(): Boolean = true

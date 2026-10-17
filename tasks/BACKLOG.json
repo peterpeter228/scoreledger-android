@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "currentTask": "D09",
+  "currentTask": "REVIEW_T01_T17",
   "execution": "一个主写入任务；并行只做边界隔离的审查或实现。D08外部阻断不阻断D09/D10内测。",
   "tasks": [
     {
@@ -347,5 +347,6 @@
       "evidence": [],
       "notes": "起步文件不等于该任务完成。依赖完成后按当前上下文执行。"
     }
-  ]
+  ],
+  "reviewTaskFile": "tasks/REVIEW_BACKLOG.json"
 }

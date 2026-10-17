@@ -13,7 +13,13 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.UUID
 
-class BackupException : IOException("备份格式无效、损坏或超出支持范围")
+enum class BackupFailure { INVALID, VERSION, TOO_LARGE, ACCESS }
+class BackupException(val reason:BackupFailure=BackupFailure.INVALID) : IOException(when(reason) {
+    BackupFailure.INVALID->"备份格式无效或损坏，请重新导出完整备份"
+    BackupFailure.VERSION->"不支持此备份版本，请使用版本1备份"
+    BackupFailure.TOO_LARGE->"备份超过96MiB上限，请选择受支持的备份"
+    BackupFailure.ACCESS->"无法完整读取文件，请检查提供方访问权限后重试"
+})
 /** Streaming v1 only. Never reflects entities, creates a JSON DOM, or logs input diagnostics. */
 object BackupCodec {
     const val MAX_BYTES=96L*1024*1024
@@ -28,7 +34,7 @@ object BackupCodec {
                 var children:List<ChildEntity>?=null;var subjects:List<SubjectEntity>?=null;var exams:List<ExamEntity>?=null;var scores:List<ScoreEntity>?=null
                 r.obj(setOf("format","schemaVersion","exportedAt","children","subjects","exams","scores")) { key -> when(key) {
                     "format" -> require(r.text()=="scoreledger-backup")
-                    "schemaVersion" -> require(r.number()==1L)
+                    "schemaVersion" -> if(r.number()!=1L)throw BackupException(BackupFailure.VERSION)
                     "exportedAt" -> { val stamp=r.text();require(Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(\\.[0-9]{1,3})?Z").matches(stamp));Instant.parse(stamp);require(stamp.take(4)!="0000") }
                     "children" -> children=r.array(20){r.child()}
                     "subjects" -> subjects=r.array(100){r.subject()}
@@ -38,7 +44,7 @@ object BackupCodec {
                 r.endDocument()
                 return DataSnapshot(requireNotNull(children),requireNotNull(subjects),requireNotNull(exams),requireNotNull(scores)).also(::validate)
             }
-        } catch(e: Exception) { throw BackupException() }
+        } catch(e: BackupException) { throw e } catch(e: java.nio.charset.CharacterCodingException) { throw BackupException() } catch(e: com.google.gson.stream.MalformedJsonException) { throw BackupException() } catch(e: EOFException) { throw BackupException() } catch(e: IOException) { throw BackupException(BackupFailure.ACCESS) } catch(e: Exception) { throw BackupException() }
     }
     fun write(snapshot: DataSnapshot,output: OutputStream,exportedAt: Instant=Instant.now()) {
         validate(snapshot)
@@ -93,7 +99,7 @@ object BackupCodec {
     }
     private class LimitedInput(input:InputStream):FilterInputStream(input) {
         var count=0L
-        private fun add(n:Int){if(n>0){count+=n;require(count<=MAX_BYTES)}}
+        private fun add(n:Int){if(n>0){count+=n;if(count>MAX_BYTES)throw BackupException(BackupFailure.TOO_LARGE)}}
         override fun read():Int=super.read().also{if(it>=0)add(1)}
         override fun read(b:ByteArray,off:Int,len:Int):Int=`in`.read(b,off,minOf(len,(MAX_BYTES-count+1).toInt())).also(::add)
     }

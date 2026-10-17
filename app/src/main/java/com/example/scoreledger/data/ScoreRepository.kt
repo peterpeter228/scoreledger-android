@@ -17,7 +17,7 @@ data class DataSnapshot(val children: List<ChildEntity>, val subjects: List<Subj
     val exams: List<ExamEntity>, val scores: List<ScoreEntity>)
 data class ExamInput(val id: String, val childId: String, val title: String, val date: String,
     val kind: ExamKind = ExamKind.OTHER, val term: String = "", val note: String = "",
-    val values: List<ScoreValue>)
+    val values: List<ScoreValue>, val gradeSnapshot: String? = null)
 
 class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: Boolean,
     private val clock: Clock = Clock.systemDefaultZone(),
@@ -75,6 +75,7 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
     }
     fun drafts(childId: String) = dao.observeDrafts(childId)
     suspend fun draft(id: String, childId: String) = dao.draft(id, childId)
+    suspend fun exam(id: String, childId: String): ExamEntity? = dao.exam(id)?.takeIf { it.childId==childId }
     suspend fun putDraft(draft: EntryDraft, expectedPayload: String? = null) = transaction {
         require(UUID.fromString(draft.id).toString() == draft.id)
         requireNotNull(dao.child(draft.childId)) { "孩子档案不存在" }
@@ -104,7 +105,7 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
             val old = dao.exam(draft.id)
             val same = old != null && old.childId == input.childId && old.title == input.title.trim() &&
                 old.examDate == input.date && old.kind == input.kind.name && old.term == input.term.trim() &&
-                old.note == input.note.trim() && dao.scores(draft.id).map { it.toValue() }.toSet() == input.values.toSet()
+                old.note == input.note.trim() && old.gradeSnapshot == (input.gradeSnapshot?.trim() ?: old.gradeSnapshot) && dao.scores(draft.id).map { it.toValue() }.toSet() == input.values.toSet()
             if (!same) throw DraftConflictException()
             return@transaction
         }
@@ -115,13 +116,11 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
         val nickname = ScoreRules.validateText(rawNickname, 24)
         val gradeLabel = ScoreRules.validateText(grade, 30, true)
         check(dao.childCount() < 20) { "已达到20个孩子的数量上限" }
-        check(TrialPolicy.canAddChild(internalBeta, dao.activeChildCount())) { "免费版支持1名未归档孩子，已有数据仍可查看与导出" }
         val now = timestamp(); val id = identifier()
         dao.insertChild(ChildEntity(id, nickname, gradeLabel, false, now, now)); id
     }
     suspend fun updateChild(id: String, name: String, grade: String, archived: Boolean) = transaction {
         val old = requireNotNull(dao.child(id)) { "孩子档案不存在" }
-        if (old.archived && !archived) check(TrialPolicy.canAddChild(internalBeta, dao.activeChildCount())) { "未归档孩子数量已达免费上限" }
         check(dao.updateChild(old.copy(nickname=ScoreRules.validateText(name,24),
             gradeLabel=ScoreRules.validateText(grade,30,true),archived=archived,
             updatedAt=maxOf(timestamp(),old.createdAt))) == 1)
@@ -155,6 +154,7 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
         require(UUID.fromString(input.id).toString() == input.id) { "记录标识无效" }
         val title = ScoreRules.validateText(input.title,60)
         val term = ScoreRules.validateText(input.term,40,true)
+        val grade = input.gradeSnapshot?.let { ScoreRules.validateText(it,30,true) }
         ScoreRules.validateExactText(input.note,500,true,true)
         val note = input.note.trim()
         require(note.codePointCount(0,note.length) <= 500 && note.none { it.code < 32 && it != '\n' && it != '\t' }) { "备注过长或包含不支持的字符" }
@@ -167,7 +167,7 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
             // Retry of an already committed creation is success only for the same owned payload.
             if (!editing && old != null) {
                 val same = old.title == title && old.examDate == input.date && old.kind == input.kind.name &&
-                    old.term == term && old.note == note && prior.map { it.toValue() }.toSet() == input.values.toSet()
+                    old.term == term && old.note == note && old.gradeSnapshot == (input.gradeSnapshot?.trim() ?: old.gradeSnapshot) && prior.map { it.toValue() }.toSet() == input.values.toSet()
                 check(same) { "记录标识已存在且内容不同，请重新打开记录" }
                 return@transaction
             }
@@ -176,7 +176,6 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
             if (!editing) {
                 check(!child.archived) { "不能向已归档孩子添加新记录" }
                 check(dao.examCount() < 10000) { "已达到考试数量上限" }
-                check(TrialPolicy.canAddExam(internalBeta,dao.examCount())) { "免费版可保留3次考试；已有记录仍可修改与导出" }
             }
             check(dao.scoreCount() - prior.size + input.values.size <= 100000) { "已达到成绩总条数上限" }
             val subjects = dao.subjects().associateBy { it.id }
@@ -186,13 +185,65 @@ class ScoreRepository(private val db: ScoreDatabase, private val internalBeta: B
             }
             val now = maxOf(timestamp(),old?.createdAt ?: 0)
             val exam = ExamEntity(input.id,input.childId,title,input.date,input.kind.name,term,
-                old?.gradeSnapshot ?: child.gradeLabel,note,old?.createdAt ?: now,now)
+                grade ?: old?.gradeSnapshot ?: child.gradeLabel,note,old?.createdAt ?: now,now)
             val scores = input.values.map { v -> ScoreEntity(input.id,v.subjectId,
                 prior.find { it.subjectId == v.subjectId }?.subjectNameSnapshot ?: requireNotNull(subjects[v.subjectId]).name,
                 v.status.name,v.scoreMinor,v.maxMinor) }
             if (old == null) dao.insertExam(exam) else { check(dao.updateExam(exam)==1);dao.deleteScores(old.id) }
             dao.insertScores(scores)
         }
+    }
+    suspend fun startFirstRecord(nickname: String, subjectNames: List<String>): EntryDraft = transaction {
+        require(subjectNames.isNotEmpty() && subjectNames.size <= 30) { "请选择1至30个科目" }
+        val names=subjectNames.map { ScoreRules.validateText(it,30) }.distinct()
+        val childId=addChild(nickname)
+        addSubjectTemplate(names)
+        val active=dao.subjects().filter { !it.archived && it.name in names }
+        check(active.size == names.size) { "建议科目中有已归档项，请先恢复或选择其他科目" }
+        val draft=newDraft(childId).copy(rows=active.map { DraftRow(it.id,it.name,maximum=ScoreRules.formatPoints(it.defaultMaxMinor)) })
+        putDraft(draft)
+        draft
+    }
+    suspend fun addSuggestedSubjects(draft: EntryDraft, names: List<String>, expectedPayload: String?): EntryDraft = transaction {
+        val normalized=names.map { ScoreRules.validateText(it,30) }.distinct()
+        addSubjectTemplate(normalized)
+        val active=dao.subjects().filter { !it.archived && it.name in normalized }
+        check(active.size==normalized.size) { "建议科目中有已归档项，请先恢复或选择其他科目" }
+        val additions=active.filter { subject -> draft.rows.none { row -> row.subjectId==subject.id } }
+        check(draft.rows.size+additions.size<=30) { "一次考试最多30科" }
+        val updated=draft.copy(rows=draft.rows+additions.map { DraftRow(it.id,it.name,maximum=ScoreRules.formatPoints(it.defaultMaxMinor)) })
+        putDraft(updated,expectedPayload)
+        updated
+    }
+    /** Fresh input based only on permitted metadata, never copied results or notes. */
+    suspend fun newDraft(childId: String): EntryDraft = transaction {
+        val child = requireNotNull(dao.child(childId)) { "孩子档案不存在" }
+        check(!child.archived) { "不能向已归档孩子添加新记录" }
+        val latest = dao.allExams().filter { it.childId == childId }
+            .maxWithOrNull(compareBy<ExamEntity> { it.examDate }.thenBy { it.createdAt }.thenBy { it.id })
+        val previous = latest?.let { dao.scores(it.id) }.orEmpty().associateBy { it.subjectId }
+        val rows = dao.subjects().filter { !it.archived && (latest == null || it.id in previous) }.take(30).map { subject ->
+            DraftRow(subject.id,subject.name,maximum=ScoreRules.formatPoints(previous[subject.id]?.maxMinor ?: subject.defaultMaxMinor))
+        }
+        EntryDraft(childId=childId,title="${LocalDate.now(clock)} 成绩",date=LocalDate.now(clock).toString(),
+            rows=rows,gradeSnapshot=child.gradeLabel)
+    }
+    /** One process-local undo token, invalid after replacement or any conflicting reuse of the ID. */
+    suspend fun deleteForUndo(record: ExamWithScores): DeletedExam = transaction {
+        check(dao.exam(record.exam.id) == record.exam && dao.scores(record.exam.id).toSet() == record.scores.toSet()) { "记录已改变，请重新打开" }
+        val token=DeletedExam(record,dao.draft(record.exam.id,record.exam.childId),generationValue.value)
+        deleteExam(record.exam.id,record.exam.childId)
+        token
+    }
+    suspend fun undoDelete(token: DeletedExam) = transaction {
+        check(token.generation == generationValue.value) { "数据已恢复或清理，不能撤销" }
+        check(dao.exam(token.record.exam.id) == null && dao.draftById(token.record.exam.id) == null) { "记录标识已被使用，不能撤销" }
+        requireNotNull(dao.child(token.record.exam.childId)) { "孩子档案已删除" }
+        check(dao.examCount() < 10000 && dao.scoreCount()+token.record.scores.size <= 100000) { "已达到记录数量上限" }
+        val ids=dao.subjects().map { it.id }.toSet()
+        check(token.record.scores.all { it.subjectId in ids }) { "科目已删除，不能撤销" }
+        dao.insertExam(token.record.exam);dao.insertScores(token.record.scores)
+        token.draft?.let { dao.putDraft(it) }
     }
     suspend fun deleteExam(id: String, childId: String) = transaction {
         dao.deleteDraft(id,childId)
@@ -214,3 +265,5 @@ class PendingRestore internal constructor(internal val data:DataSnapshot,interna
     val dateRange get()=data.exams.map{it.examDate}.let{ if(it.isEmpty()) "无考试" else "${it.minOrNull()} 至 ${it.maxOrNull()}" }
 }
 class WriteGeneration(val value:Long):AbstractCoroutineContextElement(Key) { companion object Key:CoroutineContext.Key<WriteGeneration> }
+
+data class DeletedExam(val record: ExamWithScores, val draft: DraftEntity?, val generation: Long)

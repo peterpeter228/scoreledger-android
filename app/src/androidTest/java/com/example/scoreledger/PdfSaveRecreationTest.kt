@@ -25,8 +25,8 @@ import java.io.File
 class PdfSaveRecreationTest {
     @get:Rule val compose=createEmptyComposeRule()
     private fun history(text:String):SemanticsNodeInteraction {
-        compose.onNodeWithTag("history-list").performScrollToNode(hasText(text))
-        return compose.onNodeWithText(text)
+        compose.onNodeWithTag("report-list").performScrollToNode(hasText(text))
+        return compose.onNodeWithText(text).performScrollTo()
     }
     private fun saveFailureEvidence() {
         val instrumentation=InstrumentationRegistry.getInstrumentation()
@@ -48,11 +48,12 @@ class PdfSaveRecreationTest {
             val data=instrumentation.context.assets.open("backup-valid.json").use{BackupCodec.read(it)}
             runBlocking {repository.replace(PendingRestore(data,repository.restorePreview())){}}
             ActivityScenario.launch(RecreationHostActivity::class.java).use{scenario ->
-                compose.waitUntil(10000){compose.onAllNodesWithText("PDF 报告").fetchSemanticsNodes().isNotEmpty()}
-                history("PDF 报告").performClick()
+                compose.onNodeWithText("趋势").performClick()
+                compose.onNodeWithTag("trend-list").performScrollToNode(hasTestTag("open-trend-report"))
+                compose.onNodeWithTag("open-trend-report").performClick()
                 history("生成分页报告").performClick()
-                compose.waitUntil(15000){compose.onAllNodesWithText("选择位置保存 PDF").fetchSemanticsNodes().isNotEmpty()}
-                history("选择位置保存 PDF").performClick()
+                compose.waitUntil(15000){compose.onAllNodesWithText("保存PDF").fetchSemanticsNodes().isNotEmpty()}
+                compose.onNodeWithText("保存PDF").performClick()
                 compose.waitUntil(10000){registry.pendingCode!=null}
                 val code=requireNotNull(registry.pendingCode)
                 scenario.recreate();compose.waitForIdle()
@@ -63,9 +64,10 @@ class PdfSaveRecreationTest {
                 compose.waitUntil(15000){target.isFile && target.length()>0}
                 // Recreation removes the non-saveable preview/buttons, so the restored lazy
                 // offset may now be below the report item. Bring status into view explicitly.
+                compose.onNodeWithText("关闭预览").performClick()
                 history("PDF 报告").assertExists()
-                compose.waitUntil(15000){compose.onAllNodesWithText("PDF已保存").fetchSemanticsNodes().isNotEmpty()}
-                history("PDF已保存").assertIsDisplayed()
+                compose.waitUntil(15000){compose.onAllNodesWithText("PDF已保存（已回读校验）").fetchSemanticsNodes().isNotEmpty()}
+                history("PDF已保存（已回读校验）").assertIsDisplayed()
                 assertTrue(target.length()>0)
                 val original=File(isolated.cacheDir,"reports").listFiles()!!.single{it.extension=="pdf"}
                 assertArrayEquals(original.readBytes(),target.readBytes())
