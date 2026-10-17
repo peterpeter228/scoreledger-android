@@ -4,6 +4,12 @@ plugins {
     kotlin("kapt")
     id("org.jetbrains.kotlin.plugin.compose")
 }
+// Fixed INTERNAL-BETA identity is supplied only by trusted CI, never stored in source.
+val internalStorePath = System.getenv("SCORELEDGER_INTERNAL_KEYSTORE")
+val requireInternalSigning = System.getenv("SCORELEDGER_REQUIRE_INTERNAL_SIGNING") == "true"
+if (requireInternalSigning) require(!internalStorePath.isNullOrBlank()) { "Fixed internal signing is required" }
+val useInternalSigning = !internalStorePath.isNullOrBlank()
+fun signingEnv(name: String): String = requireNotNull(System.getenv(name)?.takeIf { it.isNotBlank() }) { "Missing internal signing configuration: $name" }
 android {
     namespace = "com.example.scoreledger"
     compileSdk = 36
@@ -16,23 +22,38 @@ android {
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    if (useInternalSigning) {
+        signingConfigs.create("internalBeta") {
+            storeFile = file(requireNotNull(internalStorePath))
+            storePassword = signingEnv("SCORELEDGER_INTERNAL_STORE_PASSWORD")
+            keyPassword = signingEnv("SCORELEDGER_INTERNAL_KEY_PASSWORD")
+            keyAlias = signingEnv("SCORELEDGER_INTERNAL_KEY_ALIAS")
+            storeType = "PKCS12"
+        }
+    }
     flavorDimensions += "channel"
     productFlavors {
         create("localBeta") {
             dimension = "channel"
             applicationIdSuffix = ".beta"
+            if (useInternalSigning) signingConfig = signingConfigs.getByName("internalBeta")
             versionNameSuffix = "-beta"
             resValue("string", "app_display_name", "分数记录 · 内测")
             buildConfigField("boolean", "INTERNAL_BETA", "true")
         }
         create("play") {
+            if (useInternalSigning) signingConfig = signingConfigs.getByName("debug")
             dimension = "channel"
             resValue("string", "app_display_name", "分数记录")
             buildConfigField("boolean", "INTERNAL_BETA", "false")
         }
     }
     buildTypes {
-        debug { applicationIdSuffix = ".debug" }
+        debug {
+            applicationIdSuffix = ".debug"
+            // Let the flavor select the internal key; play remains on its debug key.
+            if (useInternalSigning) signingConfig = null
+        }
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -48,6 +69,13 @@ android {
     testOptions { unitTests.isReturnDefaultValues = true }
     sourceSets.getByName("test").resources.srcDir(rootProject.file("fixtures"))
     sourceSets.getByName("androidTest").assets.srcDir(rootProject.file("fixtures"))
+}
+// A build supplied with internal credentials cannot produce either commercial or beta release variants.
+// Ordinary development without those credentials retains the existing commercial release guard.
+androidComponents {
+    beforeVariants(selector().withBuildType("release")) { variant ->
+        if (useInternalSigning) variant.enable = false
+    }
 }
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
 val verifyCommercialRelease by tasks.registering(Exec::class) {

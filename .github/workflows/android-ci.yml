@@ -36,13 +36,54 @@ jobs:
           test -x "$SDKMANAGER" || { echo "sdkmanager missing; configure an official SDK installation"; exit 1; }
           # Hosted runner normally has license acceptance. Do not bypass it.
           "$SDKMANAGER" "platforms;android-36" "build-tools;35.0.0" "platform-tools"
+      - name: Prepare fixed internal signing on trusted main
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        env:
+          INTERNAL_KEYSTORE_BASE64: ${{ secrets.INTERNAL_BETA_KEYSTORE_BASE64 }}
+        run: |
+          set -euo pipefail
+          test -n "$INTERNAL_KEYSTORE_BASE64" || { echo 'Internal signing secret missing'; exit 1; }
+          umask 077
+          printf '%s' "$INTERNAL_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/internal-beta.p12"
+          test -s "$RUNNER_TEMP/internal-beta.p12"
       - name: Build and JVM checks (not emulator/device testing)
+        env:
+          SCORELEDGER_REQUIRE_INTERNAL_SIGNING: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          SCORELEDGER_INTERNAL_KEYSTORE: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && format('{0}/internal-beta.p12', runner.temp) || '' }}
+          SCORELEDGER_INTERNAL_STORE_PASSWORD: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.INTERNAL_BETA_STORE_PASSWORD || '' }}
+          SCORELEDGER_INTERNAL_KEY_PASSWORD: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.INTERNAL_BETA_KEY_PASSWORD || '' }}
+          SCORELEDGER_INTERNAL_KEY_ALIAS: ${{ github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && secrets.INTERNAL_BETA_KEY_ALIAS || '' }}
         run: |
           set -o pipefail
           chmod +x gradlew
           ./gradlew --no-daemon :core:test :app:testLocalBetaDebugUnitTest :app:lintLocalBetaDebug :app:assembleLocalBetaDebug :app:assembleLocalBetaDebugAndroidTest 2>&1 | tee evidence/android-ci-build.log
+      - name: Verify fixed internal signing certificate
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          set -euo pipefail
+          SDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"
+          "$SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/localBeta/debug/app-localBeta-debug.apk | tee evidence/internal-signature.txt
+          grep -Fxi 'Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c' evidence/internal-signature.txt
+          "$SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/androidTest/localBeta/debug/app-localBeta-debug-androidTest.apk | tee evidence/internal-test-signature.txt
+          grep -Fxi 'Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c' evidence/internal-test-signature.txt
+      - name: Remove temporary signing file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/internal-beta.p12"
       - name: Collect real APK
         run: python3 tools/collect_artifacts.py app/build/outputs/apk/localBeta/debug/app-localBeta-debug.apk
+      - name: Attach verified internal certificate metadata
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        run: |
+          cp evidence/internal-signature.txt out/internal-signature.txt
+          python3 - <<'PYMETA'
+          import json, pathlib
+          for path in pathlib.Path('out').glob('*.metadata.json'):
+              data=json.loads(path.read_text())
+              data['signature']='VERIFIED_BY_APKSIGNER_FIXED_INTERNAL_BETA'
+              data['certificateSha256']='bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c'
+              data['note']='Signature verified in CI. Installation, usage and upgrade remain separately verified.'
+              path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')
+          PYMETA
       - uses: actions/upload-artifact@v4
         with:
           name: scoreledger-internal-apk
@@ -59,6 +100,8 @@ jobs:
             app/build/test-results/
             app/schemas/
             evidence/android-ci-build.log
+            evidence/internal-signature.txt
+            evidence/internal-test-signature.txt
             app/build/outputs/apk/androidTest/
             evidence/emulator-*
             evidence/android-instrumentation.log
