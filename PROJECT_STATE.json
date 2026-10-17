@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T10:29:00Z",
-  "stage": "REVIEW_REVISION_DEVICE_REPAIR",
-  "androidBuild": "a0662a_COMPILED_SUCCESS",
-  "deviceTests": "NOT_ACCEPTED_API26_FULL_PASS_API30_PDF_CHECK_FAILURE_API36_UNRESOLVED",
+  "asOf": "2026-10-17T13:44:00Z",
+  "stage": "CURRENT_INTERNAL_BETA_VERIFIED_PENDING_DELIVERY",
+  "androidBuild": "f673_BUILD_PASS",
+  "deviceTests": "API26_API30_API36_EXACT65_PLUS2_STRICT_GATE_PASS",
   "billing": "NOT_IMPLEMENTED_NOT_TESTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "Finish actual UI flow corrections and evidence, rerun exact signed APK on AOSP26/30/36, then decide delivery.",
+  "nextTask": "Root final report/source-evidence packaging and delivery; preserve all explicitly unverified original-case limitations.",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -26,34 +26,35 @@
       "evidence/d09-lint-repair-core.log",
       "evidence/d09-lint-repair-python.log",
       "evidence/d09-lint-repair-static.log"
-    ]
+    ],
+    "scope": "Historical0.1 checkpoint only; not latest0.2 validation"
   },
   "productAcceptance": {
     "total": 70,
-    "fullyPassed": 4,
-    "partial": 52,
-    "notRun": 14,
     "fullAcceptance": "INCOMPLETE",
-    "note": "Automated34 normal+2 explicit retention methods pass on each API26/30/36; broad cases contain additional real-device/provider/accessibility/performance steps.",
-    "scope": "Historical 0.1.0 only; does not establish new 0.2.0 acceptance. See docs/CANDIDATE_ACCEPTANCE_MAPPING.json."
+    "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
+    "caseAssertionSummary": {
+      "PARTIAL": 51,
+      "PASS": 11,
+      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3,
+      "NOT_RUN": 5
+    },
+    "note": "Current internal-beta runtime gate verified; original70cases remain scoped11PASS/51PARTIAL/5NOT_RUN/3superseded, not full product acceptance."
   },
-  "blockers": [
-    {
-      "id": "NEW_APK_ACCEPTANCE",
-      "status": "IN_PROGRESS",
-      "detail": "No new build or device pass asserted. Human research/payment/physical OEM remain independent."
-    }
-  ],
+  "blockers": [],
   "ci": {
-    "commit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
-    "runId": 38991766567,
-    "status": "SUCCESS",
-    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38991766567"
+    "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+    "runId": "39036648565",
+    "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+    "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+    "requiredDeviceMethods": 65,
+    "externalDraftPhaseMethods": 2
   },
   "baselineKitValidation": {
     "kotlinCoreChecksPassed": 58,
     "pythonContractTestsPassed": 42,
-    "evidence": "evidence/validation_summary.json"
+    "evidence": "evidence/validation_summary.json",
+    "scope": "Historical original kit only"
   },
   "historicalBaselineCI": {
     "commit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
@@ -65,14 +66,26 @@
     "versionName": "0.2.0-beta",
     "versionCode": 2,
     "package": "com.example.scoreledger.beta.debug",
-    "delivered": false
+    "delivered": false,
+    "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+    "latestValidation": {
+      "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+      "runId": "39036648565",
+      "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+      "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+      "requiredDeviceMethods": 65,
+      "externalDraftPhaseMethods": 2
+    },
+    "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9"
   },
   "currentLimitations": [
-    "Physical phones/OEM keyboards/TalkBack not verified",
-    "Real DocumentsUI and external document providers not end-to-end verified",
-    "Full supported-scale100000-score performance not measured",
-    "PDF maximum200 measured pages; larger scope explicitly rejected without truncation; full JSON backup remains available",
-    "Same-APK reinstall retention is verified; distinct-version update and production signing/payment/publication are not"
+    "T06 uses current managed subject order; arbitrary historical per-exam row order is not persisted.",
+    "Mid-copy/mid-restore external process death not tested; normal persisted-draft external-stop recovery is tested.",
+    "8-parent efficiency/comprehension study and4–6-week real-exam retention study not run.",
+    "Real payments/store publication not authorized or performed; physicalOEM/ChineseIME/TalkBack remain unverified.",
+    "Complete hostile-import UI matrix remains unverified.",
+    "Scoped light/dark fixtures are not actual OS night-mode transitions; actual TalkBack, physical/OEM/ChineseIME, real-parent retention and payments remain unverified.",
+    "Scale observations use in-memory Room; physical storage/I/O, peak memory and performance SLA remain unverified."
   ],
   "historicalMilestoneEvidence": {
     "archiveSha256": "50f7ae72d08a64dc13ed592a45733fd615ead83be20099c47cede35b170981ff",
@@ -135,7 +148,8 @@
       "failure": "DraftIntegrityTest.generatedVersionOneSchemaMigratesWithoutLosingRows: test assumes every genuine v1 entity contains indices; children/subjects legitimately omit field",
       "repair": "Test reads absent index array as empty, retains all actual declared indexes and adds exam/score preservation + index-name assertions. NOT_RUN after repair."
     },
-    "upgradeRetention": "Opt-in seed/verify instrumentation source added, DEBUG/localBeta/exact package/emulator hardware/nonce/explicit flag guards, empty DB prerequisite, no cleanup. Requires separate signed APK install -r run; NOT_RUN."
+    "upgradeRetention": "Opt-in seed/verify instrumentation source added, DEBUG/localBeta/exact package/emulator hardware/nonce/explicit flag guards, empty DB prerequisite, no cleanup. Requires separate signed APK install -r run; NOT_RUN.",
+    "scope": "Chronological historical evidence, including resolved NOT_RUN states; does not describe current delivery readiness"
   },
   "previousDelivery": {
     "businessCommit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
@@ -213,5 +227,42 @@
       "36": "Runner crashed during PdfSaveRecreation cleanup before IME tests. Retry then lost platform services before app installation."
     },
     "nextTestExpansion": "55 full methods + 2 separate external-force-stop UI phases, NOT_RUN"
+  },
+  "historicalCheckpointBeforeFinal65Review": {
+    "asOf": "2026-10-17T10:29:00Z",
+    "stage": "REVIEW_REVISION_DEVICE_REPAIR",
+    "androidBuild": "a0662a_COMPILED_SUCCESS",
+    "deviceTests": "NOT_ACCEPTED_API26_FULL_PASS_API30_PDF_CHECK_FAILURE_API36_UNRESOLVED",
+    "ci": {
+      "commit": "58a91061b33e853f66e475bdc2273ff6af5c63c8",
+      "runId": 38991766567,
+      "status": "SUCCESS",
+      "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38991766567"
+    },
+    "productAcceptance": {
+      "total": 70,
+      "fullyPassed": 4,
+      "partial": 52,
+      "notRun": 14,
+      "fullAcceptance": "INCOMPLETE",
+      "note": "Automated34 normal+2 explicit retention methods pass on each API26/30/36; broad cases contain additional real-device/provider/accessibility/performance steps.",
+      "scope": "Historical 0.1.0 only; does not establish new 0.2.0 acceptance. See docs/CANDIDATE_ACCEPTANCE_MAPPING.json."
+    },
+    "kitValidation": {
+      "kotlinCoreChecksPassed": 64,
+      "pythonContractTestsPassed": 46,
+      "evidence": [
+        "evidence/d09-lint-repair-core.log",
+        "evidence/d09-lint-repair-python.log",
+        "evidence/d09-lint-repair-static.log"
+      ]
+    },
+    "currentLimitations": [
+      "Physical phones/OEM keyboards/TalkBack not verified",
+      "Real DocumentsUI and external document providers not end-to-end verified",
+      "Full supported-scale100000-score performance not measured",
+      "PDF maximum200 measured pages; larger scope explicitly rejected without truncation; full JSON backup remains available",
+      "Same-APK reinstall retention is verified; distinct-version update and production signing/payment/publication are not"
+    ]
   }
 }

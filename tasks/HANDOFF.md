@@ -1,3 +1,27 @@
+# Final current internal-beta checkpoint — 2026-10-17 13:44 UTC
+
+Verified source f673e787500d8754463b919b91e236eae643eb97, run39036648565. API26/30/36 each passed all65 full-suite methods,2external draft phases and strict evidence gates. App SHA256:2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02. Test APK SHA256:e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9. All three use the same source/run/app/test identities. Evidence directories: ../scoreledger-revision-evidence/api26-eighteenth, api30-eighteenth, api36-eighteenth; current JVM reports: build-reports-eighteenth.
+
+Delivery has NOT been sent. Root owns final report, documentation commit, evidence packaging and delivery. The earlier Scale ambiguity and API30 Native fixture failures are resolved by actual final passes, not merely source edits.
+
+Original70case assessment remains11PASS/51PARTIAL/5NOT_RUN/3superseded;65methods do not mean70cases accepted. Preserve T06 historical subject-order deviation; real-parent/4–6-week studies, payments/publication, physical OEM/Chinese IME/TalkBack, actual OS night-mode switching and physical storage/performance limitations. Scale500exam/5000score observations pass using in-memory Room and a segmented20exam/200score report, not physical I/O or peak-memory/SLA proof.
+
+PROJECT_STATE.json, docs/CANDIDATE_ACCEPTANCE_MAPPING.json and tasks/REVIEW_BACKLOG.json carry current bindings. All checkpoints below, including pending or failed states, are chronological history only.
+
+## Historical checkpoints below
+
+# Current acceptance checkpoint — 2026-10-17 13:29 UTC
+
+Latest source f673e787500d8754463b919b91e236eae643eb97, run39036648565, is building the65-method suite. No latest pass or delivery is claimed. Root must verify all65 methods,2external draft phases and strict evidence gates onAPI26/30/36 with exact APK/test/source identities.
+
+Prior c0197bb88ad49a2bb45337501b85db3f6a3dfb40/run39035368145 used production APK SHA2562f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02. API26/36 completed64of65 methods successfully; API30 completed63of65. Privacy/theme, chart/history pixel checks, seven hostile-backup cases and separate-UID sharing passed individually. Whole suites failed: Scale matched two text nodes; API30 Native preview used a degenerate dialog-only fixture. Corrections are awaiting latest runtime verification, not presumed accepted.
+
+Authoritative current boundaries: PROJECT_STATE.json, docs/CANDIDATE_ACCEPTANCE_MAPPING.json and tasks/REVIEW_BACKLOG.json. Earlier0.1 and0.2 checkpoints below are chronological history and do not override this pending status. Do not combine different APK/test runs into an unqualified final pass.
+
+T06 historical subject-row order remains a known deviation. Real-parent studies/4–6-week retention, payments/publication, physical OEM/Chinese IME/TalkBack, actual OS night-mode transitions and physical storage/performance remain unverified. Scoped theme configurations and controlled cross-UID receiver checks are not claims about all OEM/system apps.
+
+## Historical checkpoints below
+
 ## 0.2.0 独立审查返工，2026-10-17 08:19 UTC
 当前从 main/64d2e012ff195859581af82650066f77f8383cec 的181文件校验快照继续；较审查bbb48dd仅质量规则文档后续更新，业务基线仍58a910。原审查包10项SHA清单已核验，23发现/20任务已完整读取。
 本地预检无JDK编译器/SDK/adb/KVM，Python46契约和静态验证通过；现有GitHub构建及签名模拟器工作流可用。当前新源码IMPLEMENTED_UNVERIFIED，旧APK证据不覆盖本版。

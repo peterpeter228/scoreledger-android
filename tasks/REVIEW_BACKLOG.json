@@ -3,7 +3,7 @@
   "source": "Independent review2026-10-17",
   "sourceHead": "bbb48dd08691ded0cb2d872d876821752e101844",
   "implementationBase": "64d2e012ff195859581af82650066f77f8383cec",
-  "status": "BOUND_APP_PLATFORM_GATES_PASS_LATEST_TEST_REVISION_PENDING",
+  "status": "VERIFIED_CURRENT_INTERNAL_BETA_SCOPED_ACCEPTANCE",
   "tasks": [
     {
       "id": "T01",
@@ -29,7 +29,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -57,7 +66,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -87,7 +105,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -119,7 +146,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -150,7 +186,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -183,7 +228,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_KNOWN_FUNCTIONAL_DEVIATION",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -215,7 +269,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -246,7 +309,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -277,7 +349,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -309,7 +390,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -342,7 +432,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -374,7 +473,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -410,7 +518,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -441,7 +558,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -477,7 +603,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -515,7 +650,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -544,7 +688,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -578,7 +731,16 @@
       "candidateAcceptance": {
         "status": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -609,7 +771,16 @@
       "candidateAcceptance": {
         "status": "PARTIAL_EXPLICIT_PLATFORM_EVIDENCE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     },
     {
@@ -640,87 +811,93 @@
       "candidateAcceptance": {
         "status": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
         "bindingRef": "candidateBinding.platformBindings",
-        "note": "Task-specific remaining limits and T06 deviation retained; latestd80 test validation pending."
+        "note": "Task-specific partial/external limitations retained; runtime gate passes do not waive them.",
+        "latestSourceValidation": {
+          "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+          "runId": "39036648565",
+          "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+          "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+          "requiredDeviceMethods": 65,
+          "externalDraftPhaseMethods": 2
+        },
+        "deliveryGate": "PASS_EXACT_CURRENT_INTERNAL_BETA"
       }
     }
   ],
   "candidateBinding": {
-    "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
+    "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+    "acceptanceStatus": "VERIFIED_CURRENT_INTERNAL_BETA_SCOPED_ACCEPTANCE",
+    "platformBindings": {
+      "26": {
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "runId": "39036648565",
+        "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+        "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+        "requiredMethods": 65,
+        "completedMethods": 65,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api26-eighteenth/",
+        "gate": "../scoreledger-revision-evidence/api26-eighteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api26-eighteenth/artifact-provenance.json"
+      },
+      "30": {
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "runId": "39036648565",
+        "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+        "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+        "requiredMethods": 65,
+        "completedMethods": 65,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api30-eighteenth/",
+        "gate": "../scoreledger-revision-evidence/api30-eighteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api30-eighteenth/artifact-provenance.json"
+      },
+      "36": {
+        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
+        "appSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "runId": "39036648565",
+        "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+        "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+        "requiredMethods": 65,
+        "completedMethods": 65,
+        "externalDraftPhaseMethods": 2,
+        "evidenceRoot": "../scoreledger-revision-evidence/api36-eighteenth/",
+        "gate": "../scoreledger-revision-evidence/api36-eighteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api36-eighteenth/artifact-provenance.json"
+      }
+    },
+    "latestSourceValidation": {
+      "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+      "runId": "39036648565",
+      "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+      "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+      "requiredDeviceMethods": 65,
+      "externalDraftPhaseMethods": 2
+    },
     "variant": "localBetaDebug",
     "package": "com.example.scoreledger.beta.debug",
     "versionCode": 2,
     "versionName": "0.2.0-beta",
-    "acceptanceStatus": "SAME_APP_BYTES_PLATFORM_GATES_PASS_WITH_EXPLICIT_DISTINCT_TEST_BINDINGS",
-    "platformBindings": {
-      "26": {
-        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
-        "appSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
-        "testSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
-        "appArtifactRunId": "39030983529",
-        "testArtifactRunId": "39030983529",
-        "acceptanceRunId": "39030983529",
-        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
-        "testApkSha256": "0f6d666f121e01c1509174b13d9353d07fb73c048b1314b0b1d5d7bc3e9b5e77",
-        "requiredMethods": 58,
-        "externalDraftPhaseMethods": 2,
-        "evidenceRoot": "../scoreledger-revision-evidence/api26-twelfth/",
-        "gate": "../scoreledger-revision-evidence/api26-twelfth/evidence-gate.json",
-        "provenance": "../scoreledger-revision-evidence/api26-twelfth/artifact-provenance.json",
-        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
-      },
-      "30": {
-        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
-        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "appArtifactRunId": "39031982184",
-        "testArtifactRunId": "39031982184",
-        "acceptanceRunId": "39031982184",
-        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
-        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
-        "requiredMethods": 58,
-        "externalDraftPhaseMethods": 2,
-        "evidenceRoot": "../scoreledger-revision-evidence/api30-thirteenth/",
-        "gate": "../scoreledger-revision-evidence/api30-thirteenth/evidence-gate.json",
-        "provenance": "../scoreledger-revision-evidence/api30-thirteenth/artifact-provenance.json",
-        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
-      },
-      "36": {
-        "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
-        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "appArtifactRunId": "39031982184",
-        "testArtifactRunId": "39031982184",
-        "acceptanceRunId": "39031982184",
-        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
-        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
-        "requiredMethods": 58,
-        "externalDraftPhaseMethods": 2,
-        "evidenceRoot": "../scoreledger-revision-evidence/api36-thirteenth/",
-        "gate": "../scoreledger-revision-evidence/api36-thirteenth/evidence-gate.json",
-        "provenance": "../scoreledger-revision-evidence/api36-thirteenth/artifact-provenance.json",
-        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
-      }
-    },
-    "requiredDeviceMethods": 58,
-    "externalDraftPhaseMethods": 2,
-    "latestSourceValidation": {
-      "sourceSha": "d80d770879e172e45cc97c8e7ab3b1da4720a746",
-      "runId": null,
-      "status": "RUNNING_NOT_ACCEPTED",
-      "scope": "Stronger Synthetic filter-transition test; its new assertions are not imported into completed evidence. Run ID pending root binding."
-    },
-    "reviewDate": "2026-10-17",
     "evidencePathConvention": "Paths are relative to repository root and point to the adjacent retained evidence collection, not files embedded in this repository. Original artifact source files bind APK identity. This later docs-only review does not change tested APK/source identity.",
     "jvmEvidence": {
-      "sourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-      "runId": "39031982184",
-      "evidenceRoot": "../scoreledger-revision-evidence/build-reports-thirteenth/",
+      "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+      "runId": "39036648565",
+      "evidenceRoot": "../scoreledger-revision-evidence/build-reports-eighteenth/",
       "coreJUnitMethods": 1,
-      "coreInternalContractChecks": 71,
       "appJUnitMethods": 9,
       "failures": 0,
       "errors": 0
-    }
+    },
+    "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+    "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+    "runId": "39036648565",
+    "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+    "deliveryStatus": "NOT_SENT"
   },
   "acceptanceMapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
   "acceptanceRiskClassification": {
@@ -734,7 +911,7 @@
     "otherMissingEvidence": [
       "Hostile-import complete UI rejection matrix and external process death during file I/O are not established by normal-path restore and transaction injection tests."
     ],
-    "environmentGate": "Same APK bytes pass strict gates on API26/30/36 with explicit per-platform sources/test hashes. Latestd80 test-only validation running, not passed.",
+    "environmentGate": "Final exactf673/run39036648565 gates passAPI26/30/36,65methods+2external phases each.",
     "externalFutureStages": [
       "Eight-parent usability study",
       "Four-to-six-week real-exam retention study",
@@ -744,11 +921,11 @@
       "TalkBack interaction"
     ],
     "interpretation": "Missing evidence is not a demonstrated functional failure. No claim that all original70cases passed or that all remaining gaps are release blockers.",
-    "closedPriorCandidateGaps": "AC006 deletion and AC047 empty restore confirmation/recovery individually passed on7c API26/30; latest gate pending."
+    "closedPriorCandidateGaps": "Deletion/empty restore, privacy/theme/chart/history, hostile backup and separate-UID sharing assertions are included in final65method pass; per-case remaining limitations remain explicit."
   },
   "jvmEvidenceReview": {
     "bindingRef": "candidateBinding.jvmEvidence",
-    "result": "1core+9app JVM methods pass;71internal core checks include adversarial delta. AC032 core-only PASS. No all70cases claim."
+    "result": "Currenteighteenth XML1core+9app JVM methods pass; pure-core assertions assessed separately."
   },
   "priorCandidateBindings": [
     {
@@ -807,67 +984,65 @@
     }
   ],
   "currentEvidenceReconciliation": {
-    "caseStatusSummary": {
-      "PARTIAL": 40,
-      "NOT_RUN": 16,
-      "PASS": 11,
-      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3
-    },
     "platformBindings": {
       "26": {
         "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
-        "appSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
-        "testSourceSha": "e8c8b2e64ee4f3f6da38e5b92b5b455a0963ed08",
-        "appArtifactRunId": "39030983529",
-        "testArtifactRunId": "39030983529",
-        "acceptanceRunId": "39030983529",
-        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
-        "testApkSha256": "0f6d666f121e01c1509174b13d9353d07fb73c048b1314b0b1d5d7bc3e9b5e77",
-        "requiredMethods": 58,
+        "appSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "runId": "39036648565",
+        "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+        "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+        "requiredMethods": 65,
+        "completedMethods": 65,
         "externalDraftPhaseMethods": 2,
-        "evidenceRoot": "../scoreledger-revision-evidence/api26-twelfth/",
-        "gate": "../scoreledger-revision-evidence/api26-twelfth/evidence-gate.json",
-        "provenance": "../scoreledger-revision-evidence/api26-twelfth/artifact-provenance.json",
-        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
+        "evidenceRoot": "../scoreledger-revision-evidence/api26-eighteenth/",
+        "gate": "../scoreledger-revision-evidence/api26-eighteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api26-eighteenth/artifact-provenance.json"
       },
       "30": {
         "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
-        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "appArtifactRunId": "39031982184",
-        "testArtifactRunId": "39031982184",
-        "acceptanceRunId": "39031982184",
-        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
-        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
-        "requiredMethods": 58,
+        "appSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "runId": "39036648565",
+        "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+        "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+        "requiredMethods": 65,
+        "completedMethods": 65,
         "externalDraftPhaseMethods": 2,
-        "evidenceRoot": "../scoreledger-revision-evidence/api30-thirteenth/",
-        "gate": "../scoreledger-revision-evidence/api30-thirteenth/evidence-gate.json",
-        "provenance": "../scoreledger-revision-evidence/api30-thirteenth/artifact-provenance.json",
-        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
+        "evidenceRoot": "../scoreledger-revision-evidence/api30-eighteenth/",
+        "gate": "../scoreledger-revision-evidence/api30-eighteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api30-eighteenth/artifact-provenance.json"
       },
       "36": {
         "status": "PASS_REQUIRED_METHODS_AND_STRICT_EVIDENCE",
-        "appSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "testSourceSha": "79fe2923b923b7741f70a9f5cbf5cbe67add6ed9",
-        "appArtifactRunId": "39031982184",
-        "testArtifactRunId": "39031982184",
-        "acceptanceRunId": "39031982184",
-        "appSha256": "2eb5cf5a1f8cbfb5ef501acdfdb23d8d907659845f87cf775c0da0ee371bda1c",
-        "testApkSha256": "c9cb416c441110c014cb06a603f25e379da5dc824fe7f930a462ad0e40e622cb",
-        "requiredMethods": 58,
+        "appSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "testSourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+        "runId": "39036648565",
+        "appSha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+        "testApkSha256": "e24ba3c6ee55d31cfc51830a6c2eca3b6905b2ea9fb843f6bde9af038620aad9",
+        "requiredMethods": 65,
+        "completedMethods": 65,
         "externalDraftPhaseMethods": 2,
-        "evidenceRoot": "../scoreledger-revision-evidence/api36-thirteenth/",
-        "gate": "../scoreledger-revision-evidence/api36-thirteenth/evidence-gate.json",
-        "provenance": "../scoreledger-revision-evidence/api36-thirteenth/artifact-provenance.json",
-        "screenshotEvidence": "Required screenshot files/hash/size verified by strict gate; existence is not a blanket visual or accessibility approval."
+        "evidenceRoot": "../scoreledger-revision-evidence/api36-eighteenth/",
+        "gate": "../scoreledger-revision-evidence/api36-eighteenth/evidence-gate.json",
+        "provenance": "../scoreledger-revision-evidence/api36-eighteenth/artifact-provenance.json"
       }
     },
     "latestSourceValidation": {
-      "sourceSha": "d80d770879e172e45cc97c8e7ab3b1da4720a746",
-      "runId": null,
-      "status": "RUNNING_NOT_ACCEPTED",
-      "scope": "Stronger Synthetic filter-transition test; its new assertions are not imported into completed evidence. Run ID pending root binding."
-    }
+      "sourceSha": "f673e787500d8754463b919b91e236eae643eb97",
+      "runId": "39036648565",
+      "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565",
+      "status": "PASS_BUILD_AND_ALL_THREE_DEVICE_GATES",
+      "requiredDeviceMethods": 65,
+      "externalDraftPhaseMethods": 2
+    },
+    "caseStatusSummary": {
+      "PARTIAL": 51,
+      "PASS": 11,
+      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3,
+      "NOT_RUN": 5
+    },
+    "deliveryStatus": "NOT_SENT",
+    "note": "All65methods+2external phases pass; original70cases not allPASS."
   }
 }

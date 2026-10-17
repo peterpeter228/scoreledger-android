@@ -115,12 +115,12 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
-  # ONE_ROUND_ENABLED: final literal true below is the disable switch.
+  # ONE_ROUND_CLOSED_AFTER_ACCEPTANCE: final literal true below is the disable switch.
   # Only this authorized ScoreLedger 0.2.0 correction/acceptance round, expiring
   # 2026-10-17 23:59:59 UTC. Set it false after final acceptance; no standing KVM grant.
   current-round-device:
     needs: internal-apk
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.internal-apk.result == 'success' && true }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && needs.internal-apk.result == 'success' && false }}
     permissions:
       contents: read
       actions: read
