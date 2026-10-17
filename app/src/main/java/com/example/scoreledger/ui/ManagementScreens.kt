@@ -12,6 +12,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.scoreledger.R
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.scoreledger.core.ScoreRules
 import com.example.scoreledger.data.*
@@ -29,7 +30,7 @@ import com.example.scoreledger.data.*
     var name by rememberSaveable { mutableStateOf("") }
     var grade by rememberSaveable { mutableStateOf("") }
     var deletion by rememberSaveable { mutableStateOf<String?>(null) }
-    LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    LazyColumn(modifier=Modifier.testTag("children-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item { TextButton(onClick=back){Text(stringResource(R.string.ui_5))};Text("孩子档案 · ${children.size}/20",style=MaterialTheme.typography.headlineSmall);Text(stringResource(R.string.ui_6)) }
         item { Button(onClick={editingId=null;name="";grade="";form=true},enabled=!busy && children.size<20){Text(stringResource(R.string.ui_7))} }
         items(children,key={it.id}) { child -> Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp)) {
@@ -57,7 +58,7 @@ import com.example.scoreledger.data.*
 @Composable fun SubjectsScreen(model: ScoreViewModel,subjects: List<SubjectEntity>,busy: Boolean,back: ()->Unit) {
     var form by rememberSaveable { mutableStateOf(false) };var id by rememberSaveable { mutableStateOf<String?>(null) }
     var name by rememberSaveable { mutableStateOf("") };var maximum by rememberSaveable { mutableStateOf("100") };var order by rememberSaveable { mutableStateOf("0") }
-    LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    LazyColumn(modifier=Modifier.testTag("subjects-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item { TextButton(onClick=back){Text(stringResource(R.string.ui_5))};Text("科目管理 · ${subjects.size}/100",style=MaterialTheme.typography.headlineSmall);Text(stringResource(R.string.ui_16)) }
         item { Text(stringResource(R.string.ui_17));Row(Modifier.horizontalScroll(rememberScrollState())) {
             listOf("小学" to listOf("语文","数学","英语"),"初中" to listOf("语文","数学","英语","物理","化学","生物","道德与法治","历史","地理"),"高中" to listOf("语文","数学","英语","物理","化学","生物","思想政治","历史","地理")).forEach { (label,names) -> TextButton(onClick={model.template(names)},enabled=!busy){Text(label)} }

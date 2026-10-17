@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.scoreledger.R
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -44,7 +45,7 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
     val focus=LocalFocusManager.current
     BackHandler { if(!busy) leaving=true }
     fun rowChange(row: DraftRow) { model.change(draft.copy(rows=draft.rows.map { if(it.subjectId==row.subjectId) row else it })) }
-    LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    LazyColumn(modifier=Modifier.testTag("entry-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item {
             TextButton(onClick={leaving=true},enabled=!busy){Text(stringResource(R.string.ui_5))}
             Text(if(draft.editing) "编辑成绩" else "记一次成绩",style=MaterialTheme.typography.headlineSmall)
@@ -68,14 +69,14 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
             KindPicker(draft.kind,enabled=!busy){model.change(draft.copy(kind=requireNotNull(it)))}
             OutlinedTextField(draft.term,{model.change(draft.copy(term=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text(stringResource(R.string.ui_28))})
         }
-        items(draft.rows,key={it.subjectId}) { row -> Card(Modifier.fillMaxWidth()) { Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
+        items(draft.rows,key={it.subjectId}) { row -> Card(Modifier.fillMaxWidth().testTag("subject-${row.subjectId}")) { Column(Modifier.padding(16.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             Text(row.name,style=MaterialTheme.typography.titleMedium)
             Row(Modifier.horizontalScroll(rememberScrollState()),horizontalArrangement=Arrangement.spacedBy(6.dp)) {
                 ScoreStatus.entries.forEach { status -> FilterChip(selected=row.status==status,onClick={rowChange(row.copy(status=status))},label={Text(status.label())},enabled=!busy) }
             }
             // Stacked fields remain usable with narrow screens and doubled font size.
             OutlinedTextField(row.score,{rowChange(row.copy(score=it,status=if(it.isBlank()) ScoreStatus.MISSING else ScoreStatus.SCORED))},
-                label={Text(stringResource(R.string.ui_29))},enabled=!busy && row.status!=ScoreStatus.ABSENT,modifier=Modifier.fillMaxWidth(),singleLine=true,
+                label={Text(stringResource(R.string.ui_29))},enabled=!busy && row.status!=ScoreStatus.ABSENT,modifier=Modifier.fillMaxWidth().testTag("score-${row.subjectId}"),singleLine=true,
                 keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal,imeAction=ImeAction.Next),keyboardActions=KeyboardActions(onNext={focus.moveFocus(FocusDirection.Next)}))
             OutlinedTextField(row.maximum,{rowChange(row.copy(maximum=it))},label={Text(stringResource(R.string.ui_30))},enabled=!busy,modifier=Modifier.fillMaxWidth(),singleLine=true,
                 keyboardOptions=KeyboardOptions(keyboardType=KeyboardType.Decimal,imeAction=ImeAction.Next),keyboardActions=KeyboardActions(onNext={focus.moveFocus(FocusDirection.Next)}))
@@ -93,7 +94,7 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
         confirmButton={TextButton(onClick={reloadConfirm=false;model.reloadDraft()},enabled=!busy){Text(stringResource(R.string.draft_reload_confirm))}},
         dismissButton={TextButton(onClick={reloadConfirm=false}){Text("取消")}})
     if(adding) AlertDialog(onDismissRequest={adding=false},title={Text("添加科目 · ${draft.rows.size}/30")},text={
-        LazyColumn { items(subjects.filter { !it.archived && draft.rows.none { r->r.subjectId==it.id } },key={it.id}) { s ->
+        LazyColumn(modifier=Modifier.testTag("subject-picker-list")) { items(subjects.filter { !it.archived && draft.rows.none { r->r.subjectId==it.id } },key={it.id}) { s ->
             TextButton(enabled=!busy && draft.rows.size<30,onClick={model.change(draft.copy(rows=draft.rows+DraftRow(s.id,s.name,maximum=ScoreRules.formatPoints(s.defaultMaxMinor))));adding=false},modifier=Modifier.fillMaxWidth()){Text(s.name)}
         } }
     },confirmButton={TextButton(onClick={adding=false}){Text(stringResource(R.string.ui_36))}})

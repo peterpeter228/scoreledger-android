@@ -1,13 +1,13 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T01:04:14.420423+00:00",
-  "stage": "D09_source_and_lint_fix_pending_new_CI",
+  "asOf": "2026-10-17T01:15:11.803889+00:00",
+  "stage": "D09_P1_lifecycle_accessibility_source_pending_CI",
   "androidBuild": "IMPLEMENTED_UNVERIFIED",
-  "deviceTests": "NOT_RUN",
+  "deviceTests": "IN_PROGRESS",
   "billing": "NOT_IMPLEMENTED",
   "commercialRelease": "BLOCKED",
-  "nextTask": "Build_D09_snapshot_then_run_device_acceptance",
+  "nextTask": "Build_P1_snapshot_and_observe_2c9_device_run",
   "repository": "https://github.com/peterpeter228/scoreledger-android",
   "decisionsFile": "tasks/DECISIONS.md",
   "handoffFile": "tasks/HANDOFF.md",
@@ -42,7 +42,7 @@
     "wrapper": "VERIFIED_GENERATED",
     "dataLayer": "Compiled including instrumentation APK on3394203; device tests NOT_RUN",
     "gradleCoreCompile": "PASSED_IN_CI_3394203",
-    "gradleCoreTest": "PASSED_IN_CI_3394203",
+    "gradleCoreTest": "PASSED_IN_CI_2c9b199e",
     "sdkInstalled": "SDK36,BuildTools35,platform-tools installed with approved Android license",
     "roomSchema": {
       "status": "REAL_GENERATED_V1_AND_V2_PRESENT",
@@ -51,16 +51,16 @@
       "deviceMigrationTest": "NOT_RUN"
     },
     "entryHistorySlice": "3394203 Android compile/instrumentation assembly passed; device acceptance NOT_RUN",
-    "localSliceChecks": "Latest core64/Python46/static passed; evidence/d09-lint-repair-*.log",
+    "localSliceChecks": "core64/Python46/static passed; evidence/d09-p1-*.log",
     "trendSlice": "Android source compiled on3394203; Canvas device/TalkBack acceptance NOT_RUN",
     "backupSlice": "Android and actual Gson/retention JVM tests passed on3394203; Room replacement/SAF device tests NOT_RUN",
     "pdfSlice": "3394203 Android compilation passed; lint WrongConstant fixed in source; PdfRenderer/device tests NOT_RUN",
     "backupAuditFixes": "3394203 compiled and app JVM passed; generation/Room/device regressions NOT_RUN",
-    "d07CompileRepair": "38988358601 compile failures repaired;3394203 compilation passed, subsequent lint-only failure now fixed in source",
-    "d09Preview": "IMPLEMENTED_UNVERIFIED: bounded in-app PdfRenderer, background file/share work, native preview and ActivityScenario recreation tests added NOT_RUN. Local core64/Python46/static pass.",
-    "gradleAppUnitTest": "PASSED_IN_CI_3394203 (actual Gson/importer and retention JVM tests included)",
-    "androidCompilation": "3394203 app compilation/APK assembly and instrumentation assembly PASSED; D09/new lint-fix source not yet built",
-    "lint": "3394203 FAILED WrongConstant on optional StaticLayout breakStrategy; removed call in source, new lint NOT_RUN",
+    "d07CompileRepair": "Historical compile and lint errors resolved by2c9b199e successful CI",
+    "d09Preview": "2c9b199e native preview source built and lint passed; device run38989862766 in progress with no result",
+    "gradleAppUnitTest": "PASSED_IN_CI_2c9b199e:8 JUnit methods (core64 assertions,BackupCodec5,RollbackRetention1,ChannelIsolation1),zero failures/errors/skips",
+    "androidCompilation": "2c9b199e app/APK and instrumentation compilation PASSED; current P1 source not built",
+    "lint": "2c9b199e PASSED:0 errors30 warnings; new P1 source lint NOT_RUN",
     "baselineApk": {
       "path": "evidence/d00-apk/app-localBeta-debug.apk",
       "sha256": "8a9cba634603d572d9de83c9c1c6d9940a627f9c623d7510824e3573fcec35cb",
@@ -73,7 +73,14 @@
       "sourceCommit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
       "scope": "D00 baseline only; not current D05-D09 feature APK"
     },
-    "latestApk": "3394203 assembly passed per CI; no latest APK hash asserted in this state update"
+    "latestApk": "3394203 assembly passed per CI; no latest APK hash asserted in this state update",
+    "d09P1": "SOURCE_IMPLEMENTED_UNVERIFIED: saveable opaque PDF ID across SAF recreation, visible recoverable restore/clear errors, labeled checkbox semantics, isolated UI managers and lifecycle/error/synthetic journey tests",
+    "ciReportArtifact": {
+      "id": 12084830970,
+      "sha256": "cbc72b71fb97bc74fffaf0be7da6b91d7582eebdfcf8846d550a2c5c9c40dbba",
+      "sourceCommit": "2c9b199e4160497f5d2e72f05a3dc64c96845b25",
+      "source": "Root verified downloaded reports; not committed as large artifact directory"
+    }
   },
   "blockers": [
     {
@@ -83,18 +90,18 @@
     }
   ],
   "ci": {
-    "commit": "3394203ebbe0ed24baa8c32e68db591a21b154f7",
-    "status": "FAILURE",
-    "failureStage": "LINT_ONLY",
+    "commit": "2c9b199e4160497f5d2e72f05a3dc64c96845b25",
+    "runId": 38989323329,
+    "status": "SUCCESS",
+    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38989323329",
     "androidCompile": "PASSED",
     "instrumentationAssembly": "PASSED",
     "coreJvm": "PASSED",
     "appJvm": "PASSED",
-    "deviceTests": "NOT_RUN",
-    "source": "Parent verified CI result at2026-10-17T01:03Z; run ID not supplied in this handoff",
-    "newSource": "D09 plus lint repair awaiting next snapshot build",
-    "runId": 38988800541,
-    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38988800541"
+    "lint": "0 errors,30 warnings",
+    "deviceRunId": 38989862766,
+    "deviceStatus": "IN_PROGRESS_NO_RESULT",
+    "newSource": "Signing-only148af79 and current P1 fixes are separate, not certified by2c9 success"
   },
   "baselineKitValidation": {
     "kotlinCoreChecksPassed": 58,

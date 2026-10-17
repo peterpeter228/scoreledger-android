@@ -11,16 +11,19 @@ import com.example.scoreledger.ui.*
 
 /** Non-exported debug-only instrumentation host; never opens the user's persisted database. */
 class RecreationHostActivity:ComponentActivity() {
-    companion object { var testRepository:ScoreRepository?=null }
+    companion object { var testRepository:ScoreRepository?=null; var testServices:UiServices?=null; var testRegistryOwner:androidx.activity.result.ActivityResultRegistryOwner?=null }
     override fun onCreate(savedInstanceState:Bundle?) {
         super.onCreate(savedInstanceState)
         val repository=requireNotNull(testRepository)
+        val services=requireNotNull(testServices) { "Isolated UI managers are mandatory in the test host" }
         setContent {
             val model:ScoreViewModel=viewModel(factory=object:ViewModelProvider.Factory {
                 @Suppress("UNCHECKED_CAST")
                 override fun <T:ViewModel> create(modelClass:Class<T>):T=ScoreViewModel(repository) as T
             })
-            ScoreLedgerTheme { StarterScreen(model) }
+            val owner=testRegistryOwner
+            if(owner==null) ScoreLedgerTheme { StarterScreen(model,services) }
+            else androidx.compose.runtime.CompositionLocalProvider(androidx.activity.compose.LocalActivityResultRegistryOwner provides owner) { ScoreLedgerTheme { StarterScreen(model,services) } }
         }
     }
 }

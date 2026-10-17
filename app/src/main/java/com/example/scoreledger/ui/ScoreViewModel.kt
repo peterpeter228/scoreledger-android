@@ -8,7 +8,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class ScoreViewModel(private val repository: ScoreRepository) : ViewModel() {
+class ScoreViewModel(internal val repository: ScoreRepository) : ViewModel() {
     val childCounts = repository.childCounts.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val children = repository.children.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val subjects = repository.subjects.stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())

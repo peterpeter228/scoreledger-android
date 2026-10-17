@@ -20,7 +20,9 @@ class RecreationDraftTest {
         val db=Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().targetContext,ScoreDatabase::class.java).build()
         val repository=ScoreRepository(db,true)
         val draft=runBlocking { val child=repository.addChild("重建测试孩子");EntryDraft(childId=child,title="重建前标题").also{repository.putDraft(it)} }
+        val isolated=IsolatedUiContext(InstrumentationRegistry.getInstrumentation().targetContext)
         RecreationHostActivity.testRepository=repository
+        RecreationHostActivity.testServices=isolated.services(repository)
         try {
             ActivityScenario.launch(RecreationHostActivity::class.java).use { scenario ->
                 compose.waitUntil(10000){compose.onAllNodesWithText("继续草稿：重建前标题").fetchSemanticsNodes().isNotEmpty()}
@@ -35,6 +37,6 @@ class RecreationDraftTest {
                 assertEquals(draft.id,runBlocking{repository.draft(draft.id,draft.childId)}?.id)
                 assertEquals(0,runBlocking{db.dao().examCount()})
             }
-        }finally{RecreationHostActivity.testRepository=null;db.close()}
+        }finally{RecreationHostActivity.testRepository=null;RecreationHostActivity.testServices=null;isolated.cleanup();db.close()}
     }
 }

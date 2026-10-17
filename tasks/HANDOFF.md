@@ -78,3 +78,13 @@ D06审查修复一并纳入：保护新回滚快照不受旧文件未来mtime误
 01:03 UTC真实3394203构建/JVM通过，lint在PdfReport setBreakStrategy(Layout.BREAK_STRATEGY_HIGH_QUALITY)报WrongConstant。源码移除非必要的显式breakStrategy调用，保留StaticLayout.Builder默认换行与原测量/逐行分页，不引入API29 LineBreaker依赖，也不加lint豁免。core64/Python46/static重跑通过（evidence/d09-lint-repair-*.log），新版lint和D09设备仍NOT_RUN。源码暂停供主线程捕获。
 
 01:04 UTC状态纠偏：PROJECT_STATE将最新本地D09源码标IMPLEMENTED_UNVERIFIED，不再以D00旧APK/首次成功CI当最新证据。真实Room schema2已在仓库并记录SHA256及来源D04 CI38986723022。最新观测3394203 Android编译/组装、instrumentation组装、core/app JVM通过，仅lint失败；D09和lint修复待下次构建。baseline APK SHA/首次成功CI单独保留并明确历史范围。当前本地core64/Python46。
+
+## 2026-10-17 01:15 UTC · D09生命周期/错误/无障碍审查修复
+PDF SAF待保存状态由plain remember文件对象改为rememberSaveable的生成UUID。回调在IO严格验证canonical UUID、固定reports目录中的非空普通文件及父目录后再打开目标URI，不保存/接受任意路径或位图；Activity重建不会因report对象丢失留下假成功空文件。新增控制ActivityResultRegistry与隔离file URI的重建后返回测试（NOT_RUN）。
+恢复/清除失败关闭旧确认modal并清掉过期pending/baseline，显示带重新选择/重新确认说明的live-region错误；新增过期清除及回滚文件失败UI回归，核对旧DB保持（NOT_RUN）。三个报告复选框改为整行toggleable、Role.Checkbox、checked状态、label可点击且合并语义；新增语义测试（NOT_RUN）。
+所有设置/报告UI改从UiServices显式注入，不再自行取production application managers；StarterScreen默认用同一个ViewModel仓储创建服务。debug重建host强制同时注入隔离服务，IsolatedUiContext隔离cache/noBackup/preferences与内存DB，测试破坏操作不会触及应用真库/真实报告/回滚。新增空库创建孩子/模板/0/全角小数/缺考/未录入/保存/历史编辑/孩子切换的合成流程测试（NOT_RUN）。
+实际本地core64/Python46/static通过evidence/d09-p1-*.log。主线程已验证2c9b199e CI38989323329成功，8个JUnit方法（core64内部断言、Gson5、retention1、channel1）全通过；lint0error30warning。device38989862766仍运行，不能宣称设备通过。该成功不覆盖当前新P1源码或148af79签名变更。未改app/build.gradle.kts、workflow或签名。源码暂停供主线程捕获。
+
+01:16 UTC BACKLOG同步：D00按真实构建门禁标VERIFIED（不含设备/最新未编译源码）；D01从过期NOT_STARTED改IMPLEMENTED_UNVERIFIED并注明真实schema2/编译与设备待验独立。D09更新最新P1功能、隔离测试、64/46本地日志和当前真实2c9/设备证据范围。没有新增功能改动。
+
+01:17 UTC合成UI测试稳健性：录入/历史/详情/设置/管理/选科LazyColumn增加稳定测试tag，SyntheticJourneyTest与PdfSaveRecreationTest先在父列表performScrollToNode再操作子节点，不要求尚未compose的行已经存在。备份错误测试是普通verticalScroll全量Column，无此未组合行问题。静态检查再次通过，实际新UI测试仍NOT_RUN；源码暂停。

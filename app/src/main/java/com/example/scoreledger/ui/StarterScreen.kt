@@ -9,12 +9,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.res.stringResource
 import com.example.scoreledger.R
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.scoreledger.BuildConfig
 
 @Composable
-fun StarterScreen(model: ScoreViewModel) {
+fun StarterScreen(model: ScoreViewModel, services:UiServices?=null) {
+    val context=androidx.compose.ui.platform.LocalContext.current
+    val resolved=services ?: remember(model,context) { UiServices(
+        com.example.scoreledger.backup.BackupManager(context,model.repository),
+        com.example.scoreledger.export.ReportManager(context,model.repository)) }
+    CompositionLocalProvider(LocalUiServices provides resolved) { StarterContent(model) }
+}
+@Composable private fun StarterContent(model:ScoreViewModel) {
     val counts by model.childCounts.collectAsStateWithLifecycle()
     val children by model.children.collectAsStateWithLifecycle()
     val subjects by model.subjects.collectAsStateWithLifecycle()
@@ -44,7 +52,7 @@ fun StarterScreen(model: ScoreViewModel) {
                     val record=exams.firstOrNull { it.exam.id == detail && it.exam.childId == selected }
                     if(record != null) DetailScreen(model,record,busy,{detail=null}) else { Text(stringResource(R.string.ui_42));TextButton(onClick={detail=null}){Text(stringResource(R.string.ui_43))}}
                 }
-                destination=="设置" -> LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
+                destination=="设置" -> LazyColumn(modifier=Modifier.testTag("settings-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp)) {
                     item { Text(stringResource(R.string.ui_44),style=MaterialTheme.typography.headlineMedium) }
                     item { Button(onClick={page="孩子"},modifier=Modifier.fillMaxWidth()){Text("孩子档案 · ${children.size}/20")}}
                     item { OutlinedButton(onClick={page="科目"},modifier=Modifier.fillMaxWidth()){Text("科目管理 · ${subjects.size}/100")}}

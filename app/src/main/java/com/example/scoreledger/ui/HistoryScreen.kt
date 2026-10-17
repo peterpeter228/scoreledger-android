@@ -11,6 +11,7 @@ import androidx.compose.ui.res.stringResource
 import com.example.scoreledger.R
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.example.scoreledger.core.*
 import com.example.scoreledger.data.*
@@ -21,7 +22,7 @@ import com.example.scoreledger.data.*
     val result=runCatching { query.apply(records) }
     val visible=result.getOrDefault(emptyList())
     val listState=key(selected) { rememberLazyListState() }
-    LazyColumn(state=listState,contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    LazyColumn(modifier=Modifier.testTag("history-list"),state=listState,contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item { Text(stringResource(R.string.app_title),style=MaterialTheme.typography.headlineMedium);Text(stringResource(R.string.ui_51),style=MaterialTheme.typography.bodyMedium) }
         if(child==null) item {
             Text(stringResource(R.string.ui_52))
@@ -59,7 +60,7 @@ import com.example.scoreledger.data.*
 }
 @Composable fun DetailScreen(model: ScoreViewModel,record: ExamWithScores,busy: Boolean,back: ()->Unit) {
     var deletion by rememberSaveable {mutableStateOf(false)}
-    LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
+    LazyColumn(modifier=Modifier.testTag("detail-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(12.dp)) {
         item { TextButton(onClick=back){Text(stringResource(R.string.ui_43))};Text(record.exam.title,style=MaterialTheme.typography.headlineSmall)
             Text("${record.exam.examDate} · ${ExamKind.valueOf(record.exam.kind).label()}")
             Text("学期：${record.exam.term.ifBlank { "未填写" }} · 年级快照：${record.exam.gradeSnapshot.ifBlank { "未填写" }}")

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -20,7 +21,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @Composable fun BackupSettings() {
-    val manager=(LocalContext.current.applicationContext as ScoreLedgerApplication).backupManager
+    val manager=LocalUiServices.current.backup
     val scope=rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
     var message by remember { mutableStateOf("") }
@@ -30,7 +31,7 @@ import java.time.format.DateTimeFormatter
     var exportWarning by remember { mutableStateOf(false) }
     var cleanup by remember { mutableStateOf(false) }
     LaunchedEffect(manager) { runCatching { manager.maintenance() } }
-    fun run(action:suspend ()->Unit) { if(busy)return;busy=true;message="";scope.launch { try { action() } catch(e:CancellationException){throw e} catch(_:Exception){message="操作未完成，原记录不会被部分替换。若正在导出，请删除可能不完整的目标文件后重试；恢复预览过期时请重新选择文件。"} finally { busy=false } } }
+    fun run(action:suspend ()->Unit) { if(busy)return;busy=true;message="";scope.launch { try { action() } catch(e:CancellationException){throw e} catch(_:Exception){pending=null;baseline=null;cleanup=false;message="操作未完成，原记录不会被部分替换。若正在导出，请删除可能不完整的目标文件后重试；恢复请重新选择文件预览；清除操作请重新点击并确认最新数量。"} finally { busy=false } } }
     val export=rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri -> if(uri==null)message="已取消备份，未更新成功时间" else run { manager.export(uri);last=manager.lastSuccessfulBackupAt;message="备份已保存，请妥善保管明文文件" } }
     val restore=rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if(uri==null)message="已取消选择，数据未改变" else run { pending=manager.preview(uri) } }
     Column(verticalArrangement=Arrangement.spacedBy(8.dp)) {
@@ -43,7 +44,7 @@ import java.time.format.DateTimeFormatter
         OutlinedButton(onClick={run{baseline=manager.baseline()}},enabled=!busy){Text(stringResource(R.string.backup_clear))}
         TextButton(onClick={cleanup=true},enabled=!busy){Text(stringResource(R.string.backup_cleanup))}
         if(busy) Text(stringResource(R.string.backup_busy))
-        if(message.isNotEmpty()) Text(message)
+        if(message.isNotEmpty()) Text(message,Modifier.semantics { liveRegion=LiveRegionMode.Assertive })
     }
     if(exportWarning) AlertDialog(onDismissRequest={exportWarning=false},title={Text(stringResource(R.string.backup_export))},text={Text(stringResource(R.string.backup_warning))},confirmButton={TextButton(onClick={exportWarning=false;export.launch("scoreledger-backup-${DateTimeFormatter.ofPattern("yyyyMMdd-HHmm").format(java.time.LocalDateTime.now())}.json")}){Text(stringResource(R.string.backup_choose))}},dismissButton={TextButton(onClick={exportWarning=false}){Text(stringResource(R.string.ui_13))}})
     pending?.let { preview -> AlertDialog(onDismissRequest={if(!busy)pending=null},title={Text(stringResource(R.string.backup_confirm))},text={Text("将导入${preview.childCount}个孩子、${preview.examCount}次考试、${preview.scoreCount}条成绩。\n${preview.dateRange}\n当前${preview.oldExamCount}次考试将被完整替换，${preview.oldDraftCount}份草稿将丢弃。不是合并。\n先完成内部回滚快照再写入；快照不含草稿，也不能用于卸载后恢复。请先导出当前数据。")},confirmButton={TextButton(enabled=!busy,onClick={run { manager.restore(preview);pending=null;message="恢复完成，已替换数据；旧草稿已丢弃" }}){Text(stringResource(R.string.backup_replace))}},dismissButton={TextButton(enabled=!busy,onClick={pending=null}){Text(stringResource(R.string.ui_13))}}) }

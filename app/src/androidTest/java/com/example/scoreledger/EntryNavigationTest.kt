@@ -18,7 +18,8 @@ import org.junit.runner.RunWith
 class EntryNavigationTest {
     @get:Rule val compose=createComposeRule()
     private val db=Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getInstrumentation().targetContext,ScoreDatabase::class.java).build()
-    @After fun close() { db.close() }
+    private val isolated=IsolatedUiContext(InstrumentationRegistry.getInstrumentation().targetContext)
+    @After fun close() { db.close();isolated.cleanup() }
     @Test fun childSwitchDoesNotExposeAnotherChildDraftAndResumeWorks() {
         val repository=ScoreRepository(db,true)
         val ids=runBlocking {
@@ -26,7 +27,7 @@ class EntryNavigationTest {
             repository.putDraft(EntryDraft(childId=a,title="甲专属草稿"));a to b
         }
         val model=ScoreViewModel(repository)
-        compose.setContent { ScoreLedgerTheme { StarterScreen(model) } }
+        compose.setContent { ScoreLedgerTheme { StarterScreen(model,isolated.services(repository)) } }
         compose.waitUntil(10000) { compose.onAllNodesWithText("继续草稿：甲专属草稿").fetchSemanticsNodes().isNotEmpty() }
         compose.onNodeWithText("虚构乙").performClick()
         compose.waitUntil(10000) { model.selectedChild.value==ids.second }

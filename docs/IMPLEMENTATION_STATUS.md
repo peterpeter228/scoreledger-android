@@ -29,3 +29,5 @@ D07增量（00:49 UTC）：原生分页PDF/预览/保存/只读分享/缓存维�
 D07首次真实编译CI38988358601失败在两处API/命名错误；已源码修复resetBudget及目录O_RDONLY fsync，同时修复多换行备注分页。重构建待跑，绝不据源码改动标PASS；本地修复检查core64/Python46/static通过。
 
 D09增量（01:02 UTC）：应用内离线单页PDF预览、IO线程分享准备已实现；新增隔离ActivityScenario.recreate与预览导航测试尚未运行。core64/Python46/static真实通过；新Android/device验收NOT_RUN，D09整体仍IN_PROGRESS（大字/TalkBack/矩阵未通过）。
+
+01:15 UTC证据更新：2c9b199e CI38989323329成功，8JUnit方法/64core断言、Gson和retention测试通过，lint0error30warning；device38989862766仍执行中，无通过结论。此后新增SAF重建恢复/确认失败提示/复选框语义/显式隔离UI服务修复及合成E2E测试是未编译新源码，保持IMPLEMENTED_UNVERIFIED，不借用旧CI成功。

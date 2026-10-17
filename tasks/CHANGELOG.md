@@ -39,3 +39,10 @@ D07审查修复：有效多换行备注按测量行边界跨页、原文无损�
 - Added isolated debug-host ActivityScenario recreation and preview bounds/navigation tests (NOT_RUN). Local core64/Python46/static pass; no release/signing changes.
 
 D09 lint修复：移除StaticLayout可选高质量breakStrategy常量调用，保留默认换行，避免API29常量与minAPI26冲突；不抑制lint。新lint待CI。
+
+### 2026-10-17 D09 lifecycle/accessibility safety repairs
+- Persist opaque generated PDF ID across SAF/Activity recreation; validate private cache file before output writes.
+- Dismiss stale restore/clear confirmation on failure and announce actionable retry guidance.
+- Make report checkbox labels clickable with combined role/checked semantics.
+- Explicitly inject isolated DB/file/settings managers into test hosts; add recreation/error/semantics and synthetic mixed-score journey tests (NOT_RUN).
+- Local core64/Python46/static passed. Previous2c9 actual CI build/JVM/lint succeeded; new source/device results remain separate.

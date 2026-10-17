@@ -27,6 +27,16 @@ class ReportManager(private val context:Context,private val repository:ScoreRepo
             ReportFile(target,plan.pages.size,plan.scoreRows)
         } finally { partial.delete() }
     }
+    /** Only the opaque generated ID is saved across SAF recreation, never an arbitrary path. */
+    fun reportId(report:ReportFile):String = report.file.name.removePrefix("scoreledger-report-").removeSuffix(".pdf").also(::validateId)
+    private fun validateId(id:String) { require(Regex("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}").matches(id) && UUID.fromString(id).toString()==id) }
+    suspend fun savePending(id:String,uri:Uri)=withContext(Dispatchers.IO) {
+        validateId(id)
+        val file=File(directory,"scoreledger-report-$id.pdf")
+        require(file.canonicalFile.parentFile==directory.canonicalFile && file.isFile && file.length()>0) { "报告已清理，请重新生成；目标文件尚未写入" }
+        // Validate the existing file before opening/truncating the user's selected destination.
+        requireNotNull(context.contentResolver.openOutputStream(uri,"wt")).use { out -> file.inputStream().use{it.copyTo(out)} }
+    }
     suspend fun save(report:ReportFile,uri:Uri)=withContext(Dispatchers.IO) {
         require(report.file.isFile) { "报告已清理，请重新生成" }
         requireNotNull(context.contentResolver.openOutputStream(uri,"wt")).use { out -> report.file.inputStream().use { it.copyTo(out) } }
