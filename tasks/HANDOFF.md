@@ -4,7 +4,7 @@ The first localBetaDebug candidate is fixed-signed and passed AOSP API26/30/36 t
 
 Each API passed34 ordinary methods; two opt-in methods skipped normal discovery then passed individually across same-APK install-r. This is not distinct-version upgrade or physical-phone acceptance. Broad70-case mapping remains4PASS/52PARTIAL/14NOT_RUN. Core64 checks, Python46 contracts and 8 JVM test methods passed. PDF is explicitly bounded200 pages, without truncation. Real provider/TalkBack/physical/maximum-scale/payment/publication remain unverified.
 
-Supplemental visual capture38993300734 passed. Parent inspected3 UI screenshots and2 PDF pages. Current task: deliver the verified first internal beta bundle; retain remaining acceptance gaps for later iterations. No secrets belong in source or delivery. Fixed signing recovery is owner-only Drive; do not copy it into delivery.
+Supplemental visual capture38993300734 passed. Parent inspected3 UI screenshots and2 PDF pages. First internal beta APK and complete source/logs/evidence ZIP sent2026-10-17T02:09:27Z; messaging accepted, user download not confirmed. Next: real-device feedback and remaining acceptance gaps. No CI run is pending. No secrets belong in source or delivery. Fixed signing recovery is owner-only Drive; do not copy it into delivery.
 
 Previous chronological checkpoints below are historical and may describe resolved failures.
 

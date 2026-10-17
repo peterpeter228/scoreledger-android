@@ -55,8 +55,8 @@
     },
     {
       "path": "PROJECT_STATE.json",
-      "sizeBytes": 8518,
-      "sha256": "d8c0fc74a5eda7d658599688d1b49e27c01fc8f7bc30a75ff140c6e0944110c2"
+      "sizeBytes": 8641,
+      "sha256": "98e5de73130014005ab983c136f9e1d21693f1346766b8537d8d19bede76957e"
     },
     {
       "path": "README.md",
@@ -845,8 +845,8 @@
     },
     {
       "path": "tasks/HANDOFF.md",
-      "sizeBytes": 22245,
-      "sha256": "0902daf4065e2a496464809f7384fb910f33973818f360d8e7cd303c55b54b30"
+      "sizeBytes": 22344,
+      "sha256": "57a69f7830bb13827abc1b6b7e1145feb0a9f68a415f881aed5c465fc2761094"
     },
     {
       "path": "tools/collect_artifacts.py",
