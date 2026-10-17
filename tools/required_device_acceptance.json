@@ -58,7 +58,8 @@
     "com.example.scoreledger.SyntheticJourneyTest#multiSelectAndCustomSubjectSaveReopenAndIsolatePopulatedChildren",
     "com.example.scoreledger.SyntheticJourneyTest#narrow320dpDoubleFontEntryCanScrollTypeSaveAndReopen",
     "com.example.scoreledger.EmptyRestoreUiTest#controlledPickerEmptyRestoreCancelPreservesDraftsAndConfirmProtectsOriginal",
-    "com.example.scoreledger.ChildManagementUiTest#archiveAndCancelThenConfirmChildDeletionPreservesOtherChildAndAllTheirRows"
+    "com.example.scoreledger.ChildManagementUiTest#archiveAndCancelThenConfirmChildDeletionPreservesOtherChildAndAllTheirRows",
+    "com.example.scoreledger.GenerationNoticeTest#restoreNoticeOnlyReportsAnEditorThatWasActuallyClosed"
   ],
   "requiredFiles": [
     "ui-artifacts/synthetic-01-entry-before-save.png",

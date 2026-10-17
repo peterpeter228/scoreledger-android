@@ -95,6 +95,28 @@ class EvidenceCollectionTests(unittest.TestCase):
                 self.assertEqual(result.returncode,0,result.stderr)
                 self.assertEqual(result.stdout.strip(),expected)
 
+    def test_visible_software_keyboard_preference_is_scoped_and_verified(self):
+        code=SCRIPT.split('configure_visible_software_keyboard() {',1)[1].split('\n}\n',1)[0]
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            for actual,passes in [('1',True),('0',False),('null',False)]:
+                shell = 'set -e\nSERIAL=emulator-5580\nEVIDENCE="'+str(root)+'"\n' + r'''timeout() { shift; "$@"; }
+adb() {
+  [ "$1" = -s ] && [ "$2" = emulator-5580 ] || return 9
+  shift 2
+  case "$*" in
+    "shell settings get secure show_ime_with_hard_keyboard") echo "$READBACK" ;;
+    "shell settings put secure show_ime_with_hard_keyboard 1") echo "$*" >> "$EVIDENCE/writes.txt" ;;
+    *) return 9 ;;
+  esac
+}
+''' + code
+                result=subprocess.run(['bash','-c',shell],env={**os.environ,'READBACK':actual},capture_output=True,text=True)
+                self.assertEqual(result.returncode==0,passes,result.stdout+result.stderr)
+                self.assertEqual((root/'software-keyboard-preference-before.txt').read_text().strip(),actual)
+                self.assertEqual((root/'software-keyboard-preference-after.txt').read_text().strip(),actual)
+            self.assertEqual((root/'writes.txt').read_text().splitlines(),['shell settings put secure show_ime_with_hard_keyboard 1']*3)
+
     def test_touch_only_fixture_replaces_only_keyboard_setting(self):
         code=SCRIPT.split("<<'PYKEYBOARD'\n",1)[1].split('\nPYKEYBOARD',1)[0]
         with tempfile.TemporaryDirectory() as tmp:

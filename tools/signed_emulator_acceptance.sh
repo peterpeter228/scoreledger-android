@@ -127,6 +127,18 @@ health_checkpoint() {
   check_boot_health "$EVIDENCE/health-latest-logcat.txt" | tee "$EVIDENCE/health-$phase.txt"
 }
 
+# Disposable AVD ordinary input preference only: no host/user-device change and
+# no app-level IMM forcing. Android16 still reports an exposed QWERTY keyboard
+# with hw.keyboard=no; explicitly test the visible software-keyboard use case.
+configure_visible_software_keyboard() {
+  timeout 10 adb -s "$SERIAL" shell settings get secure show_ime_with_hard_keyboard > "$EVIDENCE/software-keyboard-preference-before.txt"
+  timeout 10 adb -s "$SERIAL" shell settings put secure show_ime_with_hard_keyboard 1
+  timeout 10 adb -s "$SERIAL" shell settings get secure show_ime_with_hard_keyboard > "$EVIDENCE/software-keyboard-preference-after.txt"
+  [ "$(tr -d '\r\n' < "$EVIDENCE/software-keyboard-preference-after.txt")" = 1 ] || {
+    echo 'SOFTWARE_KEYBOARD_PREFERENCE_NOT_APPLIED'; return 1;
+  }
+}
+
 capture_input_diagnostics() {
   local phase="$1"
   case "$phase" in pre-install|final) ;; *) return 1;; esac
@@ -340,6 +352,7 @@ done
 # dismiss an ANR or treat a blocked system window as successful UI coverage.
 timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/pre-install-logcat.txt"
 check_boot_health "$EVIDENCE/pre-install-logcat.txt" | tee "$EVIDENCE/pre-install-health.txt"
+configure_visible_software_keyboard
 capture_input_diagnostics pre-install
 
 timeout 10 adb -s "$SERIAL" shell pm list packages com.google.android.gms | tr -d '\r' > "$EVIDENCE/gms-packages.txt"

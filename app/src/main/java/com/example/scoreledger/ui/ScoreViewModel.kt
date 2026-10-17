@@ -96,9 +96,12 @@ class ScoreViewModel(internal val repository: ScoreRepository, private val saved
     init {
         viewModelScope.launch { repository.generation.collect { epoch ->
             if(epoch!=visibleGeneration) {
+                val closedEditor=draft.value!=null
                 visibleGeneration=epoch;clearEditor()
                 deleted=null;undo.value=false;removedRow=null;rowUndo.value=false;consumeSavedRecord()
-                message.value="数据已恢复或清理，旧编辑页面已关闭"
+                // Settings reports its own inline restore/clear result. Only announce an
+                // editor closure when one actually happened; do not cover rollback actions.
+                if(closedEditor) message.value="数据已恢复或清理，旧编辑页面已关闭"
             }
         } }
 

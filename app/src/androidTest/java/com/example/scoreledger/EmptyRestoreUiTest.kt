@@ -101,9 +101,13 @@ class EmptyRestoreUiTest {
                 assertTrue(runBlocking{repository.restorePreview()}.drafts.isEmpty())
                 val copy=runBlocking{services.backup.listRollbacks()}.single()
                 assertEquals(before.data,runBlocking{services.backup.previewRollback(copy.id)}.data)
-                capture("empty-restore-confirmed")
                 stage="recover-protected-original"
-                setting("预览并取回").performClick()
+                // No editor was open. A redundant global "editor closed" Snackbar used to
+                // obscure this immediate rollback action despite successful empty restore.
+                compose.onNodeWithText("数据已恢复或清理，旧编辑页面已关闭").assertDoesNotExist()
+                val recover=setting("预览并取回").assertIsDisplayed().assertIsEnabled()
+                capture("empty-restore-confirmed")
+                recover.performClick()
                 awaitText("确认替换并丢弃旧草稿")
                 compose.onNodeWithText("将导入1个孩子、3次考试、9条成绩。",substring=true).assertIsDisplayed()
                 compose.onNodeWithText("确认替换并丢弃旧草稿").performClick()
@@ -123,6 +127,7 @@ class EmptyRestoreUiTest {
                 )
               } catch(failure:Throwable) {
                 runCatching { File(instrumentation.targetContext.filesDir,"ui-evidence/empty-restore-failure.txt").apply{parentFile!!.mkdirs();writeText("stage=$stage\n${failure.stackTraceToString()}")} }
+                runCatching { capture("empty-restore-failure") }
                 throw failure
               }
             }
