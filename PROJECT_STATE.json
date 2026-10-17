@@ -1,10 +1,10 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T09:35:00Z",
+  "asOf": "2026-10-17T10:29:00Z",
   "stage": "REVIEW_REVISION_DEVICE_REPAIR",
-  "androidBuild": "03d1256_COMPILED_SUCCESS",
-  "deviceTests": "NOT_ACCEPTED_PREVIOUS_MATRIX_FAILED",
+  "androidBuild": "a0662a_COMPILED_SUCCESS",
+  "deviceTests": "NOT_ACCEPTED_API26_FULL_PASS_API30_PDF_CHECK_FAILURE_API36_UNRESOLVED",
   "billing": "NOT_IMPLEMENTED_NOT_TESTED",
   "commercialRelease": "BLOCKED",
   "nextTask": "Finish actual UI flow corrections and evidence, rerun exact signed APK on AOSP26/30/36, then decide delivery.",
@@ -191,8 +191,8 @@
     "emulatorAcceptedIfCloudPhysicalUnavailable": true
   },
   "currentRevision": {
-    "candidateCommit": "03d1256a4d3e6ccdc41d566490a7989b27c7ac54",
-    "runId": 39020787012,
+    "candidateCommit": "a0662a329799d3b8927e907896651d7df77d6876",
+    "runId": 39023946423,
     "versionName": "0.2.0-beta",
     "delivered": false,
     "previousCandidate": "00b7ddf3d35307ff23227ab9f59ad8df63dde982",
@@ -202,16 +202,15 @@
       "36": "49/52 passed; boot SystemUI/phone ANR predates UI tests"
     },
     "remainingValidation": [
-      "save/edit transition",
-      "actual DocumentsUI backup replacement and PDF cancel/retry/save",
-      "external process death followed by UI draft resume",
-      "populated child isolation",
-      "compact and large-font entry layout"
+      "Real PDF cancellation absence probe on API30",
+      "Original failure before PdfSaveRecreation cleanup on API36",
+      "Actual visible keyboard on API36 (inset-only earlier evidence rejected)",
+      "Complete exact-source artifact and visual acceptance"
     ],
     "currentMatrix": {
-      "26": "52/52 and evidence gate PASS",
-      "30": "52/52 and evidence gate PASS",
-      "36": "51/52; real MainActivity keyboard did not show after input replacement. No ANR dialog in failure screenshot."
+      "26": "55 full methods and2 external-draft phases plus evidence gate PASS",
+      "30": "54/55; cancellation succeeded but shell directory format check failed",
+      "36": "Runner crashed during PdfSaveRecreation cleanup before IME tests. Retry then lost platform services before app installation."
     },
     "nextTestExpansion": "55 full methods + 2 separate external-force-stop UI phases, NOT_RUN"
   }

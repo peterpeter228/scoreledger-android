@@ -27,8 +27,9 @@ text = pathlib.Path(sys.argv[1]).read_text(errors='replace')
 if not text.strip():
     sys.exit('EMULATOR_BOOT_HEALTH_UNCONFIRMED: empty logcat')
 failures = re.findall(r'^.*\bANR in com\.android\.(?:systemui|phone)(?:[ \t]|$).*$', text, re.M)
+failures += re.findall(r'^.*FATAL EXCEPTION IN SYSTEM PROCESS:.*$', text, re.M)
 if failures:
-    print('EMULATOR_BOOT_HEALTH_FAILED: system component ANR before app installation')
+    print('EMULATOR_BOOT_HEALTH_FAILED: system component ANR/crash before app installation')
     print('\n'.join(failures))
     sys.exit(1)
 print('EMULATOR_BOOT_HEALTH_CHECKED: no SystemUI/phone ANR in captured boot log; not a guarantee of later health')
@@ -246,7 +247,26 @@ cp "$AVD_CONFIG" "$EVIDENCE/avd-config-effective.ini"
 adb start-server
 # Refuse to touch any pre-existing device occupying our chosen emulator serial.
 if adb devices | grep -q "^$SERIAL[[:space:]]"; then echo 'Emulator serial already occupied'; exit 1; fi
-"$SDK_ROOT/emulator/emulator" -avd "$AVD_NAME" -port 5580 -no-window -no-audio -no-boot-anim -no-snapshot -wipe-data -gpu swiftshader_indirect -accel on > "$EVIDENCE/emulator-runtime.log" 2>&1 &
+# Bounded hosted-runner sizing; retain the previous 2560 MB on smaller hosts.
+# Renderer is the supported software backend, not deprecated swiftshader_indirect.
+nproc > "$EVIDENCE/host-nproc.txt"
+free -k > "$EVIDENCE/host-free.txt"
+cat /proc/meminfo > "$EVIDENCE/host-meminfo.txt"
+"$SDK_ROOT/emulator/emulator" -version > "$EVIDENCE/emulator-version.txt" 2>&1
+read -r EMULATOR_CORES EMULATOR_MEMORY < <(python3 - "$EVIDENCE" <<'PYRESOURCES'
+import json,pathlib,re,sys
+root=pathlib.Path(sys.argv[1]);cpus=int((root/'host-nproc.txt').read_text())
+assert cpus>0
+available=int(re.search(r'^MemAvailable:\s+(\d+) kB$',(root/'host-meminfo.txt').read_text(),re.M)[1])
+cores=min(4,cpus);memory=4096 if available>=6*1024*1024 else 2560
+(root/'emulator-launch-options.json').write_text(json.dumps({'hostNproc':cpus,'hostMemAvailableKiB':available,
+    'cores':cores,'memoryMiB':memory,'gpu':'swiftshader','accel':'on','hardwareKeyboard':False,
+    'scope':'Disposable test fixture; resource modernization is not proof of prior crash cause.'},indent=2)+'\n')
+print(cores,memory)
+PYRESOURCES
+)
+[[ "$EMULATOR_CORES" =~ ^[1-4]$ ]] && [[ "$EMULATOR_MEMORY" =~ ^(2560|4096)$ ]]
+"$SDK_ROOT/emulator/emulator" -avd "$AVD_NAME" -port 5580 -no-window -no-audio -no-boot-anim -no-snapshot -wipe-data -gpu swiftshader -cores "$EMULATOR_CORES" -memory "$EMULATOR_MEMORY" -accel on > "$EVIDENCE/emulator-runtime.log" 2>&1 &
 EMU_PID=$!
 DEADLINE=$((SECONDS + 600))
 READY=false

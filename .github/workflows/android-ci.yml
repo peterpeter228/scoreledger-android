@@ -213,7 +213,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: current-round-signed-device-api-${{ matrix.api }}
+          name: current-round-signed-device-api-${{ matrix.api }}-attempt-${{ github.run_attempt }}
           path: evidence/signed-device/
           if-no-files-found: warn
           retention-days: 14

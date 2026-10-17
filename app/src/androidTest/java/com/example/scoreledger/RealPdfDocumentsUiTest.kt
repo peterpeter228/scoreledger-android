@@ -257,11 +257,20 @@ class RealPdfDocumentsUiTest {
                 compose.onNodeWithText("关闭预览").performClick()
                 awaitAppText("已取消保存，没有报告保存成功",15000)
                 reportControl("已取消保存，没有报告保存成功").assertIsDisplayed()
-                // UiAutomation executes argv, not a shell script: do not pass &&/echo as test arguments.
-                // Dot entries prove the directory was successfully listed; permission/error output cannot pass.
-                val downloadNames=shellBytes("ls -a -1 /sdcard/Download").toString(Charsets.UTF_8).lineSequence().toSet()
-                assertTrue("Downloads must be readable before checking cancellation", "." in downloadNames && ".." in downloadNames)
-                assertFalse("Cancel must not create the requested PDF",cancelledName in downloadNames)
+                // Runtime.exec tokenizes argv without interpreting quotes. Keep the sh -c script
+                // one token; the shell expands IFS only after parsing &&/;/redirections.
+                // Check the listing's exit status, not platform-dependent ls dot-entry formatting.
+                // A missing/unreadable directory, existing file, or dangling symlink must fail.
+                require(cancelledName.matches(Regex("scoreledger-pdf-cancel-[0-9a-f-]+\\.pdf")))
+                val gap="${'$'}{IFS}"
+                val cancelledPath="/sdcard/Download/$cancelledName"
+                val probe="ls${gap}-a${gap}/sdcard/Download&&" +
+                    "test${gap}!${gap}-e${gap}$cancelledPath&&" +
+                    "test${gap}!${gap}-L${gap}$cancelledPath;echo${gap}CANCEL_CHECK:${'$'}?"
+                val cancellationCheck=shellBytes("sh -c $probe").toString(Charsets.UTF_8).trim()
+                File(instrumentation.targetContext.filesDir,"ui-evidence/real-pdf-cancel-shell.txt")
+                    .apply { parentFile!!.mkdirs();writeText(cancellationCheck) }
+                assertEquals("Cancel must leave no file and Downloads must be readable", "CANCEL_CHECK:0",cancellationCheck.lineSequence().last())
                 assertEquals(baseline,runBlocking{repository.restorePreview()})
                 assertArrayEquals(expected,cached.readBytes())
                 assertEquals(1,File(isolated.cacheDir,"reports").listFiles().orEmpty().count{it.extension=="pdf"})

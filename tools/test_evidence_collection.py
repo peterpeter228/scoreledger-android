@@ -56,6 +56,17 @@ class EvidenceCollectionTests(unittest.TestCase):
             output = evidence / 'ui-artifacts/synthetic.png'
             return result, output.read_bytes() if output.exists() else None
 
+    def test_resource_selection_is_bounded_by_actual_host(self):
+        code=SCRIPT.split("<<'PYRESOURCES'\n",1)[1].split('\nPYRESOURCES',1)[0]
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            for cpus,available,expected in [(2,5*1024*1024,'2 2560'),(8,6*1024*1024,'4 4096'),(1,9*1024*1024,'1 4096')]:
+                (root/'host-nproc.txt').write_text(str(cpus))
+                (root/'host-meminfo.txt').write_text(f'MemAvailable: {available} kB\n')
+                result=subprocess.run(['python3','-',str(root)],input=code,text=True,capture_output=True)
+                self.assertEqual(result.returncode,0,result.stderr)
+                self.assertEqual(result.stdout.strip(),expected)
+
     def test_touch_only_fixture_replaces_only_keyboard_setting(self):
         code=SCRIPT.split("<<'PYKEYBOARD'\n",1)[1].split('\nPYKEYBOARD',1)[0]
         with tempfile.TemporaryDirectory() as tmp:
@@ -71,6 +82,7 @@ class EvidenceCollectionTests(unittest.TestCase):
         cases = [('I SystemServer: Boot complete', True),
                  ('E ActivityManager: ANR in com.android.systemui\n', False),
                  ('E ActivityManager: ANR in com.android.phone\n', False),
+                 ('E AndroidRuntime: *** FATAL EXCEPTION IN SYSTEM PROCESS: WifiHandlerThread', False),
                  ('', False)]
         with tempfile.TemporaryDirectory() as tmp:
             log = Path(tmp) / 'boot.log'
