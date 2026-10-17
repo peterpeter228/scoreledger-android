@@ -56,6 +56,16 @@ class EvidenceCollectionTests(unittest.TestCase):
             output = evidence / 'ui-artifacts/synthetic.png'
             return result, output.read_bytes() if output.exists() else None
 
+    def test_touch_only_fixture_replaces_only_keyboard_setting(self):
+        code=SCRIPT.split("<<'PYKEYBOARD'\n",1)[1].split('\nPYKEYBOARD',1)[0]
+        with tempfile.TemporaryDirectory() as tmp:
+            path=Path(tmp)/'config.ini'
+            for original in ('hw.keyboard=yes\nhw.ramSize=2560\n','hw.ramSize=2560\n'):
+                path.write_text(original)
+                result=subprocess.run(['python3','-',str(path)],input=code,text=True,capture_output=True)
+                self.assertEqual(result.returncode,0,result.stderr)
+                self.assertEqual(path.read_text(),'hw.ramSize=2560\nhw.keyboard=no\n')
+
     def test_boot_health_rejects_system_anr_and_empty_logs(self):
         script = Path(__file__).with_name('signed_emulator_acceptance.sh').resolve()
         cases = [('I SystemServer: Boot complete', True),

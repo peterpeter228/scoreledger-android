@@ -115,6 +115,15 @@ PYEVIDENCE
   return 1
 }
 
+capture_input_diagnostics() {
+  local phase="$1"
+  case "$phase" in pre-install|final) ;; *) return 1;; esac
+  timeout 10 adb -s "$SERIAL" shell settings get secure show_ime_with_hard_keyboard > "$EVIDENCE/$phase-show-ime-with-hard-keyboard.txt"
+  timeout 15 adb -s "$SERIAL" shell dumpsys input_method > "$EVIDENCE/$phase-input-method.txt"
+  timeout 15 adb -s "$SERIAL" shell dumpsys input > "$EVIDENCE/$phase-input.txt"
+  timeout 15 adb -s "$SERIAL" shell dumpsys window > "$EVIDENCE/$phase-window.txt"
+}
+
 collect_and_stop() {
   local result=$?
   trap - EXIT
@@ -123,6 +132,7 @@ collect_and_stop() {
     timeout 15 adb -s "$SERIAL" exec-out screencap -p > "$EVIDENCE/final-screen.png"
     timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/logcat.txt"
     timeout 10 adb -s "$SERIAL" shell getprop > "$EVIDENCE/device-properties.txt"
+    capture_input_diagnostics final
     [ -d "$EVIDENCE/pdf-artifacts" ] || collect_app_evidence pdf-evidence pdf-artifacts
     [ -d "$EVIDENCE/ui-artifacts" ] || collect_app_evidence ui-evidence ui-artifacts
     kill "$EMU_PID" 2>/dev/null
@@ -220,6 +230,18 @@ export ANDROID_EMULATOR_HOME="$AVD_ROOT/emulator"
 mkdir -p "$ANDROID_AVD_HOME" "$ANDROID_USER_HOME" "$ANDROID_EMULATOR_HOME"
 AVD_NAME=scoreledger_signed_acceptance
 printf 'no\n' | "$AVDMANAGER" create avd -n "$AVD_NAME" -k "system-images;android-$API;default;x86_64" --device pixel_2
+# Explicit touch-only phone fixture, not a claim about the prior IME root cause.
+# Preserve both configurations; never alter host/user device input settings.
+AVD_CONFIG="$ANDROID_AVD_HOME/$AVD_NAME.avd/config.ini"
+cp "$AVD_CONFIG" "$EVIDENCE/avd-config-original.ini"
+python3 - "$AVD_CONFIG" <<'PYKEYBOARD'
+import pathlib,re,sys
+path=pathlib.Path(sys.argv[1]);text=path.read_text()
+text=re.sub(r'^hw\.keyboard\s*=.*\n?', '', text, flags=re.M)
+path.write_text(text.rstrip()+'\nhw.keyboard=no\n')
+assert re.findall(r'^hw\.keyboard=(.*)$',path.read_text(),re.M)==['no']
+PYKEYBOARD
+cp "$AVD_CONFIG" "$EVIDENCE/avd-config-effective.ini"
 "$SDK_ROOT/emulator/emulator" -list-avds | grep -Fx "$AVD_NAME"
 adb start-server
 # Refuse to touch any pre-existing device occupying our chosen emulator serial.
@@ -242,6 +264,7 @@ done
 # dismiss an ANR or treat a blocked system window as successful UI coverage.
 timeout 20 adb -s "$SERIAL" logcat -d > "$EVIDENCE/pre-install-logcat.txt"
 check_boot_health "$EVIDENCE/pre-install-logcat.txt" | tee "$EVIDENCE/pre-install-health.txt"
+capture_input_diagnostics pre-install
 
 timeout 10 adb -s "$SERIAL" shell pm list packages com.google.android.gms | tr -d '\r' > "$EVIDENCE/gms-packages.txt"
 if grep -q '^package:com.google.android.gms$' "$EVIDENCE/gms-packages.txt"; then

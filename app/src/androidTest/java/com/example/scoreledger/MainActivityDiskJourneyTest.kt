@@ -5,6 +5,9 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import android.view.accessibility.AccessibilityWindowInfo
 import android.os.Build
+import android.os.ParcelFileDescriptor
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import android.os.Handler
 import android.os.Looper
 import android.view.Window
@@ -59,21 +62,58 @@ class MainActivityDiskJourneyTest {
         val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         try{file.outputStream().use{check(bitmap.compress(Bitmap.CompressFormat.PNG,100,it))}}finally{bitmap.recycle()}
     }
-    private fun assertVisibleAboveRealIme(scenario:ActivityScenario<MainActivity>,scoreTag:String) {
+    private fun recordInputState(scenario:ActivityScenario<MainActivity>,stage:String) {
+        val state=JSONObject().put("stage",stage).put("uptimeMs",android.os.SystemClock.uptimeMillis())
+        scenario.onActivity { activity->
+            val view=activity.window.decorView
+            val insets=ViewCompat.getRootWindowInsets(view)
+            val imm=activity.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            state.put("imeVisible",insets?.isVisible(WindowInsetsCompat.Type.ime())==true)
+                .put("imeBottom",insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)
+                .put("windowFocused",view.hasWindowFocus()).put("inputMethodActive",imm.isActive)
+                .put("focusClass",activity.currentFocus?.javaClass?.name.orEmpty())
+                .put("softInputMode",activity.window.attributes.softInputMode)
+                .put("keyboard",activity.resources.configuration.keyboard)
+                .put("hardKeyboardHidden",activity.resources.configuration.hardKeyboardHidden)
+        }
+        val file=File(instrumentation.targetContext.filesDir,"ui-evidence/main-disk-input-$stage.json")
+        check(file.parentFile!!.isDirectory || file.parentFile!!.mkdirs());file.writeText(state.toString())
+    }
+    private fun assertVisibleAboveRealIme(scenario:ActivityScenario<MainActivity>,scoreTag:String,stage:String) {
         val automation=instrumentation.uiAutomation
         val flags=automation.serviceInfo.flags
         automation.serviceInfo=automation.serviceInfo.apply { this.flags=this.flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS }
         try {
             fun keyboardBounds():Rect? = automation.windows.firstOrNull { it.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD }
                 ?.let { window->Rect().also { window.getBoundsInScreen(it) } }?.takeUnless { it.isEmpty }
-            compose.waitUntil(10000){keyboardBounds()!=null}
+            var visible=false
+            var bottom=0
+            compose.waitUntil(10000){
+                scenario.onActivity {
+                    val insets=ViewCompat.getRootWindowInsets(it.window.decorView)
+                    visible=insets?.isVisible(WindowInsetsCompat.Type.ime())==true
+                    bottom=insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+                }
+                keyboardBounds()!=null && visible && bottom>0
+            }
             val ime=requireNotNull(keyboardBounds())
             val offset=IntArray(2);scenario.onActivity { it.window.decorView.getLocationOnScreen(offset) }
             val save=compose.onNodeWithTag("save-record").assertIsDisplayed().fetchSemanticsNode().boundsInWindow
             val score=compose.onNodeWithTag(scoreTag).assertIsDisplayed().fetchSemanticsNode().boundsInWindow
             assertTrue("Save action overlaps real IME",save.bottom+offset[1]<=ime.top+1)
             assertTrue("Focused score overlaps real IME",score.bottom+offset[1]<=ime.top+1)
-            capture("main-disk-entry-ime",scenario)
+            capture(if(stage=="score-ime-after-replacement") "main-disk-entry-ime" else "main-disk-$stage",scenario)
+        } catch(failure:Throwable) {
+            runCatching { recordInputState(scenario,"$stage-failure") }
+            runCatching { capture("main-disk-$stage-failure") }
+            // Read-only state at the failure, before ActivityScenario closes the window.
+            val commands=mapOf("input-method" to "dumpsys input_method","window" to "dumpsys window",
+                "input" to "dumpsys input","hard-keyboard-setting" to "settings get secure show_ime_with_hard_keyboard")
+            commands.forEach { (name,command)->runCatching {
+                val text=ParcelFileDescriptor.AutoCloseInputStream(automation.executeShellCommand(command)).bufferedReader().use { it.readText() }
+                File(instrumentation.targetContext.filesDir,"ui-evidence/main-disk-$stage-$name.txt").writeText(text)
+            } }
+            throw failure
         } finally { automation.serviceInfo=automation.serviceInfo.apply { this.flags=flags } }
     }
     @Test fun genuineMainActivityCreatesSavesReopensDiskRecordAndPreservesUpgradeBaseline() {
@@ -109,18 +149,21 @@ class MainActivityDiskJourneyTest {
                 compose.onNodeWithText("记录").performClick()
                 compose.onNodeWithTag("new-record").performClick()
                 compose.waitUntil(10000){compose.onAllNodesWithTag("save-record").fetchSemanticsNodes().isNotEmpty()}
+                recordInputState(scenario,"entry-ready")
                 item("entry-list",hasText("修改考试信息")).performClick()
                 item("entry-list",hasText("考试名称")).performTextReplacement(title)
                 item("entry-list",hasText("本次年级（可选）")).performTextReplacement("本次合成年级")
-                item("entry-list",hasTestTag("score-${subject.id}")).performTextReplacement("８５．５")
-                compose.waitForIdle()
-                compose.onNodeWithTag("score-${subject.id}").assertIsFocused()
-                // Text replacement uses semantics and may restart the input connection.
-                // A real pointer tap after that update is the user action under test;
-                // do not force-show IME or accept a focused field without its keyboard.
+                recordInputState(scenario,"metadata-entered")
+                // Distinguish genuine tap/focus/scroll from the later semantics edit.
                 item("entry-list",hasTestTag("score-${subject.id}")).assertIsEnabled().performTouchInput { click() }
                 compose.onNodeWithTag("score-${subject.id}").assertIsFocused()
-                assertVisibleAboveRealIme(scenario,"score-${subject.id}")
+                recordInputState(scenario,"score-ime-before-replacement")
+                assertVisibleAboveRealIme(scenario,"score-${subject.id}","score-ime-before-replacement")
+                compose.onNodeWithTag("score-${subject.id}").performTextReplacement("８５．５")
+                compose.waitForIdle()
+                compose.onNodeWithTag("score-${subject.id}").assertIsFocused()
+                recordInputState(scenario,"score-ime-after-replacement")
+                assertVisibleAboveRealIme(scenario,"score-${subject.id}","score-ime-after-replacement")
                 compose.onNodeWithTag("save-record").performClick()
                 compose.waitUntil(10000){compose.onAllNodesWithTag("detail-list").fetchSemanticsNodes().isNotEmpty()}
                 item("detail-list",hasText(title)).assertExists()

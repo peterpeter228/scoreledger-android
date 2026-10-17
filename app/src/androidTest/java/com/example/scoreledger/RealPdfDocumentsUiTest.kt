@@ -4,12 +4,13 @@ import android.accessibilityservice.AccessibilityServiceInfo
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import androidx.compose.ui.semantics.SemanticsProperties
-import java.io.FileInputStream
 import java.util.UUID
 import java.security.MessageDigest
 import org.json.JSONObject
 import android.graphics.Bitmap
 import android.graphics.Rect
+import android.view.KeyEvent
+import android.view.accessibility.AccessibilityWindowInfo
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.os.Bundle
@@ -132,16 +133,73 @@ class RealPdfDocumentsUiTest {
         compose.onNodeWithTag("report-list").performScrollToNode(hasText(text))
         return compose.onNodeWithText(text).performScrollTo()
     }
-    private fun shellBytes(command:String):ByteArray = instrumentation.uiAutomation.executeShellCommand(command).use { descriptor ->
-        FileInputStream(descriptor.fileDescriptor).use { it.readBytes() }
+    // AutoCloseInputStream owns the ParcelFileDescriptor. Never also close a raw-fd stream:
+    // double-closing a reused fd can damage unrelated instrumentation transport.
+    private fun shellBytes(command:String):ByteArray = ParcelFileDescriptor.AutoCloseInputStream(
+        instrumentation.uiAutomation.executeShellCommand(command)
+    ).use { it.readBytes() }
+    private fun belongsToRoots(node:AccessibilityNodeInfo):Boolean {
+        var current:AccessibilityNodeInfo?=node
+        while(current!=null) {
+            if(current.viewIdResourceName?.endsWith("/roots_list")==true)return true
+            current=current.parent
+        }
+        return false
+    }
+    private fun drawerOpen():Boolean = nodes(instrumentation.uiAutomation.rootInActiveWindow).any {
+        it.isVisibleToUser && it.viewIdResourceName?.endsWith("/roots_list")==true
+    }
+    private fun imeVisible():Boolean = instrumentation.uiAutomation.windows.any {
+        it.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD && it.root?.isVisibleToUser==true
+    }
+    private fun awaitState(description:String,predicate:()->Boolean) {
+        val deadline=SystemClock.uptimeMillis()+10000
+        while(SystemClock.uptimeMillis()<deadline) { if(predicate())return;SystemClock.sleep(100) }
+        evidence("real-pdf-state-timeout-$stage")
+        error("DocumentsUI did not reach $description")
     }
     private fun selectDownloads() {
-        val visible=nodes(instrumentation.uiAutomation.rootInActiveWindow)
-        if(visible.none{it.isVisibleToUser && it.text?.toString()=="Downloads"}) {
+        // A label in an open roots drawer is NOT evidence that its directory was selected.
+        if(!drawerOpen()) {
             click(awaitNode { it.contentDescription?.toString() in setOf("Show roots","Open navigation drawer","显示根目录","打开导航抽屉") })
-            click(awaitNode { it.text?.toString()=="Downloads" })
+            awaitState("open roots drawer"){drawerOpen()}
         }
-        awaitNode { it.text?.toString()=="Downloads" && it.className?.toString()!="android.widget.EditText" }
+        click(awaitNode { it.text?.toString()=="Downloads" && belongsToRoots(it) })
+        awaitState("Downloads with roots drawer closed") {
+            !drawerOpen() && nodes(instrumentation.uiAutomation.rootInActiveWindow).any {
+                it.isVisibleToUser && it.text?.toString()=="Downloads" && !belongsToRoots(it)
+            }
+        }
+    }
+    private fun backFromVerifiedPicker() {
+        check(instrumentation.uiAutomation.rootInActiveWindow?.packageName?.toString()?.contains("documentsui")==true) {
+            "Refusing Back outside verified DocumentsUI"
+        }
+        val now=SystemClock.uptimeMillis()
+        check(instrumentation.uiAutomation.injectInputEvent(KeyEvent(now,now,KeyEvent.ACTION_DOWN,KeyEvent.KEYCODE_BACK,0),true))
+        check(instrumentation.uiAutomation.injectInputEvent(KeyEvent(now,now+50,KeyEvent.ACTION_UP,KeyEvent.KEYCODE_BACK,0),true))
+    }
+    private fun cancelCreateDocument() {
+        // Each preliminary Back requires a visible overlay and an observed dismissal.
+        // Never send a second Back blindly or after the app has already returned.
+        repeat(2) {
+            if(instrumentation.uiAutomation.rootInActiveWindow?.packageName?.toString()==instrumentation.targetContext.packageName)return
+            val hadDrawer=drawerOpen();val hadIme=imeVisible()
+            if(hadDrawer || hadIme) {
+                backFromVerifiedPicker()
+                awaitState("observed drawer/IME dismissal") {
+                    instrumentation.uiAutomation.rootInActiveWindow?.packageName?.toString()==instrumentation.targetContext.packageName ||
+                        (hadDrawer && !drawerOpen()) || (hadIme && !imeVisible())
+                }
+            }
+        }
+        if(instrumentation.uiAutomation.rootInActiveWindow?.packageName?.toString()==instrumentation.targetContext.packageName)return
+        check(!drawerOpen() && !imeVisible()) { "Picker overlay still visible; refusing speculative Back" }
+        val cancel=nodes(instrumentation.uiAutomation.rootInActiveWindow).firstOrNull {
+            it.isEnabled && it.isVisibleToUser && it.packageName?.toString()?.contains("documentsui")==true &&
+                (it.text?.toString() in setOf("Cancel","CANCEL","取消") || it.contentDescription?.toString() in setOf("Close","关闭"))
+        }
+        if(cancel!=null)click(cancel) else backFromVerifiedPicker()
     }
     private fun filename(value:String) {
         val input=awaitNode { it.className?.toString()=="android.widget.EditText" }
@@ -160,7 +218,7 @@ class RealPdfDocumentsUiTest {
         val cancelledName="scoreledger-pdf-cancel-$id.pdf"
         val savedName="scoreledger-pdf-saved-$id.pdf"
         val priorFlags=instrumentation.uiAutomation.serviceInfo.flags
-        instrumentation.uiAutomation.serviceInfo=instrumentation.uiAutomation.serviceInfo.apply { flags=flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS }
+        instrumentation.uiAutomation.serviceInfo=instrumentation.uiAutomation.serviceInfo.apply { flags=flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS }
         try {
             val fixture=instrumentation.context.assets.open("backup-valid.json").use(BackupCodec::read)
             runBlocking {
@@ -194,12 +252,16 @@ class RealPdfDocumentsUiTest {
                 compose.onNodeWithText("保存PDF").performClick()
                 selectDownloads();filename(cancelledName)
                 capture("real-pdf-cancel-picker")
-                instrumentation.uiAutomation.executeShellCommand("input keyevent 4").close()
+                cancelCreateDocument()
                 awaitAppText("保存PDF",15000)
                 compose.onNodeWithText("关闭预览").performClick()
                 awaitAppText("已取消保存，没有报告保存成功",15000)
                 reportControl("已取消保存，没有报告保存成功").assertIsDisplayed()
-                assertEquals("ABSENT",shellBytes("test ! -e /sdcard/Download/$cancelledName && echo ABSENT").toString(Charsets.UTF_8).trim())
+                // UiAutomation executes argv, not a shell script: do not pass &&/echo as test arguments.
+                // Dot entries prove the directory was successfully listed; permission/error output cannot pass.
+                val downloadNames=shellBytes("ls -a -1 /sdcard/Download").toString(Charsets.UTF_8).lineSequence().toSet()
+                assertTrue("Downloads must be readable before checking cancellation", "." in downloadNames && ".." in downloadNames)
+                assertFalse("Cancel must not create the requested PDF",cancelledName in downloadNames)
                 assertEquals(baseline,runBlocking{repository.restorePreview()})
                 assertArrayEquals(expected,cached.readBytes())
                 assertEquals(1,File(isolated.cacheDir,"reports").listFiles().orEmpty().count{it.extension=="pdf"})

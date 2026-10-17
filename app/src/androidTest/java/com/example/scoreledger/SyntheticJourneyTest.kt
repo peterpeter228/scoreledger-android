@@ -1,6 +1,9 @@
 package com.example.scoreledger
 
 import android.graphics.Bitmap
+import android.graphics.Rect
+import android.accessibilityservice.AccessibilityServiceInfo
+import android.view.accessibility.AccessibilityWindowInfo
 import android.os.Handler
 import android.os.Looper
 import android.view.Window
@@ -48,28 +51,42 @@ class SyntheticJourneyTest {
         compose.waitUntil(10000) { compose.onAllNodesWithTag(tag).fetchSemanticsNodes().size==1 }
         compose.onNodeWithTag(tag).assertExists()
     }
-    private fun assertSaveAboveVisibleIme(scenario:ActivityScenario<RecreationHostActivity>) {
-        var imeTop=0
-        var contentTop=0
-        compose.waitUntil(10000) {
+    private fun assertSaveAboveVisibleIme(scenario:ActivityScenario<RecreationHostActivity>,scoreTag:String,captureName:String) {
+        val automation=InstrumentationRegistry.getInstrumentation().uiAutomation
+        val flags=automation.serviceInfo.flags
+        automation.serviceInfo=automation.serviceInfo.apply { this.flags=this.flags or AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS }
+        try {
+            fun keyboardBounds():Rect?=automation.windows.firstOrNull { it.type==AccessibilityWindowInfo.TYPE_INPUT_METHOD }
+                ?.let { window -> Rect().also { window.getBoundsInScreen(it) } }?.takeUnless { it.isEmpty }
             var visible=false
-            scenario.onActivity { activity ->
-                val decor=activity.window.decorView
-                val insets=ViewCompat.getRootWindowInsets(decor)
-                visible=insets?.isVisible(WindowInsetsCompat.Type.ime())==true
-                val decorLocation=IntArray(2);decor.getLocationOnScreen(decorLocation)
-                imeTop=decorLocation[1]+decor.height-(insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0)
-                val content=activity.findViewById<android.view.View>(android.R.id.content)
-                val location=IntArray(2);content.getLocationOnScreen(location);contentTop=location[1]
+            var bottom=0
+            fun readInsets() {
+                scenario.onActivity { activity ->
+                    val insets=ViewCompat.getRootWindowInsets(activity.window.decorView)
+                    visible=insets?.isVisible(WindowInsetsCompat.Type.ime())==true
+                    bottom=insets?.getInsets(WindowInsetsCompat.Type.ime())?.bottom ?: 0
+                }
             }
-            visible
-        }
-        compose.onNodeWithTag("save-record").assertIsDisplayed()
-        val bounds=compose.onNodeWithTag("save-record").fetchSemanticsNode().boundsInRoot
-        assertTrue("Save action must remain entirely above the visible system IME",bounds.bottom+contentTop<=imeTop+1f)
+            compose.waitUntil(10000) { readInsets();visible && bottom>0 && keyboardBounds()!=null }
+            fun assertCurrentKeyboardGeometry() {
+                readInsets()
+                assertTrue("IME must remain visible with positive inset at capture",visible && bottom>0)
+                val ime=requireNotNull(keyboardBounds()) { "Real input-method window disappeared before capture" }
+                assertTrue("Actual keyboard must have positive height",ime.height()>0)
+                val offset=IntArray(2);scenario.onActivity { it.window.decorView.getLocationOnScreen(offset) }
+                val save=compose.onNodeWithTag("save-record").assertIsDisplayed().fetchSemanticsNode().boundsInWindow
+                val score=compose.onNodeWithTag(scoreTag).assertIsDisplayed().fetchSemanticsNode().boundsInWindow
+                assertTrue("Save action overlaps real keyboard",save.bottom+offset[1]<=ime.top+1)
+                assertTrue("Focused score overlaps real keyboard",score.bottom+offset[1]<=ime.top+1)
+            }
+            assertCurrentKeyboardGeometry()
+            // Recheck after completed draw frames, immediately before screenshot, not just
+            // before an animation that can remove the keyboard again.
+            captureSyntheticUi(captureName,scenario) { assertCurrentKeyboardGeometry() }
+        } finally { automation.serviceInfo=automation.serviceInfo.apply { this.flags=flags } }
     }
     /** Diagnostic evidence only; image existence is not a visual correctness assertion. */
-    private fun captureSyntheticUi(name:String,scenario:ActivityScenario<RecreationHostActivity>) {
+    private fun captureSyntheticUi(name:String,scenario:ActivityScenario<RecreationHostActivity>,beforeCapture:(()->Unit)?=null) {
         compose.waitForIdle()
         // Match genuine-Main evidence: semantics/layout completion is not rendered-surface completion.
         val rendered=CountDownLatch(2)
@@ -87,6 +104,7 @@ class SyntheticJourneyTest {
         val instrumentation=InstrumentationRegistry.getInstrumentation()
         val directory=File(instrumentation.targetContext.filesDir,"ui-evidence")
         check(directory.isDirectory || directory.mkdirs())
+        beforeCapture?.invoke()
         val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
         try {
             File(directory,"synthetic-$name.png").outputStream().use { output ->
@@ -176,8 +194,7 @@ class SyntheticJourneyTest {
             item("entry-list",hasText("缺考") and hasAnyAncestor(hasTestTag("subject-${subjects.getValue("英语").id}"))).performClick()
             item("entry-list",hasTestTag("score-${subjects.getValue("语文").id}")).assertExists()
             compose.onNodeWithTag("score-${subjects.getValue("语文").id}").performClick()
-            assertSaveAboveVisibleIme(scenario)
-            captureSyntheticUi("01-entry-before-save",scenario)
+            assertSaveAboveVisibleIme(scenario,"score-${subjects.getValue("语文").id}","01-entry-before-save")
             compose.onNodeWithTag("save-record").performClick()
             compose.waitUntil(10000){runBlocking{db.dao().examCount()==1}}
             compose.waitUntil(10000){compose.onAllNodesWithTag("detail-list").fetchSemanticsNodes().isNotEmpty()}
@@ -391,8 +408,7 @@ class SyntheticJourneyTest {
                     item("entry-list",hasTestTag("subject-options-${subject.id}")).assertIsDisplayed()
                 }
                 item("entry-list",hasTestTag("score-${subjects.last().id}")).performClick()
-                assertSaveAboveVisibleIme(scenario)
-                captureSyntheticUi("09-narrow320-font200-entry-ime",scenario)
+                assertSaveAboveVisibleIme(scenario,"score-${subjects.last().id}","09-narrow320-font200-entry-ime")
                 compose.onNodeWithTag("save-record").assertIsDisplayed().performClick()
                 compose.waitUntil(10000) { runBlocking { db.dao().examCount()==1 } }
                 awaitScreen("detail-list")
