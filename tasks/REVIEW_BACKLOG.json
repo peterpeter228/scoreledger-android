@@ -3,7 +3,7 @@
   "source": "Independent review2026-10-17",
   "sourceHead": "bbb48dd08691ded0cb2d872d876821752e101844",
   "implementationBase": "64d2e012ff195859581af82650066f77f8383cec",
-  "status": "PARTIAL_API26_API30_API36_RUNNING",
+  "status": "LATEST_CANDIDATE_DEVICE_ACCEPTANCE_NOT_VERIFIED",
   "tasks": [
     {
       "id": "T01",
@@ -20,11 +20,17 @@
         "失败→重试→强杀重启核对最后已确认payload；正式提交与清草稿事务不变。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "SQLite autosave failure persists Error then UI retry succeeds; confirmed-draft external-stop recovery passes, but kill immediately after injected failure/retry is not the same tested sequence.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -43,11 +49,17 @@
         "本次年级加入同ID同payload比较，避免新字段被幂等重试漏验。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "UI score/grade correction and repository idempotence/context tests pass; exhaustive old-draft/detail/statistics/regenerated-PDF equality remains partial.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -68,11 +80,17 @@
         "强杀/流关闭故障后库为原完整快照或新完整快照，外部残文件不被当完整成功。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Controlled SAF recreation, stale-result/revision fencing and real picker cancel/retry pass; mid-I/O external process death and provider-close failure remain unverified.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -95,11 +113,17 @@
         "损坏/未知版本/96MiB超限/提供方访问失败给不同下一步，保持严格Codec。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Rollback recovery/export and protection failure pass at repository/manager layer; exact10→2→10 UI and all provider error classes remain unverified.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -121,11 +145,17 @@
         "真实UI走通，不用直接repository造孩子/自动种科目绕过。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Empty isolated database→nickname/default3subjects→saved detail uses actual UI; click-budget/real-parent efficiency not measured.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -149,11 +179,17 @@
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
       "remainingLimit": "Previous subjects and max reused, current managed subject order used; arbitrary per-exam custom order not persisted in v1 schema.",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Actual Next/Done, blank reused scores and AOSP IME bounds pass;320dp/2xentry passes. Historical custom exam order is not persisted and click budgets remain unmeasured.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -176,11 +212,17 @@
         "B孩子已落盘草稿进程重启一步可继续；恢复后的全部范围可明确查看。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Saved-ID detail, filtered return and production owned-draft external-stop/resume pass;35th-row offset and out-of-filter save-range notice not fully asserted.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -202,11 +244,17 @@
         "空结果能直接清除条件；300场检索指定考试真人目标≤15秒。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Title-search/filter return and populated-child home/detail isolation pass; shared filtered trend/export cross-child and300-record human timing remain unverified.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -228,11 +276,17 @@
         "未知学期/年级不显示已证实同口径；缺科/异科/异满分总分不比较。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Selected trend original values and repository context guards tested; complete displayed rate/comparability wording fixture matrix remains partial.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -255,11 +309,17 @@
         "1/3/12/100条与同日多考、缺考未录入可读；语义表能读全。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Earlier point displays its actual score; explicit report scope tested.1/3/12/100point and full rendered missing-gap/axes/accessibility matrix remain partial.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -283,11 +343,17 @@
         "双击/双指缩放、页码恢复、文字核对入口；结果与保存同一快照。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Real PDF config→preview→DocumentsUI cancel/retry saves identical bytes, plus controlled pending-save recreation passes; sharing receiver and zoom gesture matrix unverified.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -310,11 +376,17 @@
         "两种离线阅读器和A4打印核对；不新增云端PDF服务。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "CompactA4, continuation/source-ID completeness,199/200/201page boundary and native rendering pass; two offline readers/A4print not run.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -341,11 +413,17 @@
         "TalkBack完成核心操作，不仅验证一个复选框。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Real key-screen evidence and narrow320dp/2xentry/save tested; full theme/font/contrast/48dp/TalkBack matrix and user design approval not claimed.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -367,11 +445,17 @@
         "单次删除撤销窗口与进程死行为明确定义且测试，不承诺长期回收站。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "UI record delete/undo exact snapshot and unchanged neighboring records pass; direct missing-subject focus, discard-edit and remove-row undo UI matrix incomplete.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -398,11 +482,17 @@
         "96MiB字节边界用其余结构/token均合法的输入；与最大实体文本组合测试分开。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Real Downloads backup export/cancel/changed-baseline replacement plus Room rollback pass; fresh-install/second-device, hostile corpus UI and4GBpeak-load remain unverified.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -431,11 +521,17 @@
         "完整10条家长流程视频/步骤/截图与数据断言同源；支付单列未验证。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Final-source API26/30 required55methods+2external-stop phases and evidence gates pass; API36 RUNNING. Physical devices/OEM and remaining lifecycle matrix not passed.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -455,11 +551,17 @@
         "70案例逐项对应断言与产物；历史文档标历史，不盖掉未完成项。"
       ],
       "implementationStatus": "IMPLEMENTED_UNVERIFIED",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "Source/APK/test identity and exact55-method/file gates checked on API26/30.70cases individually classified, not all passed; final API36 binding pending.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -484,11 +586,17 @@
         "连续两轮效率提升<20%则停止加功能，重新检查是否有真实记录需求。"
       ],
       "implementationStatus": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
         "summary": "8-parent study and4–6-week voluntary real-exam opportunity retention remain NOT_RUN; emulator timing is not human research.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -510,11 +618,17 @@
         "当前beta保持免费内测说明；本任务不执行实际购买/渠道发布。"
       ],
       "implementationStatus": "PARTIAL_FREE_POLICY_IMPLEMENTED_RESEARCH_NOT_RUN",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "PARTIAL_API26_API30",
         "summary": "False-entitlement fourth exam and20children allowed; resource ceiling21st rejected unchanged. Standard PDF/backup paths pass on beta.12-person pricing/value research not run.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     },
     {
@@ -536,55 +650,55 @@
       ],
       "authorization": "NOT_AUTHORIZED_THIS_ROUND",
       "implementationStatus": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
-      "candidateAcceptance": {
+      "priorCandidateAcceptance": {
         "status": "NOT_RUN_SEPARATE_EXTERNAL_STAGE",
         "summary": "No actual payment/channel operation authorized or executed; preserve separate future stage.",
         "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
         "api36": "RUNNING"
+      },
+      "candidateAcceptance": {
+        "status": "NOT_VERIFIED",
+        "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+        "runId": "39029750622",
+        "note": "Prior scoped assertions retained separately; latest device gate incomplete."
       }
     }
   ],
   "candidateBinding": {
-    "sourceSha": "8031c246de391204d816bcc88f3cd34b4843c162",
-    "appSha256": "affbe023f71c87c6e96cea3687ab052ba9f2d51927a1fb79bd954899d86f452c",
-    "testSourceSha": "8031c246de391204d816bcc88f3cd34b4843c162",
-    "testApkSha256": "34e388986db5baec81445a2c4ad22a6b9e9f6f3ed5e01e8e3e97499d7b82b915",
-    "runId": "39025843118",
-    "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39025843118",
+    "sourceSha": "5ea13c365ebb1548faf0bfab6eaef4cd19ff2009",
+    "runId": "39029750622",
+    "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39029750622",
+    "appSha256": "4951d5af947b56a5164e1e44dcaa5f376a964884e3a85be8ad2bb7bb4dbc0ff2",
     "variant": "localBetaDebug",
     "package": "com.example.scoreledger.beta.debug",
     "versionCode": 2,
     "versionName": "0.2.0-beta",
-    "reviewDate": "2026-10-17",
+    "buildStatus": "PASS",
+    "requiredDeviceMethods": 58,
+    "externalDraftPhaseMethods": 2,
+    "acceptanceStatus": "NOT_VERIFIED",
     "apiResults": {
       "26": {
-        "status": "PASS_REQUIRED_METHODS_AND_EVIDENCE",
-        "methods": 55,
-        "externalDraftPhaseMethods": 2
+        "status": "SCRIPT_EXIT_255_UNDER_DIAGNOSIS",
+        "reportedStage": "after upgrade retention",
+        "evidenceBasis": "root run-status report; final artifacts not reviewed here"
       },
       "30": {
-        "status": "PASS_REQUIRED_METHODS_AND_EVIDENCE",
-        "methods": 55,
-        "externalDraftPhaseMethods": 2
+        "status": "RUNNING"
       },
       "36": {
-        "status": "RUNNING",
-        "methods": null
+        "status": "RUNNING"
       }
     },
+    "reviewDate": "2026-10-17",
     "evidencePathConvention": "Paths are relative to repository root and point to the adjacent retained evidence collection, not files embedded in this repository. Original artifact source files bind APK identity. This later docs-only review does not change tested APK/source identity.",
     "jvmEvidence": {
-      "artifactId": "12098631471",
-      "sourceSha": "8031c246de391204d816bcc88f3cd34b4843c162",
-      "runId": "39025843118",
-      "artifactVerification": "Root verified downloaded artifact SHA; reviewed retained XML directly.",
+      "evidenceRoot": "../scoreledger-revision-evidence/build-reports-eleventh/",
       "coreJUnitMethods": 1,
-      "coreInternalContractChecks": 70,
       "appJUnitMethods": 9,
       "failures": 0,
       "errors": 0,
-      "evidenceRoot": "../scoreledger-revision-evidence/build-reports-eighth/",
-      "interpretation": "70 core internal checks are a different inventory from original70acceptance cases."
+      "interpretation": "Build/JVM success does not establish58device methods or70original cases."
     }
   },
   "acceptanceMapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
@@ -595,24 +709,11 @@
         "description": "New draft reuses prior subjects/maxima but follows current managed subject order. Arbitrary historical per-exam row order is not persisted by the schema."
       }
     ],
-    "highRiskMissingEvidence": [
-      {
-        "cases": [
-          "AC006"
-        ],
-        "gap": "Actual ChildrenScreen deletion confirmation: cancel preserves complete snapshot; confirm removes only populated A including drafts while populated B remains exact. Repository deletion coverage does not establish dialog behavior."
-      },
-      {
-        "cases": [
-          "AC047"
-        ],
-        "gap": "Actual empty-backup replacement preview: correct old/new counts and warning, cancel preserves exact populated baseline, confirm produces exact empty business/draft state with rollback copy."
-      }
-    ],
+    "highRiskMissingEvidence": [],
     "otherMissingEvidence": [
       "Hostile-import complete UI rejection matrix and external process death during file I/O are not established by normal-path restore and transaction injection tests."
     ],
-    "environmentGate": "API36 same-candidate gate not passed. Root reports current run encountered SystemUI ANR; this is not evidence of an app defect or a pass. Await final bound evidence.",
+    "environmentGate": "Latest candidate API26 exit255 under diagnosis; API30/API36 running. No latest gate pass.",
     "externalFutureStages": [
       "Eight-parent usability study",
       "Four-to-six-week real-exam retention study",
@@ -621,17 +722,98 @@
       "Chinese IME variants",
       "TalkBack interaction"
     ],
-    "interpretation": "Missing evidence is not a demonstrated functional failure. No claim that all original70cases passed or that all remaining gaps are release blockers."
+    "interpretation": "Missing evidence is not a demonstrated functional failure. No claim that all original70cases passed or that all remaining gaps are release blockers.",
+    "closedPriorCandidateGaps": "AC006 deletion and AC047 empty restore confirmation/recovery individually passed on7c API26/30; latest gate pending."
   },
   "jvmEvidenceReview": {
     "mapping": "docs/CANDIDATE_ACCEPTANCE_MAPPING.json",
-    "result": "Current-candidate JVM XML reviewed at exact assertion level. AC029 PASS core-only; AC032 PARTIAL for missing adversarial delta fixture; AC043 PARTIAL for byte-boundary parser coverage, not device memory/UI proof. Mixed-layer cases retain unproven room/device requirements.",
+    "result": "Latest build-reports-eleventh XML reviewed:1core and9app JVM methods all pass. AC029 is core-only PASS. No latest device gate pass; prior assertions separately bound.",
     "caseStatusSummary": {
-      "PARTIAL": 41,
-      "NOT_RUN": 17,
-      "PASS": 8,
-      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3,
-      "RUNNING": 1
+      "NOT_VERIFIED": 48,
+      "PARTIAL": 18,
+      "PASS": 1,
+      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3
+    }
+  },
+  "priorCandidateBindings": [
+    {
+      "sourceSha": "8031c246de391204d816bcc88f3cd34b4843c162",
+      "appSha256": "affbe023f71c87c6e96cea3687ab052ba9f2d51927a1fb79bd954899d86f452c",
+      "testSourceSha": "8031c246de391204d816bcc88f3cd34b4843c162",
+      "testApkSha256": "34e388986db5baec81445a2c4ad22a6b9e9f6f3ed5e01e8e3e97499d7b82b915",
+      "runId": "39025843118",
+      "runUrl": "https://github.com/peterpeter228/scoreledger-android/actions/runs/39025843118",
+      "variant": "localBetaDebug",
+      "package": "com.example.scoreledger.beta.debug",
+      "versionCode": 2,
+      "versionName": "0.2.0-beta",
+      "reviewDate": "2026-10-17",
+      "apiResults": {
+        "26": {
+          "status": "PASS_REQUIRED_METHODS_AND_EVIDENCE",
+          "methods": 55,
+          "externalDraftPhaseMethods": 2
+        },
+        "30": {
+          "status": "PASS_REQUIRED_METHODS_AND_EVIDENCE",
+          "methods": 55,
+          "externalDraftPhaseMethods": 2
+        },
+        "36": {
+          "status": "RUNNING",
+          "methods": null
+        }
+      },
+      "evidencePathConvention": "Paths are relative to repository root and point to the adjacent retained evidence collection, not files embedded in this repository. Original artifact source files bind APK identity. This later docs-only review does not change tested APK/source identity.",
+      "jvmEvidence": {
+        "artifactId": "12098631471",
+        "sourceSha": "8031c246de391204d816bcc88f3cd34b4843c162",
+        "runId": "39025843118",
+        "artifactVerification": "Root verified downloaded artifact SHA; reviewed retained XML directly.",
+        "coreJUnitMethods": 1,
+        "coreInternalContractChecks": 70,
+        "appJUnitMethods": 9,
+        "failures": 0,
+        "errors": 0,
+        "evidenceRoot": "../scoreledger-revision-evidence/build-reports-eighth/",
+        "interpretation": "70 core internal checks are a different inventory from original70acceptance cases."
+      }
+    },
+    {
+      "sourceSha": "7c6777dc2ca39fc2ab57386781a72f5b304dfc84",
+      "runId": "39028520352",
+      "appSha256": "4951d5af947b56a5164e1e44dcaa5f376a964884e3a85be8ad2bb7bb4dbc0ff2",
+      "testApkSha256": "5cdb0d419ce778d9ae8cd416fc03439f614ffb7751a7ccee29bd862402eeba60",
+      "apiResults": {
+        "26": "WHOLE_SUITE_FAILED_ONE_REAL_DOCUMENTS_UI_METHOD",
+        "30": "WHOLE_SUITE_FAILED_ONE_REAL_DOCUMENTS_UI_METHOD"
+      },
+      "scope": "Three added method completions individually verified, not an overall gate pass. App APK bytes match latest candidate, but latest source/test/run acceptance is not inherited."
+    }
+  ],
+  "currentEvidenceReconciliation": {
+    "newUiMethods": {
+      "EMPTY_RESTORE_UI": "com.example.scoreledger.EmptyRestoreUiTest#controlledPickerEmptyRestoreCancelPreservesDraftsAndConfirmProtectsOriginal",
+      "CHILD_MANAGEMENT_UI": "com.example.scoreledger.ChildManagementUiTest#archiveAndCancelThenConfirmChildDeletionPreservesOtherChildAndAllTheirRows",
+      "GENERATION_NOTICE": "com.example.scoreledger.GenerationNoticeTest#restoreNoticeOnlyReportsAnEditorThatWasActuallyClosed"
+    },
+    "priorMethodRun": {
+      "sourceSha": "7c6777dc2ca39fc2ab57386781a72f5b304dfc84",
+      "runId": "39028520352",
+      "appSha256": "4951d5af947b56a5164e1e44dcaa5f376a964884e3a85be8ad2bb7bb4dbc0ff2",
+      "testApkSha256": "5cdb0d419ce778d9ae8cd416fc03439f614ffb7751a7ccee29bd862402eeba60",
+      "apiResults": {
+        "26": "WHOLE_SUITE_FAILED_ONE_REAL_DOCUMENTS_UI_METHOD",
+        "30": "WHOLE_SUITE_FAILED_ONE_REAL_DOCUMENTS_UI_METHOD"
+      },
+      "scope": "Three added method completions individually verified, not an overall gate pass. App APK bytes match latest candidate, but latest source/test/run acceptance is not inherited."
+    },
+    "latestDeviceGate": "NOT_VERIFIED",
+    "caseStatusSummary": {
+      "NOT_VERIFIED": 48,
+      "PARTIAL": 18,
+      "PASS": 1,
+      "SUPERSEDED_OLD_COMMERCIAL_POLICY": 3
     }
   }
 }

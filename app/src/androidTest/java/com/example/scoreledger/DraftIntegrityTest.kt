@@ -118,6 +118,46 @@ class DraftIntegrityTest {
             await { !stale.saving.value }
             assertNull(repository.draft(initial.id,initial.childId))
             assertEquals("另一编辑器的新标题",db.dao().exam(initial.id)!!.title)
+
+            // Deterministic local stale-callback regression within the existing method.
+            // Room CAS conflicts above remain rejected; these are callbacks in ONE editor.
+            val extra=repository.saveSubject(null,"第二合成科目",10000,1)
+            val record=ExamWithScores(requireNotNull(db.dao().exam(initial.id)),db.dao().scores(initial.id))
+            withContext(Dispatchers.Main) { first.edit(record) }
+            await { first.editor.value!=null && !first.saving.value }
+            withContext(Dispatchers.Main) {
+                val start=requireNotNull(first.editor.value)
+                first.change(start.copy(rows=start.rows+DraftRow(extra,"第二合成科目")),start)
+            }
+            await { first.editor.value?.rows?.size==2 && first.persistedPayload.value==first.editor.value?.encode() }
+            val captured=requireNotNull(first.editor.value)
+            withContext(Dispatchers.Main) {
+                first.change(captured.copy(title="最新合成标题",rows=captured.rows.mapIndexed { index,row ->
+                    if(index==0) row.copy(score="90",status=ScoreStatus.SCORED) else row }),captured)
+                // Lifecycle/IME echo of its old displayed value must be a no-op.
+                first.change(captured,captured)
+                // A later unrelated callback based on the old frame cannot revert title/score.
+                first.change(captured.copy(note="后续合成备注"),captured)
+                first.change(captured.copy(rows=captured.rows.map { row ->
+                    if(row.subjectId==extra) row.copy(score="70",status=ScoreStatus.SCORED) else row }),captured)
+                val current=requireNotNull(first.editor.value)
+                assertEquals("最新合成标题",current.title);assertEquals("后续合成备注",current.note)
+                assertEquals("90",current.rows.first().score);assertEquals("70",current.rows.last().score)
+                first.change(current.copy(title="真正的后续标题"),current)
+                assertEquals("真正的后续标题",first.editor.value!!.title)
+                first.removeRow(captured.rows.first().subjectId)
+                val removed=requireNotNull(first.editor.value)
+                first.change(captured.copy(rows=captured.rows.map { it.copy(score="5",status=ScoreStatus.SCORED) }),captured)
+                assertEquals(removed,first.editor.value) // No resurrection from a deleted-row callback.
+                first.undoRemoveRow()
+                val restored=requireNotNull(first.editor.value)
+                first.change(restored.copy(rows=restored.rows.reversed()),restored)
+                val reordered=requireNotNull(first.editor.value)
+                first.change(restored.copy(note="过期排序回调"),restored)
+                assertEquals(reordered,first.editor.value) // No stale reordering or row-index mixing.
+            }
+            await { first.persistedPayload.value==first.editor.value?.encode() }
+            assertEquals(first.editor.value,EntryDraft.decode(requireNotNull(repository.draft(initial.id,initial.childId))))
         } finally { withContext(Dispatchers.Main) { store.clear() };db.close();context.deleteDatabase(name) }
     }
     @Test fun generatedVersionOneSchemaMigratesWithoutLosingRows() = runBlocking {

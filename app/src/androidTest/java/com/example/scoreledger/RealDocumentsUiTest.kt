@@ -60,7 +60,11 @@ class RealDocumentsUiTest {
                 if(scenario.state==androidx.lifecycle.Lifecycle.State.RESUMED) {
                     scenario.onActivity { focused=it.hasWindowFocus() }
                 }
-                hasText && focused
+                // An app Dialog owns its own focused window; the resumed Activity itself
+                // correctly loses focus while the restore confirmation is visible.
+                val appWindow=instrumentation.uiAutomation.rootInActiveWindow
+                    ?.packageName?.toString()==instrumentation.targetContext.packageName
+                hasText && scenario.state==androidx.lifecycle.Lifecycle.State.RESUMED && (focused || appWindow)
             }
         } catch(failure:Throwable) {
             evidence("real-saf-app-return-timeout-$stage")

@@ -61,6 +61,17 @@ class RecreationDraftTest {
                     compose.waitUntil(10000){runBlocking{repository.draft(draft.id,draft.childId)?.let(EntryDraft::decode)?.title=="旋转后仍保留"}}
                     val persistedBefore=runBlocking { requireNotNull(repository.draft(draft.id,draft.childId)) }
                     assertEquals(draft.copy(title="旋转后仍保留"),EntryDraft.decode(persistedBefore))
+                    // Capture, do not wait away a lifecycle race: the last edited draft
+                    // must already be authoritative in the retained ViewModel.
+                    var beforeModel:com.example.scoreledger.ui.ScoreViewModel?=null
+                    val beforePhase=JSONObject()
+                    scenario.onActivity { activity ->
+                        beforeModel=activity.diagnosticModel
+                        assertEquals(draft.copy(title="旋转后仍保留"),beforeModel?.editor?.value)
+                        beforePhase.put("editorTitleMatchesBeforeRecreation",true)
+                            .put("draftSaveStateBeforeRecreation",beforeModel?.draftSaveState?.value?.name)
+                            .put("persistedPayloadMatchesBeforeRecreation",beforeModel?.persistedPayload?.value==persistedBefore.payloadJson)
+                    }
                     scenario.recreate()
                     // LazyColumn/IME restoration may leave the title offscreen. First
                     // require the SAME editor, without reopening any draft, then scroll.
@@ -72,6 +83,25 @@ class RecreationDraftTest {
                         }
                         sameEditor && compose.onAllNodesWithTag("entry-list").fetchSemanticsNodes().size==1
                     }
+                    // Independently check persistence before any scroll/focus operation,
+                    // so a subsequent failure distinguishes UI state from stored content.
+                    val persistedImmediatelyAfter=runBlocking { repository.draft(draft.id,draft.childId) }
+                    val stateFile=File(InstrumentationRegistry.getInstrumentation().targetContext.filesDir,
+                        "ui-evidence/recreation-draft-phase-state.json")
+                    stateFile.parentFile!!.mkdirs()
+                    val phase=beforePhase
+                        .put("storedEntityUnchangedImmediatelyAfter",persistedBefore==persistedImmediatelyAfter)
+                        .put("storedTitleMatchesImmediatelyAfter",persistedImmediatelyAfter?.let(EntryDraft::decode)?.title=="旋转后仍保留")
+                    scenario.onActivity { activity ->
+                        val model=activity.diagnosticModel
+                        phase.put("retainedSameViewModel",model===beforeModel)
+                            .put("editorTitleMatchesBeforeScroll",model?.editor?.value?.title=="旋转后仍保留")
+                            .put("editorIdMatchesBeforeScroll",model?.editor?.value?.id==draft.id)
+                            .put("draftSaveStateBeforeScroll",model?.draftSaveState?.value?.name)
+                            .put("persistedPayloadMatchesBeforeScroll",model?.persistedPayload?.value==persistedBefore.payloadJson)
+                    }
+                    stateFile.writeText(phase.toString())
+                    assertEquals("Stored draft changed during recreation before scrolling",persistedBefore,persistedImmediatelyAfter)
                     compose.onNodeWithTag("entry-list").assertExists().performScrollToNode(hasText("考试名称"))
                     compose.onNode(hasText("考试名称") and hasSetTextAction()).performScrollTo().assertIsDisplayed()
                         .assert(SemanticsMatcher.expectValue(androidx.compose.ui.semantics.SemanticsProperties.EditableText,

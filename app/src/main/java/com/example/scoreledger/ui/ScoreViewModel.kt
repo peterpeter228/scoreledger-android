@@ -166,6 +166,44 @@ class ScoreViewModel(internal val repository: ScoreRepository, private val saved
         val d=existing?.let(EntryDraft::decode) ?: EntryDraft.from(record)
         repository.putDraft(d,existing?.payloadJson);checkGeneration();draft.value=d;markPersisted(d.encode());focusSubject.value=subjectId;editorGeneration=currentCoroutineContext()[WriteGeneration]?.value;rememberEditor(d)
     }
+    /** A Compose callback may still hold an older displayed draft. Apply only its
+     * changed fields to the current editor; an echoed old value is not a new edit.
+     * This is local callback handling only: all writes still use the FIFO/CAS path.
+     * Structural row changes require an exact current base, never a stale merge. */
+    fun change(value: EntryDraft, base: EntryDraft) {
+        val current=draft.value ?: return
+        if(busy.value || editorGeneration!=repository.generation.value ||
+            base.id!=current.id || base.childId!=current.childId || value.id!=current.id ||
+            value.childId!=current.childId || value.childId!=selected.value || base.editing!=current.editing || value.editing!=current.editing) return
+        val currentIds=current.rows.map { it.subjectId }
+        val baseIds=base.rows.map { it.subjectId }
+        val valueIds=value.rows.map { it.subjectId }
+        if(baseIds!=currentIds) return // Removed/reordered rows cannot be resurrected by old callbacks.
+        if(valueIds!=baseIds) {
+            if(base==current) change(value)
+            return
+        }
+        val rows=current.rows.mapIndexed { index,row ->
+            val previous=base.rows[index];val proposed=value.rows[index]
+            val scoreChanged=proposed.score!=previous.score
+            val statusChanged=proposed.status!=previous.status
+            // A late scored-input callback must not undo a newer absent/missing selection.
+            val acceptScore=scoreChanged && (row.status==previous.status || statusChanged)
+            val status=if(statusChanged) proposed.status else row.status
+            row.copy(name=if(proposed.name!=previous.name) proposed.name else row.name,
+                maximum=if(proposed.maximum!=previous.maximum) proposed.maximum else row.maximum,
+                status=status,score=if(status!=com.example.scoreledger.core.ScoreStatus.SCORED) ""
+                    else if(acceptScore) proposed.score else row.score)
+        }
+        val changed=current.copy(
+            title=if(value.title!=base.title) value.title else current.title,
+            date=if(value.date!=base.date) value.date else current.date,
+            kind=if(value.kind!=base.kind) value.kind else current.kind,
+            term=if(value.term!=base.term) value.term else current.term,
+            gradeSnapshot=if(value.gradeSnapshot!=base.gradeSnapshot) value.gradeSnapshot else current.gradeSnapshot,
+            note=if(value.note!=base.note) value.note else current.note,rows=rows)
+        if(changed!=current) change(changed)
+    }
     fun change(value: EntryDraft) {
         if(busy.value || editorGeneration!=repository.generation.value || value.id != draft.value?.id || value.childId != selected.value) return
         draft.value=value

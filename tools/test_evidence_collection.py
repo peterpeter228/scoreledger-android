@@ -133,6 +133,44 @@ adb() {
             result=subprocess.run(['python3','-',str(root),'36'],input=code,text=True,capture_output=True)
             self.assertNotEqual(result.returncode,0,'Wrong PNG dimensions must fail')
 
+    def test_retention_marker_read_retry_is_guarded_and_atomic(self):
+        import json
+        function='read_retention_marker() {'+SCRIPT.split('read_retention_marker() {',1)[1].split('\ncapture_input_diagnostics()',1)[0]
+        nonce='a'*48
+        payload=json.dumps(dict(nonce=nonce,childId='child',examId='exam',draftId='draft'))
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            for case,success,reads in [('transient',True,2),('denied',False,1),('unhealthy',False,1),('always255',False,2),('wrongnonce',False,1)]:
+                folder=root/case;folder.mkdir();(folder/'retention-seed-marker.json').write_text(payload)
+                shell='set -e\nSERIAL=emulator-5580\nPACKAGE=com.example.scoreledger.beta.debug\n'+function+r'''
+timeout() { shift; "$@"; }
+health_checkpoint() { [ "$CASE" != unhealthy ]; }
+adb() {
+  [ "$1" = -s ] && [ "$2" = emulator-5580 ] || return 9
+  shift 2
+  case "$*" in
+    "get-state") echo device ;;
+    "shell pm path $PACKAGE") echo package:/synthetic.apk ;;
+    "shell run-as $PACKAGE cat no_backup/upgrade-retention-$NONCE.json")
+      echo read >> "$EVIDENCE/read-count"
+      if [ "$CASE" = denied ]; then echo 'Permission denied' >&2; return 255; fi
+      if [ "$CASE" = wrongnonce ]; then echo '{}'; return 0; fi
+      if [ "$CASE" = always255 ] || [ "$(wc -l < "$EVIDENCE/read-count")" = 1 ]; then return 255; fi
+      cat "$EVIDENCE/retention-seed-marker.json" ;;
+    *) return 9 ;;
+  esac
+}
+read_retention_marker upgrade
+'''
+                result=subprocess.run(['bash','-c',shell],env={**os.environ,'CASE':case,'NONCE':nonce,'EVIDENCE':str(folder)},capture_output=True,text=True)
+                self.assertEqual(result.returncode==0,success,result.stderr)
+                self.assertEqual(len((folder/'read-count').read_text().splitlines()),reads)
+                self.assertEqual((folder/'retention-upgrade-marker.json').exists(),success)
+                self.assertEqual((folder/'retention-seed-marker.json').read_text(),payload)
+        for phase in ('upgrade','process-death','reinstall'):
+            self.assertIn('retention_phase verify verifyPersistentSyntheticData '+phase,SCRIPT)
+        self.assertNotIn('retention-verify.txt',SCRIPT)
+
     def test_framebuffer_transform_is_api36_only(self):
         code=SCRIPT.split("<<'PYDISPLAYCONFIG'\n",1)[1].split('\nPYDISPLAYCONFIG',1)[0]
         original='hw.lcd.width=1080\nhw.lcd.height=1920\nhw.lcd.density=420\nhw.keyboard=no\n'

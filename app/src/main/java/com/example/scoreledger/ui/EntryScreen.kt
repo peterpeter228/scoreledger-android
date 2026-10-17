@@ -67,7 +67,8 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
     }
     LaunchedEffect(requestedFocus,draft.id) { requestedFocus?.let { focusScore(it) } }
     BackHandler { if(!busy) leaving=true }
-    fun rowChange(row: DraftRow) { model.change(draft.copy(rows=draft.rows.map { if(it.subjectId==row.subjectId) row else it })) }
+    fun applyChange(value:EntryDraft) { model.change(value,draft) }
+    fun rowChange(row: DraftRow) { applyChange(draft.copy(rows=draft.rows.map { if(it.subjectId==row.subjectId) row else it })) }
     Column(Modifier.fillMaxSize()) {
         LazyColumn(state=listState,modifier=Modifier.weight(1f).testTag("entry-list"),contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(8.dp)) {
             item {
@@ -80,16 +81,16 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
                 Text(draft.date,color=MaterialTheme.colorScheme.primary)
                 TextButton(onClick={metadata=!metadata}) { Text(if(metadata) "收起信息" else "修改考试信息") }
                 if(metadata) {
-                    OutlinedTextField(draft.title,{model.change(draft.copy(title=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("考试名称")})
-                    OutlinedTextField(draft.date,{model.change(draft.copy(date=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("日期 YYYY-MM-DD")})
+                    OutlinedTextField(draft.title,{applyChange(draft.copy(title=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("考试名称")})
+                    OutlinedTextField(draft.date,{applyChange(draft.copy(date=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("日期 YYYY-MM-DD")})
                     TextButton(enabled=!busy,onClick={
                         val d=runCatching { LocalDate.parse(draft.date) }.getOrDefault(LocalDate.now())
-                        DatePickerDialog(context,{_,year,month,day->model.change(draft.copy(date=LocalDate.of(year,month+1,day).toString()))},d.year,d.monthValue-1,d.dayOfMonth).apply { datePicker.maxDate=System.currentTimeMillis() }.show()
+                        DatePickerDialog(context,{_,year,month,day->applyChange(draft.copy(date=LocalDate.of(year,month+1,day).toString()))},d.year,d.monthValue-1,d.dayOfMonth).apply { datePicker.maxDate=System.currentTimeMillis() }.show()
                     }){Text("选择日期")}
-                    KindPicker(draft.kind,enabled=!busy){model.change(draft.copy(kind=requireNotNull(it)))}
-                    OutlinedTextField(draft.term,{model.change(draft.copy(term=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("学期（可选）")})
-                    OutlinedTextField(draft.gradeSnapshot.orEmpty(),{model.change(draft.copy(gradeSnapshot=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("本次年级（可选）")})
-                    OutlinedTextField(draft.note,{model.change(draft.copy(note=it))},label={Text("备注（可选）")},enabled=!busy,modifier=Modifier.fillMaxWidth(),minLines=2)
+                    KindPicker(draft.kind,enabled=!busy){applyChange(draft.copy(kind=requireNotNull(it)))}
+                    OutlinedTextField(draft.term,{applyChange(draft.copy(term=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("学期（可选）")})
+                    OutlinedTextField(draft.gradeSnapshot.orEmpty(),{applyChange(draft.copy(gradeSnapshot=it))},modifier=Modifier.fillMaxWidth(),enabled=!busy,singleLine=true,label={Text("本次年级（可选）")})
+                    OutlinedTextField(draft.note,{applyChange(draft.copy(note=it))},label={Text("备注（可选）")},enabled=!busy,modifier=Modifier.fillMaxWidth(),minLines=2)
                 }
                 if(!draft.editing && draft.rows.isNotEmpty()) Text("科目与满分可逐项调整",style=MaterialTheme.typography.bodyMedium,color=MaterialTheme.colorScheme.onSurfaceVariant)
             }
@@ -178,7 +179,7 @@ fun ScoreStatus.label() = when(this) {ScoreStatus.SCORED->"有分数";ScoreStatu
             items(subjects.filter { !it.archived && draft.rows.none { r->r.subjectId==it.id } },key={it.id}) { s ->
             FilterChip(selected=s.id in picked,enabled=!busy && (s.id in picked || picked.size+draft.rows.size<30),onClick={picked=if(s.id in picked) picked-s.id else picked+s.id},label={Text(s.name)},modifier=Modifier.fillMaxWidth())
         } }
-    },confirmButton={TextButton(enabled=picked.isNotEmpty()&&!busy,onClick={model.change(draft.copy(rows=draft.rows+subjects.filter { it.id in picked }.map { DraftRow(it.id,it.name,maximum=ScoreRules.formatPoints(it.defaultMaxMinor)) }));adding=false}){Text("添加所选科目")}},dismissButton={TextButton(onClick={adding=false}){Text("取消")}})
+    },confirmButton={TextButton(enabled=picked.isNotEmpty()&&!busy,onClick={applyChange(draft.copy(rows=draft.rows+subjects.filter { it.id in picked }.map { DraftRow(it.id,it.name,maximum=ScoreRules.formatPoints(it.defaultMaxMinor)) }));adding=false}){Text("添加所选科目")}},dismissButton={TextButton(onClick={adding=false}){Text("取消")}})
     if(leaving) AlertDialog(onDismissRequest={if(!busy)leaving=false},title={Text("离开录入？")},text={Text("可以保留草稿，下次继续填写。")},
         confirmButton={TextButton(onClick={model.closeEditor(false)},enabled=!busy){Text("保留草稿并返回")}},
         dismissButton={Column { TextButton(onClick={leaving=false},enabled=!busy){Text("继续填写")};TextButton(onClick={model.closeEditor(true)},enabled=!busy){Text("丢弃草稿")}}})

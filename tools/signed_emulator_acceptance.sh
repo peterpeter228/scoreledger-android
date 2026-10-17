@@ -139,6 +139,46 @@ configure_visible_software_keyboard() {
   }
 }
 
+# Only the same nonce-owned marker read may retry; never replay business actions.
+read_retention_marker() {
+  local phase="$1" attempt status tmp err
+  [[ "$phase" =~ ^[a-z0-9-]+$ ]] && [[ "$NONCE" =~ ^[0-9a-f]{48}$ ]] || return 1
+  for attempt in 1 2; do
+    tmp="$EVIDENCE/retention-$phase-marker-attempt-$attempt.tmp"
+    err="$EVIDENCE/retention-$phase-marker-attempt-$attempt.stderr"
+    if timeout 15 adb -s "$SERIAL" shell run-as "$PACKAGE" cat "no_backup/upgrade-retention-$NONCE.json" > "$tmp" 2> "$err"; then
+      status=0
+    else
+      status=$?
+    fi
+    printf '%s\n' "$status" > "$EVIDENCE/retention-$phase-marker-attempt-$attempt.exit"
+    if [ "$status" = 0 ]; then
+      python3 - "$tmp" "$NONCE" <<'PYMARKER' || return 1
+import json,pathlib,sys
+raw=pathlib.Path(sys.argv[1]).read_bytes()
+assert 0<len(raw)<=4096
+value=json.loads(raw)
+assert value['nonce']==sys.argv[2]
+assert all(isinstance(value.get(k),str) and value[k] for k in ('childId','examId','draftId'))
+PYMARKER
+      # A valid JSON read must still equal the original exact synced marker.
+      if [ "$phase" != seed ]; then cmp "$EVIDENCE/retention-seed-marker.json" "$tmp" || return 1; fi
+      mv "$tmp" "$EVIDENCE/retention-$phase-marker.json" || return 1
+      return 0
+    fi
+    echo "RETENTION_MARKER_READ_FAILED phase=$phase attempt=$attempt exit=$status"
+    # Only the observed silent255 transport/process failure is eligible. Explicit
+    # stderr (including access errors), partial data, and all other errors fail.
+    [ "$attempt" = 1 ] && [ "$status" = 255 ] && [ ! -s "$err" ] && [ ! -s "$tmp" ] || return 1
+    timeout 10 adb -s "$SERIAL" get-state > "$EVIDENCE/retention-$phase-retry-device.txt" || return 1
+    [ "$(tr -d '\r\n' < "$EVIDENCE/retention-$phase-retry-device.txt")" = device ] || return 1
+    timeout 10 adb -s "$SERIAL" shell pm path "$PACKAGE" > "$EVIDENCE/retention-$phase-retry-package.txt" || return 1
+    grep -q '^package:' "$EVIDENCE/retention-$phase-retry-package.txt" || return 1
+    health_checkpoint "marker-retry-$phase" || return 1
+  done
+  return 1
+}
+
 capture_input_diagnostics() {
   local phase="$1"
   case "$phase" in pre-install|final) ;; *) return 1;; esac
@@ -391,20 +431,20 @@ fi
 printf 'Verified package manager ready; com.google.android.gms absent.\n' > "$EVIDENCE/aosp-verification.txt"
 
   retention_phase() {
-    local mode="$1" method="$2"
-    health_checkpoint "before-retention-$mode"
+    local mode="$1" method="$2" phase="$3"
+    health_checkpoint "before-retention-$phase"
     set +e
     timeout 180 adb -s "$SERIAL" shell am instrument -w -r \
       -e class "com.example.scoreledger.UpgradeRetentionTest#$method" \
       -e upgradeRetention "$mode" -e allowPersistentSyntheticData true \
-      -e upgradeNonce "$NONCE" "$RUNNER" 2>&1 | tee "$EVIDENCE/retention-$mode.txt"
+      -e upgradeNonce "$NONCE" "$RUNNER" 2>&1 | tee "$EVIDENCE/retention-$phase.txt"
     local status=${PIPESTATUS[0]}
     set -e
     [ "$status" = 0 ] || return 1
-    health_checkpoint "after-retention-$mode"
-    check_instrumentation "$EVIDENCE/retention-$mode.txt"
+    health_checkpoint "after-retention-$phase"
+    check_instrumentation "$EVIDENCE/retention-$phase.txt"
     # Require exactly one completed selected method. An assumption is NOT proof.
-    python3 - "$EVIDENCE/retention-$mode.txt" "$method" <<'PYRETENTION'
+    python3 - "$EVIDENCE/retention-$phase.txt" "$method" <<'PYRETENTION'
 import pathlib, re, sys
 text = pathlib.Path(sys.argv[1]).read_text().replace('\r', '')
 assert re.findall(r'^OK \((\d+) tests?\)\s*$', text, re.M) == ['1']
@@ -416,8 +456,7 @@ assert len(completed) == 1
 assert re.search(r'^INSTRUMENTATION_STATUS: class=com\.example\.scoreledger\.UpgradeRetentionTest$', completed[0], re.M)
 assert re.search(r'^INSTRUMENTATION_STATUS: test=' + re.escape(sys.argv[2]) + '$', completed[0], re.M)
 PYRETENTION
-    timeout 15 adb -s "$SERIAL" shell run-as "$PACKAGE" cat "no_backup/upgrade-retention-$NONCE.json" > "$EVIDENCE/retention-$mode-marker.json"
-    test -s "$EVIDENCE/retention-$mode-marker.json"
+    read_retention_marker "$phase"
   }
 # Only this new AVD is modified. No uninstall, clear, or physical-device commands.
 mapfile -d '' OLD_APPS < <(find signed-input/prior-app -type f -name '*.apk' -print0)
@@ -450,12 +489,12 @@ health_checkpoint before-prior-install
 timeout 120 adb -s "$SERIAL" install "$OLD_APP" | tee "$EVIDENCE/prior-app-install.txt"
 timeout 120 adb -s "$SERIAL" install "$OLD_TEST" | tee "$EVIDENCE/prior-test-install.txt"
 NONCE=$(python3 -c 'import secrets; print(secrets.token_hex(24))')
-retention_phase seed seedPersistentSyntheticData
+retention_phase seed seedPersistentSyntheticData seed
 timeout 120 adb -s "$SERIAL" install -r "$APP_APK" | tee "$EVIDENCE/app-install.txt"
 timeout 120 adb -s "$SERIAL" install -r "$TEST_APK" | tee "$EVIDENCE/test-install.txt"
-retention_phase verify verifyPersistentSyntheticData
-cmp "$EVIDENCE/retention-seed-marker.json" "$EVIDENCE/retention-verify-marker.json"
-cp "$EVIDENCE/retention-verify.txt" "$EVIDENCE/version-upgrade-verify.txt"
+retention_phase verify verifyPersistentSyntheticData upgrade
+cmp "$EVIDENCE/retention-seed-marker.json" "$EVIDENCE/retention-upgrade-marker.json"
+cp "$EVIDENCE/retention-upgrade.txt" "$EVIDENCE/version-upgrade-verify.txt"
 printf 'PASS: distinct older APK upgraded to candidate with strictly greater versionCode and identical fixed signer; complete canonical business snapshot and stored drafts matched.\n' > "$EVIDENCE/version-upgrade.txt"
 # Independent shell process termination; ActivityScenario.recreate is not used.
 adb -s "$SERIAL" shell am start -W -n "$PACKAGE/com.example.scoreledger.MainActivity" > "$EVIDENCE/pre-kill-launch.txt"
@@ -463,8 +502,8 @@ adb -s "$SERIAL" shell pidof "$PACKAGE" > "$EVIDENCE/pre-kill-pid.txt"
 test -s "$EVIDENCE/pre-kill-pid.txt"
 adb -s "$SERIAL" shell am force-stop "$PACKAGE"
 if adb -s "$SERIAL" shell pidof "$PACKAGE"; then echo 'Process still alive'; exit 1; fi
-retention_phase verify verifyPersistentSyntheticData
-cp "$EVIDENCE/retention-verify.txt" "$EVIDENCE/external-process-death-verify.txt"
+retention_phase verify verifyPersistentSyntheticData process-death
+cp "$EVIDENCE/retention-process-death.txt" "$EVIDENCE/external-process-death-verify.txt"
 printf 'PASS: externally force-stopped process; persisted business snapshot and draft verified on restart. UI editor restoration and mid-I/O death NOT covered.\n' > "$EVIDENCE/process-death.txt"
 # Separate opt-in real MainActivity draft journey. These methods must not enter
 # the full-suite allowlist, where their phase assumptions would be skips.
@@ -522,8 +561,8 @@ if [ "${RUN_REINSTALL_RETENTION:-false}" = true ]; then
   printf 'RUNNING: same-APK reinstall retention, nonce=%s\n' "$NONCE" > "$EVIDENCE/reinstall-retention.txt"
 
   timeout 120 adb -s "$SERIAL" install -r "$APP_APK" | tee "$EVIDENCE/reinstall.txt"
-  retention_phase verify verifyPersistentSyntheticData
-  cmp "$EVIDENCE/retention-seed-marker.json" "$EVIDENCE/retention-verify-marker.json"
+  retention_phase verify verifyPersistentSyntheticData reinstall
+  cmp "$EVIDENCE/retention-seed-marker.json" "$EVIDENCE/retention-reinstall-marker.json"
   printf 'PASSED: same downloaded fixed-signed APK reinstalled with install -r; guarded synthetic data verified. NOT a version upgrade.\n' > "$EVIDENCE/reinstall-retention.txt"
 fi
 # Collection is mandatory on the success path, not a best-effort EXIT side effect.

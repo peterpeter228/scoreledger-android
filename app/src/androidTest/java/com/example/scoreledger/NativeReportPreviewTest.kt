@@ -19,9 +19,18 @@ import java.io.File
 @RunWith(AndroidJUnit4::class)
 class NativeReportPreviewTest {
     @get:Rule val compose=createComposeRule()
+    private fun captureNavigation(name:String) {
+        val instrumentation=InstrumentationRegistry.getInstrumentation()
+        val directory=File(instrumentation.targetContext.filesDir,"ui-evidence").apply{mkdirs()}
+        val bitmap=requireNotNull(instrumentation.uiAutomation.takeScreenshot())
+        try { File(directory,"$name.png").outputStream().use { assertTrue(bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it)) } }
+        finally { bitmap.recycle() }
+        File(directory,"$name.txt").writeText(compose.onAllNodes(isRoot(),useUnmergedTree=true).printToString())
+    }
     @Test fun nativePreviewIsBoundedAndNavigableWithoutExternalReader() {
         val instrumentation=InstrumentationRegistry.getInstrumentation();val context=IsolatedUiContext(instrumentation.targetContext)
         val db=Room.inMemoryDatabaseBuilder(context,ScoreDatabase::class.java).build()
+        var stage="generate-and-validate"
         try {
             val data=instrumentation.context.assets.open("backup-valid.json").use{BackupCodec.read(it)}
             val repository=ScoreRepository(db,true)
@@ -55,15 +64,45 @@ class NativeReportPreviewTest {
             val bitmap=runBlocking { manager.renderPage(report,0) }.bitmap
             assertTrue(bitmap.width<=1000 && bitmap.height<=1500);bitmap.recycle()
             var closed=false
+            stage="first-page-render"
             compose.setContent{ScoreLedgerTheme{NativeReportPreview(manager,report){closed=true}}}
-            compose.waitUntil(10000){compose.onAllNodesWithText("正在读取本页…").fetchSemanticsNodes().isEmpty()}
+            compose.waitUntil(10000){
+                compose.onAllNodesWithContentDescription("报告第1页图像；原值可在记录与趋势明细查看").fetchSemanticsNodes().isNotEmpty() &&
+                    compose.onAllNodesWithText("正在读取本页…").fetchSemanticsNodes().isEmpty()
+            }
             compose.onNodeWithContentDescription("报告第1页图像；原值可在记录与趋势明细查看").assertIsDisplayed()
             compose.onNodeWithText("上一页").assertIsNotEnabled()
-            compose.onNodeWithText("下一页").assertIsEnabled().performClick()
+            stage="next-page-touch"
+            compose.onNodeWithText("下一页").assertIsDisplayed().assertIsEnabled()
+            captureNavigation("native-preview-before-next")
+            compose.onNodeWithText("下一页").performClick()
+            captureNavigation("native-preview-after-next")
+            stage="second-page-render"
             compose.waitUntil(10000){compose.onAllNodesWithText("第2/${report.pageCount}页 · ${report.scoreRows}条成绩").fetchSemanticsNodes().isNotEmpty() && compose.onAllNodesWithText("正在读取本页…").fetchSemanticsNodes().isEmpty()}
             compose.onNodeWithContentDescription("报告第2页图像；原值可在记录与趋势明细查看").assertIsDisplayed()
             compose.onNodeWithText("上一页").assertIsEnabled()
+            stage="close-preview"
             compose.onNodeWithText("关闭预览").performClick();compose.runOnIdle{assertTrue(closed)}
+        }catch(failure:Throwable) {
+            val directory=File(instrumentation.targetContext.filesDir,"ui-evidence")
+            // Capture before teardown; do not depend on Compose idleness for essential evidence.
+            runCatching {
+                directory.mkdirs()
+                File(directory,"native-preview-failure.txt").writeText(
+                    "stage=$stage\n${failure.stackTraceToString()}\n" +
+                        Thread.getAllStackTraces().entries.joinToString("\n") { (thread,frames) ->
+                            "thread=${thread.name} state=${thread.state}\n${frames.joinToString("\n")}"
+                        }
+                )
+            }
+            runCatching { instrumentation.uiAutomation.takeScreenshot()?.let { bitmap ->
+                try { File(directory,"native-preview-failure.png").outputStream().use { bitmap.compress(android.graphics.Bitmap.CompressFormat.PNG,100,it) } }
+                finally { bitmap.recycle() }
+            } }
+            runCatching {
+                File(directory,"native-preview-semantics.txt").writeText(compose.onAllNodes(isRoot(),useUnmergedTree=true).printToString())
+            }
+            throw failure
         }finally{db.close();context.cleanup()}
     }
 }
