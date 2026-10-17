@@ -76,7 +76,7 @@ fun StarterScreen(model: ScoreViewModel, services:UiServices?=null) {
                 }
                 page=="报告" -> LazyColumn(contentPadding=PaddingValues(20.dp),verticalArrangement=Arrangement.spacedBy(16.dp),modifier=Modifier.testTag("report-list")) {
                     item { TextButton(onClick={page=reportReturnPage;detail=reportExam}) { Text("返回") };Text("导出报告",style=MaterialTheme.typography.headlineSmall) }
-                    item { ReportControls(if(reportExam==null) sharedQuery.copy(childId=selected.orEmpty()) else RecordQuery(selected.orEmpty()),reportSubject,reportExam?.let { setOf(it) }) }
+                    item { ReportControls(if(reportExam==null) sharedQuery.copy(childId=selected.orEmpty()) else RecordQuery(selected.orEmpty()),reportSubject,reportExam?.let { setOf(it) },dataRevision=listOf(exams,children,subjects)) }
                 }
                 page=="历史" -> stateHolder.SaveableStateProvider("history-${selected}") {
                     HistoryScreen(model,selected,children.firstOrNull { it.id==selected },exams,drafts,busy,{detail=it},{page=""})

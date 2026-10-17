@@ -28,7 +28,7 @@ class FileOperationModel:ViewModel() {
     var baseline by mutableStateOf<RestoreBaseline?>(null)
     var copies by mutableStateOf<List<RollbackCopy>>(emptyList())
     var report by mutableStateOf<ReportFile?>(null)
-    var reportKey by mutableStateOf("")
+    var reportKey by mutableStateOf<Any?>(null)
     val busy get()=stage!=FileStage.IDLE
     fun pick():String? { if(busy)return null;return UUID.randomUUID().toString().also{requestId=it;stage=FileStage.PICKING;message=""} }
     fun pickerFinished(id:String?) : Boolean {
@@ -37,7 +37,12 @@ class FileOperationModel:ViewModel() {
     }
     fun pickerFailed(id:String?) { if(pickerFinished(id))message="无法打开系统文件选择器，请检查可用文件应用后重试。" }
     fun interrupted() { if(!busy)message="上次操作被中断，结果未确认。请检查目标文件；恢复前请重新预览，不会自动重做。" }
-    fun invalidateReport(key:String) { if(reportKey!=key){reportKey=key;report=null} }
+    fun invalidateReport(key:Any?) { if(reportKey!=key){reportKey=key;report=null} }
+    fun clearPreviews(){pending=null;baseline=null}
+    fun publishReport(key:Any?,generated:ReportFile):Boolean {
+        if(reportKey!=key)return false
+        report=generated;return true
+    }
     fun run(next:FileStage,block:suspend ()->Unit) {
         if(busy)return
         val id=UUID.randomUUID().toString()

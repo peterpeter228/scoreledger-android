@@ -47,7 +47,11 @@
     "com.example.scoreledger.PdfCompactLayoutTest#measured199And200PagesRemainCompleteAnd201IsRejectedBeforeWriting",
     "com.example.scoreledger.TrendInteractionTest#selectedEarlierPointShowsItsActualScoreAndReportKeepsExplicitScope",
     "com.example.scoreledger.FileOperationRecoveryTest#coldStartJournalIsInterruptedAndPickerStaleResultsAreRejected",
-    "com.example.scoreledger.FileOperationRecoveryTest#clearingViewModelDuringWriteKeepsInterruptedJournalForNextLaunch"
+    "com.example.scoreledger.FileOperationRecoveryTest#clearingViewModelDuringWriteKeepsInterruptedJournalForNextLaunch",
+    "com.example.scoreledger.ViewModelLocatorRecoveryTest#recreatedViewModelRestoresConfirmedDraftAndOwnerNotFailedUnsavedPayload",
+    "com.example.scoreledger.ViewModelLocatorRecoveryTest#pendingSavedRecordNavigationClearsOnChildSwitchAndChildDeletion",
+    "com.example.scoreledger.ViewModelLocatorRecoveryTest#replacementGenerationClearsEditorAndStaleLocatorFallsBackWithoutResurrectingDraft",
+    "com.example.scoreledger.ReportRevisionFenceTest#changedScoreWithSameQueryRejectsOldResultButPendingSaveKeepsSnapshot"
   ],
   "requiredFiles": [
     "ui-artifacts/synthetic-01-entry-before-save.png",

@@ -17,7 +17,7 @@ import com.example.scoreledger.BuildConfig
 import com.example.scoreledger.data.RecordQuery
 import com.example.scoreledger.export.*
 
-@Composable fun ReportControls(query:RecordQuery,subjectId:String?=null,examIds:Set<String>?=null) {
+@Composable fun ReportControls(query:RecordQuery,subjectId:String?=null,examIds:Set<String>?=null,dataRevision:Any?=null) {
     val context=LocalContext.current.applicationContext
     val manager=LocalUiServices.current.reports
     val model:FileOperationModel=viewModel(key="report-generation")
@@ -27,12 +27,12 @@ import com.example.scoreledger.export.*
     var notes by rememberSaveable { mutableStateOf(false) }
     var full by rememberSaveable { mutableStateOf(true) }
     var selectedSubject by rememberSaveable(query.childId,subjectId) { mutableStateOf(subjectId) }
-    var scopeInfo by remember(query) { mutableStateOf<ReportScope?>(null) }
-    var scopeError by remember(query) { mutableStateOf(false) }
+    var scopeInfo by remember(query,examIds,dataRevision) { mutableStateOf<ReportScope?>(null) }
+    var scopeError by remember(query,examIds,dataRevision) { mutableStateOf(false) }
     var segmentStart by rememberSaveable(query) { mutableStateOf("1") }
     var segmentEnd by rememberSaveable(query) { mutableStateOf("") }
     var split by rememberSaveable(query) { mutableStateOf(false) }
-    val key=listOf(query,examIds,anonymous,notes,full,selectedSubject,split,segmentStart,segmentEnd).toString()
+    val key=listOf(query,examIds,dataRevision,anonymous,notes,full,selectedSubject,split,segmentStart,segmentEnd)
     // Synchronous invalidation fences an older completion before the next effect runs.
     SideEffect { model.invalidateReport(key) }
     val saveState=LocalReportSaveState.current
@@ -41,7 +41,7 @@ import com.example.scoreledger.export.*
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit){if(started && !model.busy){model.interrupted();started=false}}
     LaunchedEffect(model.busy){if(!model.busy)started=false}
-    LaunchedEffect(manager,query,examIds) {
+    LaunchedEffect(manager,query,examIds,dataRevision) {
         scopeError=false
         try{scopeInfo=manager.scope(query,examIds)}catch(e:kotlinx.coroutines.CancellationException){throw e}catch(_:Exception){scopeError=true}
     }
@@ -84,7 +84,7 @@ import com.example.scoreledger.export.*
         model.invalidateReport(key);started=true
         model.run(FileStage.GENERATING){try{
             val generated=manager.generate(capturedQuery,options)
-            if(model.reportKey==capturedKey){model.report=generated;preview=true;model.message="报告已生成。预览、保存和分享使用同一快照。"}
+            if(model.publishReport(capturedKey,generated)){preview=true;model.message="报告已生成。预览、保存和分享使用同一快照。"}
         }finally{started=false}}
     },enabled=!busy && validSegment && !info?.exams.isNullOrEmpty() && (!full || info?.subjects?.any{it.first==selectedSubject}==true),modifier=Modifier.fillMaxWidth()){Text(stringResource(R.string.report_generate))}
     ready?.let {
