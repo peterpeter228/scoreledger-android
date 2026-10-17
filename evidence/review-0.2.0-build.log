@@ -1,0 +1,872 @@
+﻿2026-10-17T13:27:45.8445474Z Current runner version: '2.337.0'
+2026-10-17T13:27:45.8483506Z ##[group]Runner Image Provisioner
+2026-10-17T13:27:45.8484776Z Hosted Compute Agent
+2026-10-17T13:27:45.8485765Z Version: 20261012.601
+2026-10-17T13:27:45.8486755Z Commit: f3dc54e1fb89da6852db922499a0233137369e1d
+2026-10-17T13:27:45.8487885Z Build Date: 2026-10-12T17:48:21Z
+2026-10-17T13:27:45.8488950Z Worker ID: {36412b83-dce7-4215-b0fa-d38af27f8d12}
+2026-10-17T13:27:45.8490052Z Region: southcentralus
+2026-10-17T13:27:45.8491353Z Cloud: Azure
+2026-10-17T13:27:45.8492194Z ##[endgroup]
+2026-10-17T13:27:45.8494462Z ##[group]Operating System
+2026-10-17T13:27:45.8495456Z Ubuntu
+2026-10-17T13:27:45.8496221Z 24.04.5
+2026-10-17T13:27:45.8497014Z LTS
+2026-10-17T13:27:45.8497807Z ##[endgroup]
+2026-10-17T13:27:45.8498691Z ##[group]Runner Image
+2026-10-17T13:27:45.8499610Z Image: ubuntu-24.04
+2026-10-17T13:27:45.8500788Z Version: 20261012.334.1
+2026-10-17T13:27:45.8502719Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-17T13:27:45.8504994Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-17T13:27:45.8506447Z ##[endgroup]
+2026-10-17T13:27:45.8508239Z ##[group]GITHUB_TOKEN Permissions
+2026-10-17T13:27:45.8511747Z Contents: read
+2026-10-17T13:27:45.8512718Z Metadata: read
+2026-10-17T13:27:45.8513558Z ##[endgroup]
+2026-10-17T13:27:45.8517263Z Secret source: Actions
+2026-10-17T13:27:45.8518650Z Cache mode: write
+2026-10-17T13:27:45.8519752Z Prepare workflow directory
+2026-10-17T13:27:45.9153370Z Prepare all required actions
+2026-10-17T13:27:45.9206815Z Getting action download info
+2026-10-17T13:27:46.2130900Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-17T13:27:46.3366294Z Download action repository 'actions/setup-java@v4' (SHA:cf277c60eb25467037889841efdb72551f06f6c3)
+2026-10-17T13:27:49.1482179Z Download action repository 'gradle/actions@v4' (SHA:ed408507eac070d1f99cc633dbcf757c94c7933a)
+2026-10-17T13:27:52.3101538Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+2026-10-17T13:27:52.6484720Z Complete job name: internal-apk
+2026-10-17T13:27:52.7245806Z ##[group]Run actions/checkout@v4
+2026-10-17T13:27:52.7246482Z with:
+2026-10-17T13:27:52.7246944Z   repository: peterpeter228/scoreledger-android
+2026-10-17T13:27:52.7249562Z   token: ***
+2026-10-17T13:27:52.7249973Z   ssh-strict: true
+2026-10-17T13:27:52.7250514Z   ssh-user: git
+2026-10-17T13:27:52.7250883Z   persist-credentials: true
+2026-10-17T13:27:52.7251278Z   clean: true
+2026-10-17T13:27:52.7251635Z   sparse-checkout-cone-mode: true
+2026-10-17T13:27:52.7252057Z   fetch-depth: 1
+2026-10-17T13:27:52.7252439Z   fetch-tags: false
+2026-10-17T13:27:52.7252816Z   show-progress: true
+2026-10-17T13:27:52.7253170Z   lfs: false
+2026-10-17T13:27:52.7253484Z   submodules: false
+2026-10-17T13:27:52.7253896Z   set-safe-directory: true
+2026-10-17T13:27:52.7254254Z   allow-unsafe-pr-checkout: false
+2026-10-17T13:27:52.7254835Z ##[endgroup]
+2026-10-17T13:27:52.8870833Z Syncing repository: peterpeter228/scoreledger-android
+2026-10-17T13:27:52.8873646Z ##[group]Getting Git version info
+2026-10-17T13:27:52.8874889Z Working directory is '/home/runner/work/scoreledger-android/scoreledger-android'
+2026-10-17T13:27:52.8876375Z [command]/usr/bin/git version
+2026-10-17T13:27:52.8878301Z git version 2.55.0
+2026-10-17T13:27:53.0437599Z ##[endgroup]
+2026-10-17T13:27:53.0444662Z Temporarily overriding HOME='/home/runner/work/_temp/9cfc1267-2eb9-4980-8f14-e41e318ffb30' before making global git config changes
+2026-10-17T13:27:53.0446060Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-17T13:27:53.0447198Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/scoreledger-android/scoreledger-android
+2026-10-17T13:27:53.0449168Z Deleting the contents of '/home/runner/work/scoreledger-android/scoreledger-android'
+2026-10-17T13:27:53.0450607Z ##[group]Initializing the repository
+2026-10-17T13:27:53.0451812Z [command]/usr/bin/git init /home/runner/work/scoreledger-android/scoreledger-android
+2026-10-17T13:27:53.0452789Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-17T13:27:53.0453729Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-17T13:27:53.0454645Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-17T13:27:53.0455356Z hint: call:
+2026-10-17T13:27:53.0455766Z hint:
+2026-10-17T13:27:53.0456387Z hint: 	git config --global init.defaultBranch <name>
+2026-10-17T13:27:53.0456999Z hint:
+2026-10-17T13:27:53.0457871Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-17T13:27:53.0459298Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-17T13:27:53.0460000Z hint:
+2026-10-17T13:27:53.0460698Z hint: 	git branch -m <name>
+2026-10-17T13:27:53.0461241Z hint:
+2026-10-17T13:27:53.0461846Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-17T13:27:53.0462948Z Initialized empty Git repository in /home/runner/work/scoreledger-android/scoreledger-android/.git/
+2026-10-17T13:27:53.0464962Z [command]/usr/bin/git remote add origin https://github.com/peterpeter228/scoreledger-android
+2026-10-17T13:27:53.0466636Z ##[endgroup]
+2026-10-17T13:27:53.0467422Z ##[group]Disabling automatic garbage collection
+2026-10-17T13:27:53.0468109Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-17T13:27:53.0469580Z ##[endgroup]
+2026-10-17T13:27:53.0470574Z ##[group]Setting up auth
+2026-10-17T13:27:53.0471370Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T13:27:53.0473406Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T13:27:53.0475423Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T13:27:53.0478171Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T13:27:53.0662201Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T13:27:53.0680472Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T13:27:53.0899885Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-17T13:27:53.0944688Z ##[endgroup]
+2026-10-17T13:27:53.0946606Z ##[group]Fetching the repository
+2026-10-17T13:27:53.0956155Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +f673e787500d8754463b919b91e236eae643eb97:refs/remotes/origin/main
+2026-10-17T13:27:53.7789140Z From https://github.com/peterpeter228/scoreledger-android
+2026-10-17T13:27:53.7797756Z  * [new ref]         f673e787500d8754463b919b91e236eae643eb97 -> origin/main
+2026-10-17T13:27:53.7803310Z ##[endgroup]
+2026-10-17T13:27:53.7804491Z ##[group]Determining the checkout info
+2026-10-17T13:27:53.7805778Z ##[endgroup]
+2026-10-17T13:27:53.7806552Z [command]/usr/bin/git sparse-checkout disable
+2026-10-17T13:27:53.7867511Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-17T13:27:53.7908115Z ##[group]Checking out the ref
+2026-10-17T13:27:53.7914036Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-10-17T13:27:53.8095766Z Switched to a new branch 'main'
+2026-10-17T13:27:53.8131966Z branch 'main' set up to track 'origin/main'.
+2026-10-17T13:27:53.8135579Z ##[endgroup]
+2026-10-17T13:27:53.8442350Z [command]/usr/bin/git log -1 --format=%H
+2026-10-17T13:27:53.8443122Z f673e787500d8754463b919b91e236eae643eb97
+2026-10-17T13:27:53.8654842Z ##[group]Run actions/setup-java@v4
+2026-10-17T13:27:53.8655189Z with:
+2026-10-17T13:27:53.8655461Z   distribution: temurin
+2026-10-17T13:27:53.8655738Z   java-version: 17
+2026-10-17T13:27:53.8655993Z   java-package: jdk
+2026-10-17T13:27:53.8656251Z   check-latest: false
+2026-10-17T13:27:53.8656523Z   server-id: github
+2026-10-17T13:27:53.8656774Z   server-username: GITHUB_ACTOR
+2026-10-17T13:27:53.8657063Z   server-password: GITHUB_TOKEN
+2026-10-17T13:27:53.8657349Z   overwrite-settings: true
+2026-10-17T13:27:53.8657615Z   job-status: success
+2026-10-17T13:27:53.8659940Z   token: ***
+2026-10-17T13:27:53.8660310Z ##[endgroup]
+2026-10-17T13:27:54.0538974Z ##[warning]setup-java v4 is deprecated and will no longer receive updates. Please migrate to actions/setup-java@v5.
+2026-10-17T13:27:54.0550645Z ##[group]Installed distributions
+2026-10-17T13:27:54.0592831Z Resolved Java 17.0.20+1 from tool-cache
+2026-10-17T13:27:54.0593778Z Setting Java 17.0.20+1 as the default
+2026-10-17T13:27:54.0604019Z (node:2075) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-17T13:27:54.0605397Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-17T13:27:54.0607456Z Creating toolchains.xml for JDK version 17 from temurin
+2026-10-17T13:27:54.0683812Z Writing to /home/runner/.m2/toolchains.xml
+2026-10-17T13:27:54.0684669Z 
+2026-10-17T13:27:54.0685065Z Java configuration:
+2026-10-17T13:27:54.0685648Z   Distribution: temurin
+2026-10-17T13:27:54.0686176Z   Version: 17.0.20+1
+2026-10-17T13:27:54.0686860Z   Path: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:27:54.0687457Z 
+2026-10-17T13:27:54.0688184Z ##[endgroup]
+2026-10-17T13:27:54.0705782Z Creating settings.xml with server-id: github
+2026-10-17T13:27:54.0760999Z Writing to /home/runner/.m2/settings.xml
+2026-10-17T13:27:54.1216733Z ##[group]Run gradle/actions/setup-gradle@v4
+2026-10-17T13:27:54.1217589Z with:
+2026-10-17T13:27:54.1218220Z   gradle-version: 8.13
+2026-10-17T13:27:54.1218887Z   cache-disabled: false
+2026-10-17T13:27:54.1219513Z   cache-read-only: false
+2026-10-17T13:27:54.1220008Z   cache-write-only: false
+2026-10-17T13:27:54.1220575Z   cache-overwrite-existing: false
+2026-10-17T13:27:54.1220960Z   cache-cleanup: on-success
+2026-10-17T13:27:54.1221385Z   gradle-home-cache-includes: caches
+notifications
+
+2026-10-17T13:27:54.1221853Z   add-job-summary: always
+2026-10-17T13:27:54.1222266Z   add-job-summary-as-pr-comment: never
+2026-10-17T13:27:54.1222591Z   dependency-graph: disabled
+2026-10-17T13:27:54.1222934Z   dependency-graph-report-dir: dependency-graph-reports
+2026-10-17T13:27:54.1223438Z   dependency-graph-continue-on-failure: true
+2026-10-17T13:27:54.1223891Z   build-scan-publish: false
+2026-10-17T13:27:54.1224298Z   validate-wrappers: true
+2026-10-17T13:27:54.1224812Z   allow-snapshot-wrappers: false
+2026-10-17T13:27:54.1225282Z   gradle-home-cache-strict-match: false
+2026-10-17T13:27:54.1225755Z   workflow-job-context: null
+2026-10-17T13:27:54.1231521Z   github-token: ***
+2026-10-17T13:27:54.1232079Z env:
+2026-10-17T13:27:54.1232686Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:27:54.1233364Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:27:54.1233893Z ##[endgroup]
+2026-10-17T13:27:54.7301904Z Merged default JDK locations into /home/runner/.m2/toolchains.xml
+2026-10-17T13:27:54.7331700Z Preparing cache for cleanup.
+2026-10-17T13:27:54.7348876Z ##[group]Restore Gradle state from cache
+2026-10-17T13:27:54.9166110Z Cache hit for restore-key: gradle-home-v1|Linux-X64|internal-apk[c45e87c217d38ecda81daca63486158a]-c0197bb88ad49a2bb45337501b85db3f6a3dfb40
+2026-10-17T13:27:55.9007922Z Received 3758182 of 3758182 (100.0%), 4.4 MBs/sec
+2026-10-17T13:27:55.9008978Z Cache Size: ~4 MB (3758182 B)
+2026-10-17T13:27:55.9034918Z [command]/usr/bin/tar -xf /home/runner/work/_temp/bcd5cc3d-1583-4a98-baf8-74e80191f0c0/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:55.9786965Z Cache restored successfully
+2026-10-17T13:27:55.9803275Z Restored cache entry with key gradle-home-v1|Linux-X64|internal-apk[c45e87c217d38ecda81daca63486158a]-f673e787500d8754463b919b91e236eae643eb97 to /home/runner/.gradle/caches,/home/runner/.gradle/notifications,/home/runner/.gradle/.setup-gradle in 1246ms
+2026-10-17T13:27:56.1464253Z Cache hit for: gradle-groovy-dsl-v1-1d17f23676f7ae24c1502e81b7e72d36
+2026-10-17T13:27:56.1467012Z Cache hit for: gradle-dependencies-v1-c2b6a256d5b96958bc60df07ffd6fd69
+2026-10-17T13:27:56.1527045Z Cache hit for: gradle-kotlin-dsl-v1-16a481d29f7127d16d6c1976c98671fd
+2026-10-17T13:27:56.1531072Z Cache hit for: gradle-instrumented-jars-v1-1c45ec3abecf25c22da21c5f47909d8a
+2026-10-17T13:27:56.1535985Z Cache hit for: gradle-generated-gradle-jars-v1-697f81ec8d80712ce7da03f513960371
+2026-10-17T13:27:56.1827069Z Cache hit for: gradle-wrapper-zips-v1-2404ef08b03d28a6a12a9811a47b570f
+2026-10-17T13:27:56.1846846Z Cache hit for: gradle-transforms-v1-0d49a950b312b11236dc0596ec180816
+2026-10-17T13:27:56.5743087Z Received 77104 of 77104 (100.0%), 0.3 MBs/sec
+2026-10-17T13:27:56.5744213Z Cache Size: ~0 MB (77104 B)
+2026-10-17T13:27:56.5763895Z Received 119271 of 119271 (100.0%), 0.4 MBs/sec
+2026-10-17T13:27:56.5765161Z Cache Size: ~0 MB (119271 B)
+2026-10-17T13:27:56.5808333Z [command]/usr/bin/tar -xf /home/runner/work/_temp/56150233-e7ba-4125-b4ae-e8526e56db08/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:56.5887145Z [command]/usr/bin/tar -xf /home/runner/work/_temp/0afdf9b3-1a1e-4710-90c5-a5532c9265c9/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:56.6013899Z Cache restored successfully
+2026-10-17T13:27:56.6082258Z Restored cache entry with key gradle-instrumented-jars-v1-1c45ec3abecf25c22da21c5f47909d8a to /home/runner/.gradle/caches/jars-*/*/ in 627ms
+2026-10-17T13:27:56.6096359Z Cache restored successfully
+2026-10-17T13:27:56.6099778Z Restored cache entry with key gradle-groovy-dsl-v1-1d17f23676f7ae24c1502e81b7e72d36 to /home/runner/.gradle/caches/*/groovy-dsl/*/ in 628ms
+2026-10-17T13:27:56.6736750Z Received 187179 of 187179 (100.0%), 0.6 MBs/sec
+2026-10-17T13:27:56.6738784Z Cache Size: ~0 MB (187179 B)
+2026-10-17T13:27:56.6816806Z [command]/usr/bin/tar -xf /home/runner/work/_temp/7d8b58f2-9793-469d-bd98-9a328a18d784/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:56.7423012Z Cache restored successfully
+2026-10-17T13:27:56.7457478Z Restored cache entry with key gradle-kotlin-dsl-v1-16a481d29f7127d16d6c1976c98671fd to /home/runner/.gradle/caches/*/kotlin-dsl/accessors/*/,/home/runner/.gradle/caches/*/kotlin-dsl/scripts/*/ in 764ms
+2026-10-17T13:27:57.2071765Z Received 41943040 of 136302065 (30.8%), 39.9 MBs/sec
+2026-10-17T13:27:57.3302184Z Received 58720256 of 350897096 (16.7%), 56.0 MBs/sec
+2026-10-17T13:27:57.3521665Z Received 33554432 of 148985910 (22.5%), 31.8 MBs/sec
+2026-10-17T13:27:57.3939750Z Received 36674482 of 40868786 (89.7%), 33.7 MBs/sec
+2026-10-17T13:27:57.5254894Z Received 40868786 of 40868786 (100.0%), 33.3 MBs/sec
+2026-10-17T13:27:57.5257708Z Cache Size: ~39 MB (40868786 B)
+2026-10-17T13:27:57.7253042Z [command]/usr/bin/tar -xf /home/runner/work/_temp/9e64d585-9f70-4c2b-b1f0-cc756e1c2a5e/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:58.1214808Z Received 136302065 of 136302065 (100.0%), 67.7 MBs/sec
+2026-10-17T13:27:58.1321366Z Cache Size: ~130 MB (136302065 B)
+2026-10-17T13:27:58.1402280Z [command]/usr/bin/tar -xf /home/runner/work/_temp/0afd233b-4de4-44d8-a3f5-05e79165f2d1/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:58.3379636Z Received 134217728 of 350897096 (38.2%), 63.7 MBs/sec
+2026-10-17T13:27:58.3519973Z Received 134217728 of 148985910 (90.1%), 63.7 MBs/sec
+2026-10-17T13:27:58.5171822Z Received 148985910 of 148985910 (100.0%), 65.3 MBs/sec
+2026-10-17T13:27:58.5211485Z Cache Size: ~142 MB (148985910 B)
+2026-10-17T13:27:58.5850823Z [command]/usr/bin/tar -xf /home/runner/work/_temp/de93c574-590d-4b01-a7fc-cd1657c39e81/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:27:58.6046293Z Cache restored successfully
+2026-10-17T13:27:58.7679413Z Restored cache entry with key gradle-generated-gradle-jars-v1-697f81ec8d80712ce7da03f513960371 to /home/runner/.gradle/caches/8.13/generated-gradle-jars/gradle-api-8.13.jar in 2785ms
+2026-10-17T13:28:00.0001627Z Received 268435456 of 350897096 (76.5%), 69.9 MBs/sec
+2026-10-17T13:28:00.0064962Z Cache restored successfully
+2026-10-17T13:28:00.6060902Z Received 350897096 of 350897096 (100.0%), 78.3 MBs/sec
+2026-10-17T13:28:00.6064168Z Cache Size: ~335 MB (350897096 B)
+2026-10-17T13:28:00.6212417Z [command]/usr/bin/tar -xf /home/runner/work/_temp/9a64014d-ece9-4ea6-a484-b079a697a683/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:28:01.1666743Z Restored cache entry with key gradle-wrapper-zips-v1-2404ef08b03d28a6a12a9811a47b570f to /home/runner/.gradle/wrapper/dists/gradle-8.13-bin/5xuhj0ry160q40clulazy9h7d in 5076ms
+2026-10-17T13:28:10.4790694Z Cache restored successfully
+2026-10-17T13:28:10.7887135Z Cache restored successfully
+2026-10-17T13:28:10.7915395Z Restored cache entry with key gradle-transforms-v1-0d49a950b312b11236dc0596ec180816 to /home/runner/.gradle/caches/transforms-4/*/,/home/runner/.gradle/caches/*/transforms/*/ in 14810ms
+2026-10-17T13:28:11.0715308Z Restored cache entry with key gradle-dependencies-v1-c2b6a256d5b96958bc60df07ffd6fd69 to /home/runner/.gradle/caches/modules-*/files-*/*/*/*/* in 15091ms
+2026-10-17T13:28:11.0826263Z ##[endgroup]
+2026-10-17T13:28:11.0941632Z ##[group]All Gradle Wrapper jars are valid
+2026-10-17T13:28:11.0943350Z ✓ Found known Gradle Wrapper JAR files:
+2026-10-17T13:28:11.0944148Z   81a82aaea5abcc8ff68b3dfcb58b3c3c429378efd98e7433460610fecd7ae45f gradle/wrapper/gradle-wrapper.jar
+2026-10-17T13:28:11.0945022Z ##[endgroup]
+2026-10-17T13:28:11.2439436Z ##[group]Provision Gradle 8.13
+2026-10-17T13:28:19.6342579Z Cache hit for: gradle-8.13
+2026-10-17T13:28:20.6715339Z Received 88080384 of 136904052 (64.3%), 83.9 MBs/sec
+2026-10-17T13:28:21.0048665Z Received 136904052 of 136904052 (100.0%), 97.9 MBs/sec
+2026-10-17T13:28:21.0051039Z Cache Size: ~131 MB (136904052 B)
+2026-10-17T13:28:21.0081941Z [command]/usr/bin/tar -xf /home/runner/work/_temp/2d6e1505-b6e0-4435-b009-c05fab1f491f/cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --use-compress-program unzstd
+2026-10-17T13:28:21.1550084Z Cache restored successfully
+2026-10-17T13:28:21.1606002Z Restored Gradle distribution gradle-8.13 from cache to /home/runner/work/_temp/.gradle-actions/gradle-installations/downloads/gradle-8.13-bin.zip
+2026-10-17T13:28:21.1641782Z [command]/usr/bin/unzip -o -q /home/runner/work/_temp/.gradle-actions/gradle-installations/downloads/gradle-8.13-bin.zip
+2026-10-17T13:28:22.2648908Z Extracted Gradle 8.13 to /home/runner/work/_temp/.gradle-actions/gradle-installations/installs/gradle-8.13
+2026-10-17T13:28:22.2650591Z Provisioned Gradle executable /home/runner/work/_temp/.gradle-actions/gradle-installations/installs/gradle-8.13/bin/gradle
+2026-10-17T13:28:22.2651993Z ##[endgroup]
+2026-10-17T13:28:22.2797406Z ##[group]Run python3 tools/verify_package.py
+2026-10-17T13:28:22.2797973Z [36;1mpython3 tools/verify_package.py[0m
+2026-10-17T13:28:22.2798465Z [36;1mpython3 -m unittest discover -s reference -p 'test_*.py' -v[0m
+2026-10-17T13:28:22.3018171Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:28:22.3018586Z env:
+2026-10-17T13:28:22.3019054Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:22.3019643Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:22.3020746Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:28:22.3021166Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:28:22.3021555Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:28:22.3021947Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:28:22.3022474Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:28:22.3023108Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:28:22.3023565Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:28:22.3024129Z ##[endgroup]
+2026-10-17T13:28:22.4245188Z STATIC_CHECK_PASS: required files, JSON/XML, backup fixtures, dependency DAG, offline manifest, no signing files. Android compilation NOT verified.
+2026-10-17T13:28:22.5171222Z test_absent_zero (test_contracts.BackupTests.test_absent_zero) ... ok
+2026-10-17T13:28:22.5174846Z test_bad_encoding (test_contracts.BackupTests.test_bad_encoding) ... ok
+2026-10-17T13:28:22.5179040Z test_bad_leap_day (test_contracts.BackupTests.test_bad_leap_day) ... ok
+2026-10-17T13:28:22.5181592Z test_bad_stamp (test_contracts.BackupTests.test_bad_stamp) ... ok
+2026-10-17T13:28:22.5184329Z test_bad_uuid (test_contracts.BackupTests.test_bad_uuid) ... ok
+2026-10-17T13:28:22.5187216Z test_blank_name (test_contracts.BackupTests.test_blank_name) ... ok
+2026-10-17T13:28:22.5192744Z test_bom_accepted (test_contracts.BackupTests.test_bom_accepted) ... ok
+2026-10-17T13:28:22.5196836Z test_boolean_integer (test_contracts.BackupTests.test_boolean_integer) ... ok
+2026-10-17T13:28:22.5199028Z test_boolean_version (test_contracts.BackupTests.test_boolean_version) ... ok
+2026-10-17T13:28:22.5204175Z test_cap_and_future_preserved (test_contracts.BackupTests.test_cap_and_future_preserved) ... ok
+2026-10-17T13:28:22.5206678Z test_control_character (test_contracts.BackupTests.test_control_character) ... ok
+2026-10-17T13:28:22.5209625Z test_duplicate_child (test_contracts.BackupTests.test_duplicate_child) ... ok
+2026-10-17T13:28:22.5220634Z test_duplicate_exam (test_contracts.BackupTests.test_duplicate_exam) ... ok
+2026-10-17T13:28:22.5222115Z test_duplicate_json_key (test_contracts.BackupTests.test_duplicate_json_key) ... ok
+2026-10-17T13:28:22.5223452Z test_duplicate_score (test_contracts.BackupTests.test_duplicate_score) ... ok
+2026-10-17T13:28:22.5224630Z test_duplicate_subject (test_contracts.BackupTests.test_duplicate_subject) ... ok
+2026-10-17T13:28:22.5231517Z test_empty (test_contracts.BackupTests.test_empty) ... ok
+2026-10-17T13:28:22.5232664Z test_entitlement_injection (test_contracts.BackupTests.test_entitlement_injection) ... ok
+2026-10-17T13:28:22.5233844Z test_float_integer (test_contracts.BackupTests.test_float_integer) ... ok
+2026-10-17T13:28:22.5234918Z test_missing_field (test_contracts.BackupTests.test_missing_field) ... ok
+2026-10-17T13:28:22.5238654Z test_missing_zero (test_contracts.BackupTests.test_missing_zero) ... ok
+2026-10-17T13:28:22.5241548Z test_name_limit (test_contracts.BackupTests.test_name_limit) ... ok
+2026-10-17T13:28:22.5242993Z test_nan (test_contracts.BackupTests.test_nan) ... ok
+2026-10-17T13:28:22.5247234Z test_negative (test_contracts.BackupTests.test_negative) ... ok
+2026-10-17T13:28:22.5249667Z test_negative_zero_rejected (test_contracts.BackupTests.test_negative_zero_rejected) ... ok
+2026-10-17T13:28:22.5254208Z test_no_exam_rows (test_contracts.BackupTests.test_no_exam_rows) ... ok
+2026-10-17T13:28:22.5257949Z test_orphan_exam (test_contracts.BackupTests.test_orphan_exam) ... ok
+2026-10-17T13:28:22.5261521Z test_orphan_score_exam (test_contracts.BackupTests.test_orphan_score_exam) ... ok
+2026-10-17T13:28:22.5265671Z test_orphan_score_subject (test_contracts.BackupTests.test_orphan_score_subject) ... ok
+2026-10-17T13:28:22.5268984Z test_over_max (test_contracts.BackupTests.test_over_max) ... ok
+2026-10-17T13:28:22.5277139Z test_oversized_collection (test_contracts.BackupTests.test_oversized_collection) ... ok
+2026-10-17T13:28:22.5429102Z test_oversized_file (test_contracts.BackupTests.test_oversized_file) ... ok
+2026-10-17T13:28:22.5437241Z test_repeat_restore_model_idempotent (test_contracts.BackupTests.test_repeat_restore_model_idempotent) ... ok
+2026-10-17T13:28:22.5442169Z test_roundtrip (test_contracts.BackupTests.test_roundtrip) ... ok
+2026-10-17T13:28:22.5446232Z test_scored_null (test_contracts.BackupTests.test_scored_null) ... ok
+2026-10-17T13:28:22.5449437Z test_sql_name_is_data (test_contracts.BackupTests.test_sql_name_is_data) ... ok
+2026-10-17T13:28:22.5452529Z test_timestamp_order (test_contracts.BackupTests.test_timestamp_order) ... ok
+2026-10-17T13:28:22.5454225Z test_truncated (test_contracts.BackupTests.test_truncated) ... ok
+2026-10-17T13:28:22.5456967Z test_unicode_blank (test_contracts.BackupTests.test_unicode_blank) ... ok
+2026-10-17T13:28:22.5461222Z test_unknown_status (test_contracts.BackupTests.test_unknown_status) ... ok
+2026-10-17T13:28:22.5463430Z test_unknown_version (test_contracts.BackupTests.test_unknown_version) ... ok
+2026-10-17T13:28:22.5467916Z test_unpaired_surrogates (test_contracts.BackupTests.test_unpaired_surrogates) ... ok
+2026-10-17T13:28:22.5470816Z test_valid (test_contracts.BackupTests.test_valid) ... ok
+2026-10-17T13:28:22.5473281Z test_wrong_format (test_contracts.BackupTests.test_wrong_format) ... ok
+2026-10-17T13:28:22.5477195Z test_zero_max (test_contracts.BackupTests.test_zero_max) ... ok
+2026-10-17T13:28:22.5480251Z test_zero_valid (test_contracts.BackupTests.test_zero_valid) ... ok
+2026-10-17T13:28:22.5481152Z 
+2026-10-17T13:28:22.5481825Z ----------------------------------------------------------------------
+2026-10-17T13:28:22.5482885Z Ran 46 tests in 0.032s
+2026-10-17T13:28:22.5483397Z 
+2026-10-17T13:28:22.5483780Z OK
+2026-10-17T13:28:22.5613834Z ##[group]Run set -euo pipefail
+2026-10-17T13:28:22.5614760Z [36;1mset -euo pipefail[0m
+2026-10-17T13:28:22.5615171Z [36;1mSDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"[0m
+2026-10-17T13:28:22.5615692Z [36;1mtest -n "$SDK_ROOT" || { echo "No Android SDK configured"; exit 1; }[0m
+2026-10-17T13:28:22.5616230Z [36;1mSDKMANAGER="$SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"[0m
+2026-10-17T13:28:22.5616890Z [36;1mtest -x "$SDKMANAGER" || { echo "sdkmanager missing; configure an official SDK installation"; exit 1; }[0m
+2026-10-17T13:28:22.5617537Z [36;1m# Hosted runner normally has license acceptance. Do not bypass it.[0m
+2026-10-17T13:28:22.5618111Z [36;1m"$SDKMANAGER" "platforms;android-36" "build-tools;35.0.0" "platform-tools"[0m
+2026-10-17T13:28:22.5661862Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-17T13:28:22.5662312Z env:
+2026-10-17T13:28:22.5662723Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:22.5663379Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:22.5663882Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:28:22.5664296Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:28:22.5664678Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:28:22.5665218Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:28:22.5665794Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:28:22.5666363Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:28:22.5666774Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:28:22.5667147Z ##[endgroup]
+2026-10-17T13:28:24.0171613Z Loading package information...                                                  
+2026-10-17T13:28:24.1341716Z Loading local repository...                                                     
+2026-10-17T13:28:24.1347359Z [                                       ] 3% Loading local repository...        
+2026-10-17T13:28:24.6666936Z [                                       ] 3% Fetch remote repository...         
+2026-10-17T13:28:25.3301746Z [=                                      ] 3% Fetch remote repository...         
+2026-10-17T13:28:25.4261422Z [=                                      ] 4% Fetch remote repository...         
+2026-10-17T13:28:25.4641502Z [=                                      ] 5% Fetch remote repository...         
+2026-10-17T13:28:25.5141559Z [==                                     ] 5% Fetch remote repository...         
+2026-10-17T13:28:25.5875960Z [==                                     ] 6% Fetch remote repository...         
+2026-10-17T13:28:25.8051835Z [==                                     ] 7% Fetch remote repository...         
+2026-10-17T13:28:25.8052590Z [==                                     ] 7% Computing updates...               
+2026-10-17T13:28:25.8302703Z [===                                    ] 8% Computing updates...               
+2026-10-17T13:28:25.8432994Z [===                                    ] 10% Computing updates...              
+2026-10-17T13:28:25.8438087Z [=======================================] 100% Computing updates...             
+2026-10-17T13:28:25.8438548Z 
+2026-10-17T13:28:25.8570044Z ##[group]Run set -euo pipefail
+2026-10-17T13:28:25.8570690Z [36;1mset -euo pipefail[0m
+2026-10-17T13:28:25.8571217Z [36;1mtest -n "$INTERNAL_KEYSTORE_BASE64" || { echo 'Internal signing secret missing'; exit 1; }[0m
+2026-10-17T13:28:25.8571750Z [36;1mumask 077[0m
+2026-10-17T13:28:25.8572240Z [36;1mprintf '%s' "$INTERNAL_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/internal-beta.p12"[0m
+2026-10-17T13:28:25.8572804Z [36;1mtest -s "$RUNNER_TEMP/internal-beta.p12"[0m
+2026-10-17T13:28:25.8615019Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:28:25.8615399Z env:
+2026-10-17T13:28:25.8615824Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:25.8616407Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:25.8616924Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:28:25.8617324Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:28:25.8617774Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:28:25.8618161Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:28:25.8618698Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:28:25.8619282Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:28:25.8619692Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:28:25.8648425Z   INTERNAL_KEYSTORE_BASE64: ***
+2026-10-17T13:28:25.8649063Z ##[endgroup]
+2026-10-17T13:28:25.8778060Z ##[group]Run python3 tools/test_acceptance_gate.py
+2026-10-17T13:28:25.8778565Z [36;1mpython3 tools/test_acceptance_gate.py[0m
+2026-10-17T13:28:25.8779005Z [36;1mpython3 tools/test_current_round_guard.py[0m
+2026-10-17T13:28:25.8779461Z [36;1mpython3 tools/test_evidence_collection.py[0m
+2026-10-17T13:28:25.8779912Z [36;1mbash -n tools/signed_emulator_acceptance.sh[0m
+2026-10-17T13:28:25.8821127Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:28:25.8821512Z env:
+2026-10-17T13:28:25.8821924Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:25.8822511Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:25.8823042Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:28:25.8823453Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:28:25.8823863Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:28:25.8824253Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:28:25.8824838Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:28:25.8825400Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:28:25.8825817Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:28:25.8826175Z ##[endgroup]
+2026-10-17T13:28:26.4066478Z ........
+2026-10-17T13:28:26.4067841Z ----------------------------------------------------------------------
+2026-10-17T13:28:26.4069276Z Ran 8 tests in 0.468s
+2026-10-17T13:28:26.4069847Z 
+2026-10-17T13:28:26.4070576Z OK
+2026-10-17T13:28:26.5109494Z ......
+2026-10-17T13:28:26.5111306Z ----------------------------------------------------------------------
+2026-10-17T13:28:26.5112735Z Ran 6 tests in 0.007s
+2026-10-17T13:28:26.5113997Z 
+2026-10-17T13:28:26.5114511Z OK
+2026-10-17T13:28:28.0426310Z .............
+2026-10-17T13:28:28.0427780Z ----------------------------------------------------------------------
+2026-10-17T13:28:28.0429226Z Ran 13 tests in 1.472s
+2026-10-17T13:28:28.0429864Z 
+2026-10-17T13:28:28.0430627Z OK
+2026-10-17T13:28:28.0628871Z ##[group]Run set -o pipefail
+2026-10-17T13:28:28.0629447Z [36;1mset -o pipefail[0m
+2026-10-17T13:28:28.0629955Z [36;1mchmod +x gradlew[0m
+2026-10-17T13:28:28.0631152Z [36;1m./gradlew --no-daemon :core:test :app:testLocalBetaDebugUnitTest :app:lintLocalBetaDebug :app:assembleLocalBetaDebug :app:assembleLocalBetaDebugAndroidTest 2>&1 | tee evidence/android-ci-build.log[0m
+2026-10-17T13:28:28.0672752Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:28:28.0673270Z env:
+2026-10-17T13:28:28.0673876Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:28.0674622Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:28:28.0675328Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:28:28.0675844Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:28:28.0676411Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:28:28.0676925Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:28:28.0677724Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:28:28.0678433Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:28:28.0679024Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:28:28.0679553Z   SCORELEDGER_REQUIRE_INTERNAL_SIGNING: true
+2026-10-17T13:28:28.0680239Z   SCORELEDGER_INTERNAL_KEYSTORE: /home/runner/work/_temp/internal-beta.p12
+2026-10-17T13:28:28.0681162Z   SCORELEDGER_INTERNAL_STORE_PASSWORD: ***
+2026-10-17T13:28:28.0681922Z   SCORELEDGER_INTERNAL_KEY_PASSWORD: ***
+2026-10-17T13:28:28.0682540Z   SCORELEDGER_INTERNAL_KEY_ALIAS: ***
+2026-10-17T13:28:28.0683032Z ##[endgroup]
+2026-10-17T13:28:28.9759225Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-10-17T13:28:30.6758448Z Daemon will be stopped at the end of the build 
+2026-10-17T13:28:44.9769746Z > Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-10-17T13:28:44.9801470Z > Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+2026-10-17T13:28:44.9811851Z > Task :app:preBuild UP-TO-DATE
+2026-10-17T13:28:44.9861488Z > Task :app:preLocalBetaDebugBuild UP-TO-DATE
+2026-10-17T13:28:45.1763324Z > Task :app:generateLocalBetaDebugBuildConfig
+2026-10-17T13:28:46.0749374Z > Task :app:checkLocalBetaDebugAarMetadata
+2026-10-17T13:28:46.0771637Z > Task :core:processResources NO-SOURCE
+2026-10-17T13:28:46.1764449Z > Task :core:processTestResources NO-SOURCE
+2026-10-17T13:28:46.2753903Z > Task :app:processLocalBetaDebugNavigationResources
+2026-10-17T13:28:46.3741060Z > Task :app:compileLocalBetaDebugNavigationResources
+2026-10-17T13:28:46.3751955Z > Task :app:generateLocalBetaDebugResValues
+2026-10-17T13:28:46.4771881Z > Task :app:mapLocalBetaDebugSourceSetPaths
+2026-10-17T13:28:46.4801749Z > Task :app:generateLocalBetaDebugResources
+2026-10-17T13:28:50.3760012Z > Task :app:mergeLocalBetaDebugResources
+2026-10-17T13:28:50.3812141Z > Task :app:packageLocalBetaDebugResources
+2026-10-17T13:28:50.7762192Z > Task :app:parseLocalBetaDebugLocalResources
+2026-10-17T13:28:50.7811805Z > Task :app:createLocalBetaDebugCompatibleScreenManifests
+2026-10-17T13:28:50.8765556Z > Task :app:extractDeepLinksLocalBetaDebug
+2026-10-17T13:28:51.4741653Z > Task :app:processLocalBetaDebugMainManifest
+2026-10-17T13:28:51.7755709Z > Task :app:processLocalBetaDebugManifest
+2026-10-17T13:28:51.7781791Z > Task :app:processLocalBetaDebugManifestForPackage
+2026-10-17T13:28:52.9741828Z > Task :app:processLocalBetaDebugResources
+2026-10-17T13:28:53.0761685Z > Task :app:javaPreCompileLocalBetaDebug
+2026-10-17T13:28:53.0787081Z > Task :app:preLocalBetaDebugUnitTestBuild UP-TO-DATE
+2026-10-17T13:28:53.1791804Z > Task :app:javaPreCompileLocalBetaDebugUnitTest
+2026-10-17T13:28:53.1810659Z > Task :app:preLocalBetaDebugAndroidTestBuild SKIPPED
+2026-10-17T13:28:53.1851861Z > Task :app:generateLocalBetaDebugAndroidTestResValues
+2026-10-17T13:28:53.1871059Z > Task :app:extractProguardFiles
+2026-10-17T13:28:53.1910784Z > Task :app:mergeLocalBetaDebugNativeDebugMetadata NO-SOURCE
+2026-10-17T13:28:53.2771889Z > Task :app:mergeLocalBetaDebugShaders
+2026-10-17T13:28:53.2789793Z > Task :app:compileLocalBetaDebugShaders NO-SOURCE
+2026-10-17T13:28:53.2810952Z > Task :app:generateLocalBetaDebugAssets UP-TO-DATE
+2026-10-17T13:28:53.3748983Z > Task :app:mergeLocalBetaDebugAssets
+2026-10-17T13:28:53.3784938Z > Task :app:compressLocalBetaDebugAssets
+2026-10-17T13:28:53.6792355Z > Task :app:checkLocalBetaDebugDuplicateClasses
+2026-10-17T13:28:53.6830994Z > Task :app:desugarLocalBetaDebugFileDependencies
+2026-10-17T13:29:06.9801854Z > Task :core:compileKotlin
+2026-10-17T13:29:06.9822067Z > Task :core:compileJava NO-SOURCE
+2026-10-17T13:29:06.9841141Z > Task :core:classes UP-TO-DATE
+2026-10-17T13:29:07.1754865Z > Task :core:jar
+2026-10-17T13:29:11.2740310Z > Task :app:mergeExtDexLocalBetaDebug
+2026-10-17T13:29:15.4751767Z > Task :core:compileTestKotlin
+2026-10-17T13:29:15.4781852Z > Task :core:compileTestJava NO-SOURCE
+2026-10-17T13:29:15.4831416Z > Task :core:testClasses UP-TO-DATE
+2026-10-17T13:29:17.7777247Z > Task :core:test
+2026-10-17T13:29:20.5801767Z > Task :app:mergeLibDexLocalBetaDebug
+2026-10-17T13:29:20.6766107Z > Task :app:mergeLocalBetaDebugJniLibFolders
+2026-10-17T13:29:20.8740009Z > Task :app:mergeLocalBetaDebugNativeLibs
+2026-10-17T13:29:20.9772159Z 
+2026-10-17T13:29:20.9812009Z > Task :app:stripLocalBetaDebugDebugSymbols
+2026-10-17T13:29:20.9853805Z Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so. Run with --info option to learn more.
+2026-10-17T13:29:20.9872682Z 
+2026-10-17T13:29:20.9911715Z > Task :app:validateSigningLocalBetaDebug
+2026-10-17T13:29:20.9951127Z > Task :app:writeLocalBetaDebugAppMetadata
+2026-10-17T13:29:21.0775589Z > Task :app:writeLocalBetaDebugSigningConfigVersions
+2026-10-17T13:29:21.4741522Z > Task :app:processLocalBetaDebugAndroidTestManifest
+2026-10-17T13:29:21.4771857Z > Task :app:generateLocalBetaDebugAndroidTestBuildConfig
+2026-10-17T13:29:21.4821543Z > Task :app:checkLocalBetaDebugAndroidTestAarMetadata
+2026-10-17T13:29:21.5776163Z > Task :app:processLocalBetaDebugAndroidTestNavigationResources
+2026-10-17T13:29:21.5838284Z > Task :app:compileLocalBetaDebugAndroidTestNavigationResources
+2026-10-17T13:29:21.5856971Z > Task :app:mapLocalBetaDebugAndroidTestSourceSetPaths
+2026-10-17T13:29:21.5891765Z > Task :app:generateLocalBetaDebugAndroidTestResources
+2026-10-17T13:29:22.6756508Z > Task :app:mergeLocalBetaDebugAndroidTestResources
+2026-10-17T13:29:23.2754934Z > Task :app:processLocalBetaDebugAndroidTestResources
+2026-10-17T13:29:23.2782941Z > Task :app:javaPreCompileLocalBetaDebugAndroidTest
+2026-10-17T13:29:23.2821710Z > Task :app:mergeLocalBetaDebugAndroidTestShaders
+2026-10-17T13:29:23.2855649Z > Task :app:compileLocalBetaDebugAndroidTestShaders NO-SOURCE
+2026-10-17T13:29:23.2921102Z > Task :app:generateLocalBetaDebugAndroidTestAssets UP-TO-DATE
+2026-10-17T13:29:23.3782043Z > Task :app:mergeLocalBetaDebugAndroidTestAssets
+2026-10-17T13:29:23.4744393Z > Task :app:compressLocalBetaDebugAndroidTestAssets
+2026-10-17T13:29:23.5783123Z > Task :app:checkLocalBetaDebugAndroidTestDuplicateClasses
+2026-10-17T13:29:23.6769078Z > Task :app:desugarLocalBetaDebugAndroidTestFileDependencies
+2026-10-17T13:29:25.1763543Z > Task :app:mergeExtDexLocalBetaDebugAndroidTest
+2026-10-17T13:29:25.2752499Z > Task :app:mergeLibDexLocalBetaDebugAndroidTest
+2026-10-17T13:29:25.2782658Z > Task :app:mergeLocalBetaDebugAndroidTestJniLibFolders
+2026-10-17T13:29:25.3772227Z > Task :app:mergeLocalBetaDebugAndroidTestNativeLibs NO-SOURCE
+2026-10-17T13:29:25.3812143Z > Task :app:stripLocalBetaDebugAndroidTestDebugSymbols NO-SOURCE
+2026-10-17T13:29:25.3831816Z > Task :app:validateSigningLocalBetaDebugAndroidTest
+2026-10-17T13:29:25.3871694Z > Task :app:writeLocalBetaDebugAndroidTestSigningConfigVersions
+2026-10-17T13:29:37.6741816Z > Task :app:kaptGenerateStubsLocalBetaDebugKotlin
+2026-10-17T13:29:42.5743782Z > Task :app:kaptLocalBetaDebugKotlin
+2026-10-17T13:30:03.5751759Z > Task :app:compileLocalBetaDebugKotlin
+2026-10-17T13:30:06.0745692Z > Task :app:compileLocalBetaDebugJavaWithJavac
+2026-10-17T13:30:06.1771075Z > Task :app:bundleLocalBetaDebugClassesToRuntimeJar
+2026-10-17T13:30:06.1811896Z > Task :app:bundleLocalBetaDebugClassesToCompileJar
+2026-10-17T13:30:06.1812967Z > Task :app:processLocalBetaDebugJavaRes
+2026-10-17T13:30:06.7794239Z > Task :app:generateLocalBetaDebugAndroidTestLintModel
+2026-10-17T13:30:06.8753771Z > Task :app:generateLocalBetaDebugLintReportModel
+2026-10-17T13:30:06.9739237Z > Task :app:generateLocalBetaDebugUnitTestLintModel
+2026-10-17T13:30:07.9750889Z > Task :app:kaptGenerateStubsLocalBetaDebugUnitTestKotlin
+2026-10-17T13:30:08.6770836Z 
+2026-10-17T13:30:08.6834102Z > Task :app:kaptLocalBetaDebugUnitTestKotlin
+2026-10-17T13:30:08.6841804Z warning: The following options were not recognized by any processor: '[room.schemaLocation, kapt.kotlin.generated]'
+2026-10-17T13:30:11.2750427Z 
+2026-10-17T13:30:11.2761877Z > Task :app:compileLocalBetaDebugUnitTestKotlin
+2026-10-17T13:30:11.2781400Z > Task :app:compileLocalBetaDebugUnitTestJavaWithJavac NO-SOURCE
+2026-10-17T13:30:11.2811283Z > Task :app:processLocalBetaDebugUnitTestJavaRes
+2026-10-17T13:30:17.2739428Z > Task :app:testLocalBetaDebugUnitTest
+2026-10-17T13:30:36.9742972Z > Task :app:lintAnalyzeLocalBetaDebug
+2026-10-17T13:30:47.2772243Z > Task :app:lintAnalyzeLocalBetaDebugAndroidTest
+2026-10-17T13:31:36.3738988Z > Task :app:lintAnalyzeLocalBetaDebugUnitTest
+2026-10-17T13:31:50.8754525Z > Task :app:dexBuilderLocalBetaDebug
+2026-10-17T13:31:51.0739136Z > Task :app:mergeLocalBetaDebugGlobalSynthetics
+2026-10-17T13:31:52.5742106Z > Task :app:mergeLocalBetaDebugJavaResource
+2026-10-17T13:31:53.3741642Z > Task :app:mergeProjectDexLocalBetaDebug
+2026-10-17T13:31:55.2761768Z > Task :app:packageLocalBetaDebug
+2026-10-17T13:31:55.2781728Z > Task :app:createLocalBetaDebugApkListingFileRedirect
+2026-10-17T13:31:55.2849681Z > Task :app:assembleLocalBetaDebug
+2026-10-17T13:31:59.8800999Z 
+2026-10-17T13:31:59.8811926Z > Task :app:lintReportLocalBetaDebug
+2026-10-17T13:31:59.8834916Z Wrote HTML report to file:///home/runner/work/scoreledger-android/scoreledger-android/app/build/reports/lint-results-localBetaDebug.html
+2026-10-17T13:31:59.8860769Z 
+2026-10-17T13:31:59.8881599Z > Task :app:lintLocalBetaDebug
+2026-10-17T13:32:06.4789129Z > Task :app:kaptGenerateStubsLocalBetaDebugAndroidTestKotlin
+2026-10-17T13:32:07.3738901Z 
+2026-10-17T13:32:07.3781662Z > Task :app:kaptLocalBetaDebugAndroidTestKotlin
+2026-10-17T13:32:07.3822103Z warning: The following options were not recognized by any processor: '[room.schemaLocation, kapt.kotlin.generated]'
+2026-10-17T13:32:20.7748732Z 
+2026-10-17T13:32:20.7758321Z > Task :app:compileLocalBetaDebugAndroidTestKotlin
+2026-10-17T13:32:20.7786036Z w: file:///home/runner/work/scoreledger-android/scoreledger-android/app/src/androidTest/java/com/example/scoreledger/ShareUriGrantTest.kt:64:45 'fun <T : Parcelable!> getParcelableExtra(p0: String!): T?' is deprecated. Deprecated in Java.
+2026-10-17T13:32:20.7833698Z w: file:///home/runner/work/scoreledger-android/scoreledger-android/app/src/androidTest/java/com/example/scoreledger/ShareUriGrantTest.kt:66:41 'fun <T : Parcelable!> getParcelableExtra(p0: String!): T?' is deprecated. Deprecated in Java.
+2026-10-17T13:32:20.7854948Z w: file:///home/runner/work/scoreledger-android/scoreledger-android/app/src/androidTest/java/com/example/scoreledger/TrendHistoryAcceptanceTest.kt:99:102 Type argument for reified type parameter 'T' was inferred to the intersection of ['Comparable<*>' & 'Serializable']. Reification of an intersection type results in the common supertype being used. This may lead to subtle issues and an explicit type argument is encouraged. This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KT-71420.
+2026-10-17T13:32:21.4737825Z 
+2026-10-17T13:32:21.4761870Z > Task :app:compileLocalBetaDebugAndroidTestJavaWithJavac
+2026-10-17T13:32:21.4827211Z Note: /home/runner/work/scoreledger-android/scoreledger-android/app/src/androidTest/java/com/example/scoreledger/ShareGrantReceiverActivity.java uses or overrides a deprecated API.
+2026-10-17T13:32:21.4900784Z Note: Recompile with -Xlint:deprecation for details.
+2026-10-17T13:32:28.7746826Z 
+2026-10-17T13:32:28.7854234Z > Task :app:dexBuilderLocalBetaDebugAndroidTest
+2026-10-17T13:32:28.7871636Z > Task :app:mergeLocalBetaDebugAndroidTestGlobalSynthetics
+2026-10-17T13:32:28.7927510Z > Task :app:processLocalBetaDebugAndroidTestJavaRes
+2026-10-17T13:32:29.0751864Z > Task :app:mergeLocalBetaDebugAndroidTestJavaResource
+2026-10-17T13:32:29.2738898Z > Task :app:mergeProjectDexLocalBetaDebugAndroidTest
+2026-10-17T13:32:29.4738767Z > Task :app:packageLocalBetaDebugAndroidTest
+2026-10-17T13:32:29.4762043Z > Task :app:createLocalBetaDebugAndroidTestApkListingFileRedirect
+2026-10-17T13:32:29.4781845Z > Task :app:assembleLocalBetaDebugAndroidTest
+2026-10-17T13:32:29.5752625Z gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_5-1792243713178.json
+2026-10-17T13:32:29.5800640Z 
+2026-10-17T13:32:29.5814723Z [Incubating] Problems report is available at: file:///home/runner/work/scoreledger-android/scoreledger-android/build/reports/problems/problems-report.html
+2026-10-17T13:32:29.5850738Z 
+2026-10-17T13:32:29.5871458Z BUILD SUCCESSFUL in 4m 1s
+2026-10-17T13:32:29.5891480Z 94 actionable tasks: 94 executed
+2026-10-17T13:32:30.0041441Z ##[group]Run set -euo pipefail
+2026-10-17T13:32:30.0042100Z [36;1mset -euo pipefail[0m
+2026-10-17T13:32:30.0042624Z [36;1mSDK_ROOT="${ANDROID_SDK_ROOT:-${ANDROID_HOME:-}}"[0m
+2026-10-17T13:32:30.0043669Z [36;1m"$SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/localBeta/debug/app-localBeta-debug.apk | tee evidence/internal-signature.txt[0m
+2026-10-17T13:32:30.0044980Z [36;1mgrep -Fxi 'Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c' evidence/internal-signature.txt[0m
+2026-10-17T13:32:30.0046407Z [36;1m"$SDK_ROOT/build-tools/35.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/androidTest/localBeta/debug/app-localBeta-debug-androidTest.apk | tee evidence/internal-test-signature.txt[0m
+2026-10-17T13:32:30.0047870Z [36;1mgrep -Fxi 'Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c' evidence/internal-test-signature.txt[0m
+2026-10-17T13:32:30.0134492Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:32:30.0135201Z env:
+2026-10-17T13:32:30.0135740Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:30.0136514Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:30.0137201Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:32:30.0137757Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:32:30.0138382Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:32:30.0138918Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:32:30.0139598Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:32:30.0140598Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:32:30.0141180Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:32:30.0141722Z ##[endgroup]
+2026-10-17T13:32:30.6337555Z Verifies
+2026-10-17T13:32:30.6361255Z Verified using v1 scheme (JAR signing): false
+2026-10-17T13:32:30.6381626Z Verified using v2 scheme (APK Signature Scheme v2): true
+2026-10-17T13:32:30.6383830Z Verified using v3 scheme (APK Signature Scheme v3): false
+2026-10-17T13:32:30.6411976Z Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+2026-10-17T13:32:30.6413698Z Verified using v4 scheme (APK Signature Scheme v4): false
+2026-10-17T13:32:30.6417979Z Verified for SourceStamp: false
+2026-10-17T13:32:30.6441242Z Number of signers: 1
+2026-10-17T13:32:30.6442843Z Signer #1 certificate DN: CN=ScoreLedger INTERNAL-BETA, OU=Internal Testing Only, O=ScoreLedger
+2026-10-17T13:32:30.6445796Z Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c
+2026-10-17T13:32:30.6447140Z Signer #1 certificate SHA-1 digest: d3ce2b84c0c09e4d3235d1f784deae8e8e9eb5e8
+2026-10-17T13:32:30.6448384Z Signer #1 certificate MD5 digest: 9080d6977fa73dd78e38d1ffaa36277e
+2026-10-17T13:32:30.6449289Z Signer #1 key algorithm: RSA
+2026-10-17T13:32:30.6450438Z Signer #1 key size (bits): 4096
+2026-10-17T13:32:30.6451655Z Signer #1 public key SHA-256 digest: 82686ea5324cfaff97f14ee06ebd621d36496f53986abbff5de7cc652775d526
+2026-10-17T13:32:30.6452957Z Signer #1 public key SHA-1 digest: 5f5d2e4b259418e9a2757c7ca8ba23571d8af7d3
+2026-10-17T13:32:30.6454087Z Signer #1 public key MD5 digest: e0dffd62b1064eb4b75dc4221bac422c
+2026-10-17T13:32:30.6567452Z Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c
+2026-10-17T13:32:30.9782707Z Verifies
+2026-10-17T13:32:30.9800815Z Verified using v1 scheme (JAR signing): false
+2026-10-17T13:32:30.9821682Z Verified using v2 scheme (APK Signature Scheme v2): true
+2026-10-17T13:32:30.9841394Z Verified using v3 scheme (APK Signature Scheme v3): false
+2026-10-17T13:32:30.9868569Z Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+2026-10-17T13:32:30.9870709Z Verified using v4 scheme (APK Signature Scheme v4): false
+2026-10-17T13:32:30.9871840Z Verified for SourceStamp: false
+2026-10-17T13:32:30.9873152Z Number of signers: 1
+2026-10-17T13:32:30.9874305Z Signer #1 certificate DN: CN=ScoreLedger INTERNAL-BETA, OU=Internal Testing Only, O=ScoreLedger
+2026-10-17T13:32:30.9875737Z Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c
+2026-10-17T13:32:30.9877005Z Signer #1 certificate SHA-1 digest: d3ce2b84c0c09e4d3235d1f784deae8e8e9eb5e8
+2026-10-17T13:32:30.9878087Z Signer #1 certificate MD5 digest: 9080d6977fa73dd78e38d1ffaa36277e
+2026-10-17T13:32:30.9878873Z Signer #1 key algorithm: RSA
+2026-10-17T13:32:30.9879573Z Signer #1 key size (bits): 4096
+2026-10-17T13:32:30.9880711Z Signer #1 public key SHA-256 digest: 82686ea5324cfaff97f14ee06ebd621d36496f53986abbff5de7cc652775d526
+2026-10-17T13:32:30.9881518Z Signer #1 public key SHA-1 digest: 5f5d2e4b259418e9a2757c7ca8ba23571d8af7d3
+2026-10-17T13:32:30.9882219Z Signer #1 public key MD5 digest: e0dffd62b1064eb4b75dc4221bac422c
+2026-10-17T13:32:31.0027481Z Signer #1 certificate SHA-256 digest: bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c
+2026-10-17T13:32:31.0077526Z ##[group]Run rm -f "$RUNNER_TEMP/internal-beta.p12"
+2026-10-17T13:32:31.0078187Z [36;1mrm -f "$RUNNER_TEMP/internal-beta.p12"[0m
+2026-10-17T13:32:31.0120943Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:32:31.0121548Z env:
+2026-10-17T13:32:31.0122108Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.0122838Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.0123553Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:32:31.0124080Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:32:31.0124633Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:32:31.0125155Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:32:31.0125857Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:32:31.0126595Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:32:31.0127142Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:32:31.0127800Z ##[endgroup]
+2026-10-17T13:32:31.0252182Z ##[group]Run python3 tools/collect_artifacts.py app/build/outputs/apk/localBeta/debug/app-localBeta-debug.apk
+2026-10-17T13:32:31.0253364Z [36;1mpython3 tools/collect_artifacts.py app/build/outputs/apk/localBeta/debug/app-localBeta-debug.apk[0m
+2026-10-17T13:32:31.0294427Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:32:31.0294900Z env:
+2026-10-17T13:32:31.0295553Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.0296306Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.0296927Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:32:31.0297600Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:32:31.0298094Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:32:31.0298643Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:32:31.0299352Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:32:31.0300224Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:32:31.0300812Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:32:31.0301294Z ##[endgroup]
+2026-10-17T13:32:31.2614242Z {
+2026-10-17T13:32:31.2615517Z   "file": "app-localBeta-debug.apk",
+2026-10-17T13:32:31.2616681Z   "sizeBytes": 11587090,
+2026-10-17T13:32:31.2617914Z   "sha256": "2f39a2daaa08ee34d29ab5030309fac57ed2e529406c1233c7877521cc5d2f02",
+2026-10-17T13:32:31.2618957Z   "collectedAt": "2026-10-17T13:32:31.260842+00:00",
+2026-10-17T13:32:31.2619800Z   "installation": "NOT_VERIFIED",
+2026-10-17T13:32:31.2620837Z   "signature": "NOT_VERIFIED",
+2026-10-17T13:32:31.2621531Z   "billing": "NOT_VERIFIED",
+2026-10-17T13:32:31.2622520Z   "note": "Use apkanalyzer/aapt and apksigner, then record real device installation separately."
+2026-10-17T13:32:31.2623565Z }
+2026-10-17T13:32:31.2741310Z ##[group]Run cp evidence/internal-signature.txt out/internal-signature.txt
+2026-10-17T13:32:31.2742540Z [36;1mcp evidence/internal-signature.txt out/internal-signature.txt[0m
+2026-10-17T13:32:31.2743503Z [36;1mpython3 - <<'PYMETA'[0m
+2026-10-17T13:32:31.2744200Z [36;1mimport json, pathlib[0m
+2026-10-17T13:32:31.2745069Z [36;1mfor path in pathlib.Path('out').glob('*.metadata.json'):[0m
+2026-10-17T13:32:31.2746007Z [36;1m    data=json.loads(path.read_text())[0m
+2026-10-17T13:32:31.2746927Z [36;1m    data['signature']='VERIFIED_BY_APKSIGNER_FIXED_INTERNAL_BETA'[0m
+2026-10-17T13:32:31.2748178Z [36;1m    data['certificateSha256']='bc67f6b0ccff15581b5c08ca90df4d877c4067e3ed33bd183caa071b93954e1c'[0m
+2026-10-17T13:32:31.2749670Z [36;1m    data['note']='Signature verified in CI. Installation, usage and upgrade remain separately verified.'[0m
+2026-10-17T13:32:31.2751287Z [36;1m    path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n')[0m
+2026-10-17T13:32:31.2752341Z [36;1mPYMETA[0m
+2026-10-17T13:32:31.2809349Z shell: /usr/bin/bash -e {0}
+2026-10-17T13:32:31.2810261Z env:
+2026-10-17T13:32:31.2810921Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.2811707Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.2812359Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:32:31.2812926Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:32:31.2813479Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:32:31.2814009Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:32:31.2814691Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:32:31.2815403Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:32:31.2815983Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:32:31.2816488Z ##[endgroup]
+2026-10-17T13:32:31.3316073Z ##[group]Run actions/upload-artifact@v4
+2026-10-17T13:32:31.3316744Z with:
+2026-10-17T13:32:31.3317439Z   name: scoreledger-internal-apk
+2026-10-17T13:32:31.3318105Z   path: out/
+2026-10-17T13:32:31.3318727Z   if-no-files-found: error
+2026-10-17T13:32:31.3319402Z   retention-days: 14
+2026-10-17T13:32:31.3320033Z   compression-level: 6
+2026-10-17T13:32:31.3320974Z   overwrite: false
+2026-10-17T13:32:31.3321577Z   include-hidden-files: false
+2026-10-17T13:32:31.3322576Z env:
+2026-10-17T13:32:31.3323295Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.3324364Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:31.3325376Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:32:31.3326104Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:32:31.3326869Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:32:31.3327592Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:32:31.3328751Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:32:31.3329794Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:32:31.3330880Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:32:31.3331725Z ##[endgroup]
+2026-10-17T13:32:31.5823668Z (node:2907) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-17T13:32:31.5839522Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-17T13:32:31.5951205Z With the provided path, there will be 3 files uploaded
+2026-10-17T13:32:31.5971756Z Artifact name is valid!
+2026-10-17T13:32:31.5991045Z Root directory input is valid!
+2026-10-17T13:32:31.8943485Z Beginning upload of artifact content to blob storage
+2026-10-17T13:32:32.2083760Z (node:2907) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-17T13:32:32.6339442Z Uploaded bytes 8388608
+2026-10-17T13:32:32.7084721Z Uploaded bytes 11118709
+2026-10-17T13:32:32.7489450Z Finished uploading artifact content to blob storage!
+2026-10-17T13:32:32.7492032Z SHA256 digest of uploaded artifact zip is 66fd7abf234e216535dc0308f41a8ab324e22cba3d8d816e74726c46612b974b
+2026-10-17T13:32:32.7495043Z Finalizing artifact upload
+2026-10-17T13:32:33.0058233Z Artifact scoreledger-internal-apk.zip successfully finalized. Artifact ID 12102089642
+2026-10-17T13:32:33.0059716Z Artifact scoreledger-internal-apk has been successfully uploaded! Final size is 11118709 bytes. Artifact ID is 12102089642
+2026-10-17T13:32:33.0066717Z Artifact download URL: https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565/artifacts/12102089642
+2026-10-17T13:32:33.0240662Z ##[group]Run actions/upload-artifact@v4
+2026-10-17T13:32:33.0241514Z with:
+2026-10-17T13:32:33.0242179Z   name: android-test-reports
+2026-10-17T13:32:33.0244309Z   path: core/build/reports/
+core/build/test-results/
+app/build/test-results/
+app/schemas/
+evidence/android-ci-build.log
+evidence/internal-signature.txt
+evidence/internal-test-signature.txt
+app/build/outputs/apk/androidTest/
+evidence/emulator-*
+evidence/android-instrumentation.log
+app/build/reports/
+
+2026-10-17T13:32:33.0246399Z   if-no-files-found: warn
+2026-10-17T13:32:33.0247090Z   retention-days: 14
+2026-10-17T13:32:33.0247758Z   compression-level: 6
+2026-10-17T13:32:33.0248468Z   overwrite: false
+2026-10-17T13:32:33.0249110Z   include-hidden-files: false
+2026-10-17T13:32:33.0249794Z env:
+2026-10-17T13:32:33.0250956Z   JAVA_HOME: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:33.0252077Z   JAVA_HOME_17_X64: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.20-1/x64
+2026-10-17T13:32:33.0253184Z   GRADLE_ACTION_ID: gradle/actions/setup-gradle
+2026-10-17T13:32:33.0254004Z   GRADLE_USER_HOME: /home/runner/.gradle
+2026-10-17T13:32:33.0254748Z   GRADLE_BUILD_ACTION_SETUP_COMPLETED: true
+2026-10-17T13:32:33.0255490Z   GRADLE_BUILD_ACTION_CACHE_RESTORED: true
+2026-10-17T13:32:33.0256413Z   DEVELOCITY_INJECTION_INIT_SCRIPT_NAME: gradle-actions.inject-develocity.init.gradle
+2026-10-17T13:32:33.0257527Z   DEVELOCITY_INJECTION_CUSTOM_VALUE: gradle-actions
+2026-10-17T13:32:33.0258382Z   GITHUB_DEPENDENCY_GRAPH_ENABLED: false
+2026-10-17T13:32:33.0259052Z ##[endgroup]
+2026-10-17T13:32:33.2104474Z (node:2919) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-17T13:32:33.2106480Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-17T13:32:33.2797706Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-17T13:32:33.2803082Z The least common ancestor is /home/runner/work/scoreledger-android/scoreledger-android. This will be the root directory of the artifact
+2026-10-17T13:32:33.2804847Z With the provided path, there will be 40 files uploaded
+2026-10-17T13:32:33.2806374Z Artifact name is valid!
+2026-10-17T13:32:33.2807299Z Root directory input is valid!
+2026-10-17T13:32:33.5667658Z Beginning upload of artifact content to blob storage
+2026-10-17T13:32:33.6982554Z (node:2919) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-17T13:32:34.0316855Z Uploaded bytes 1579779
+2026-10-17T13:32:34.0792288Z Finished uploading artifact content to blob storage!
+2026-10-17T13:32:34.0794014Z SHA256 digest of uploaded artifact zip is 5871769bc70fa35cb1e53db8f0033bed1b6df05091d7abdd26ca0380799f651c
+2026-10-17T13:32:34.0795703Z Finalizing artifact upload
+2026-10-17T13:32:34.3439708Z Artifact android-test-reports.zip successfully finalized. Artifact ID 12102826075
+2026-10-17T13:32:34.3441957Z Artifact android-test-reports has been successfully uploaded! Final size is 1579779 bytes. Artifact ID is 12102826075
+2026-10-17T13:32:34.3443922Z Artifact download URL: https://github.com/peterpeter228/scoreledger-android/actions/runs/39036648565/artifacts/12102826075
+2026-10-17T13:32:34.3680470Z Post job cleanup.
+2026-10-17T13:32:34.6872137Z In post-action step
+2026-10-17T13:32:34.6890406Z ##[group]Stopping Gradle daemons
+2026-10-17T13:32:34.7213850Z Stopping Gradle daemons for /home/runner/.gradle/wrapper/dists/gradle-8.13-bin/5xuhj0ry160q40clulazy9h7d/gradle-8.13
+2026-10-17T13:32:34.7284631Z [command]/home/runner/.gradle/wrapper/dists/gradle-8.13-bin/5xuhj0ry160q40clulazy9h7d/gradle-8.13/bin/gradle --stop
+2026-10-17T13:32:35.6825460Z No Gradle daemons are running.
+2026-10-17T13:32:35.7033581Z ##[endgroup]
+2026-10-17T13:32:35.7051671Z ##[group]Provision Gradle >= 8.13
+2026-10-17T13:32:36.4767557Z Gradle version 8.13 is available at /home/runner/work/_temp/.gradle-actions/gradle-installations/installs/gradle-8.13/bin/gradle and >= 8.13. Not installing.
+2026-10-17T13:32:36.4769544Z ##[endgroup]
+2026-10-17T13:32:36.4778314Z ##[group]Executing Gradle to clean up caches
+2026-10-17T13:32:36.4779150Z Cleaning up caches last used before 1792243674729
+2026-10-17T13:32:36.4803563Z [command]/home/runner/work/_temp/.gradle-actions/gradle-installations/installs/gradle-8.13/bin/gradle -g /home/runner/.gradle -I init.gradle --info --no-daemon --no-scan --build-cache -DGITHUB_DEPENDENCY_GRAPH_ENABLED=false -DGRADLE_ACTIONS_SKIP_BUILD_RESULT_CAPTURE=true noop
+2026-10-17T13:32:37.1501281Z Initialized native services in: /home/runner/.gradle/native
+2026-10-17T13:32:37.1541641Z Initialized jansi services in: /home/runner/.gradle/native
+2026-10-17T13:32:37.3792975Z To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.13/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+2026-10-17T13:32:37.4820013Z Starting process 'Gradle build daemon'. Working directory: /home/runner/.gradle/daemon/8.13 Command: /usr/lib/jvm/temurin-17-jdk-amd64/bin/java --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED --add-opens=java.base/java.nio.charset=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.xml/javax.xml.namespace=ALL-UNNAMED -XX:MaxMetaspaceSize=384m -XX:+HeapDumpOnOutOfMemoryError -Xms256m -Xmx512m -Dfile.encoding=UTF-8 -Duser.country -Duser.language=en -Duser.variant -cp /home/runner/work/_temp/.gradle-actions/gradle-installations/installs/gradle-8.13/lib/gradle-daemon-main-8.13.jar -javaagent:/home/runner/work/_temp/.gradle-actions/gradle-installations/installs/gradle-8.13/lib/agents/gradle-instrumentation-agent-8.13.jar org.gradle.launcher.daemon.bootstrap.GradleDaemon 8.13
+2026-10-17T13:32:37.4851160Z Successfully started process 'Gradle build daemon'
+2026-10-17T13:32:38.7792230Z An attempt to start the daemon took 1.353 secs.
+2026-10-17T13:32:38.9778237Z The client will now receive all logging from the daemon (pid: 3043). The daemon log file: /home/runner/.gradle/daemon/8.13/daemon-3043.out.log
+2026-10-17T13:32:38.9779391Z Daemon will be stopped at the end of the build 
+2026-10-17T13:32:39.3790709Z Using 2 worker leases.
+2026-10-17T13:32:39.5776789Z Received JVM installation metadata from '/usr/lib/jvm/temurin-17-jdk-amd64': {JAVA_HOME=/usr/lib/jvm/temurin-17-jdk-amd64, JAVA_VERSION=17.0.20.1, JAVA_VENDOR=Eclipse Adoptium, RUNTIME_NAME=OpenJDK Runtime Environment, RUNTIME_VERSION=17.0.20.1+1, VM_NAME=OpenJDK 64-Bit Server VM, VM_VERSION=17.0.20.1+1, VM_VENDOR=Eclipse Adoptium, OS_ARCH=amd64}
+2026-10-17T13:32:40.0801788Z Watching the file system is configured to be enabled if available
+2026-10-17T13:32:40.0821602Z Now considering [/home/runner/work/_temp/dummy-cleanup-project] as hierarchies to watch
+2026-10-17T13:32:40.0831970Z File system watching is active
+2026-10-17T13:32:40.2791873Z Caching disabled for Groovy DSL script compilation (cp_init) because:
+2026-10-17T13:32:40.2811099Z   Build cache is disabled
+2026-10-17T13:32:40.2831199Z   Not worth caching.
+2026-10-17T13:32:40.2851507Z Compiling initialization script '/home/runner/work/_temp/dummy-cleanup-project/init.gradle' using SubsetScriptTransformer.
+2026-10-17T13:32:41.1779786Z Caching disabled for Groovy DSL script compilation (init) because:
+2026-10-17T13:32:41.1796274Z   Build cache is disabled
+2026-10-17T13:32:41.1821215Z   Not worth caching.
+2026-10-17T13:32:41.1831499Z Compiling initialization script '/home/runner/work/_temp/dummy-cleanup-project/init.gradle' using BuildScriptTransformer.
+2026-10-17T13:32:42.0811370Z gradle/actions: Not capturing build results
+2026-10-17T13:32:42.3773454Z Starting Build
+2026-10-17T13:32:42.4788347Z Settings evaluated using settings file '/home/runner/work/_temp/dummy-cleanup-project/settings.gradle'.
+2026-10-17T13:32:42.7772129Z Using local directory build cache for the root build (location = /home/runner/.gradle/caches/build-cache-1, remove unused entries = older than 2026-10-17 13:27:54 UTC).
+2026-10-17T13:32:42.7791729Z Projects loaded. Root project using build file '/home/runner/work/_temp/dummy-cleanup-project/build.gradle'.
+2026-10-17T13:32:42.8791643Z Included projects: [root project 'dummy-cleanup-project']
+2026-10-17T13:32:43.2781080Z 
+2026-10-17T13:32:43.2812426Z > Configure project :
+2026-10-17T13:32:43.2831846Z Evaluating root project 'dummy-cleanup-project' using build file '/home/runner/work/_temp/dummy-cleanup-project/build.gradle'.
+2026-10-17T13:32:43.2853132Z All projects evaluated.
+2026-10-17T13:32:43.2890885Z Task name matched 'noop'
+2026-10-17T13:32:43.2891482Z Selected primary task 'noop' from project :
+2026-10-17T13:32:43.2911404Z Tasks to be executed: [task ':noop']
+2026-10-17T13:32:43.2912273Z Tasks that were excluded: []
+2026-10-17T13:32:43.2913138Z Resolve mutations for :noop (Thread[Execution worker,5,main]) started.
+2026-10-17T13:32:43.3795460Z :noop (Thread[included builds,5,main]) started.
+2026-10-17T13:32:43.3796263Z 
+2026-10-17T13:32:43.3796655Z > Task :noop UP-TO-DATE
+2026-10-17T13:32:43.3797251Z Skipping task ':noop' as it has no actions.
+2026-10-17T13:32:43.3797788Z 
+2026-10-17T13:32:43.3798068Z BUILD SUCCESSFUL in 6s
+2026-10-17T13:32:43.3799406Z Build cache (/home/runner/.gradle/caches/build-cache-1) removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.3801021Z Build cache (/home/runner/.gradle/caches/build-cache-1) cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.3802025Z Build cache (/home/runner/.gradle/caches/build-cache-1) cleaned up in 0.003 secs.
+2026-10-17T13:32:43.3803206Z Artifact transforms cache (/home/runner/.gradle/caches/8.13/transforms) removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.6783288Z Artifact transforms cache (/home/runner/.gradle/caches/8.13/transforms) cleanup deleted 3 files/directories.
+2026-10-17T13:32:43.6788900Z Artifact transforms cache (/home/runner/.gradle/caches/8.13/transforms) cleaned up in 0.243 secs.
+2026-10-17T13:32:43.6790596Z dependencies-accessors (/home/runner/.gradle/caches/8.13/dependencies-accessors) removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.6792132Z dependencies-accessors (/home/runner/.gradle/caches/8.13/dependencies-accessors) cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6793325Z dependencies-accessors (/home/runner/.gradle/caches/8.13/dependencies-accessors) cleaned up in 0.0 secs.
+2026-10-17T13:32:43.6794021Z jars (/home/runner/.gradle/caches/jars-9) cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6794712Z jars (/home/runner/.gradle/caches/jars-9) removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.6795398Z jars (/home/runner/.gradle/caches/jars-9) cleanup deleted 1 files/directories.
+2026-10-17T13:32:43.6796153Z jars (/home/runner/.gradle/caches/jars-9) cleaned up in 0.01 secs.
+2026-10-17T13:32:43.6797617Z groovy-dsl (/home/runner/.gradle/caches/8.13/groovy-dsl) removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.6798754Z groovy-dsl (/home/runner/.gradle/caches/8.13/groovy-dsl) cleanup deleted 2 files/directories.
+2026-10-17T13:32:43.6799792Z groovy-dsl (/home/runner/.gradle/caches/8.13/groovy-dsl) cleaned up in 0.007 secs.
+2026-10-17T13:32:43.6821650Z artifact cache (/home/runner/.gradle/caches/modules-2) cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6822980Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/resources-2.1] cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6824839Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/resources-2.1] removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.6826489Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/resources-2.1] cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6827849Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/files-2.1] cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6829333Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/files-2.1] removing files not accessed on or after Sat Oct 17 13:27:54 UTC 2026.
+2026-10-17T13:32:43.6834230Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/files-2.1] cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6835705Z artifact cache (/home/runner/.gradle/caches/modules-2) [subdir: /home/runner/.gradle/caches/modules-2/metadata-2.107] cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6836969Z artifact cache (/home/runner/.gradle/caches/modules-2) cleanup deleted 0 files/directories.
+2026-10-17T13:32:43.6837925Z artifact cache (/home/runner/.gradle/caches/modules-2) cleaned up in 0.019 secs.
+2026-10-17T13:32:43.7736210Z ##[endgroup]
+2026-10-17T13:32:43.7737313Z ##[group]Caching Gradle state
+2026-10-17T13:32:44.3920418Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --files-from manifest.txt --use-compress-program zstdmt
+2026-10-17T13:32:44.4242698Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --files-from manifest.txt --use-compress-program zstdmt
+2026-10-17T13:32:44.8055671Z Sent 76708 of 76708 (100.0%), 0.3 MBs/sec
+2026-10-17T13:32:44.8882013Z Sent 119517 of 119517 (100.0%), 0.4 MBs/sec
+2026-10-17T13:32:45.0592398Z Saved cache entry with key gradle-instrumented-jars-v1-67cd96e8cb2800afe216c34d5416ee58 from /home/runner/.gradle/caches/jars-*/*/ in 920ms
+2026-10-17T13:32:45.0892559Z Saved cache entry with key gradle-groovy-dsl-v1-2dba017d2336b76d381623d706ea3088 from /home/runner/.gradle/caches/*/groovy-dsl/*/ in 687ms
+2026-10-17T13:32:45.3847785Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --files-from manifest.txt --use-compress-program zstdmt
+2026-10-17T13:32:48.6221872Z Sent 14768980 of 148986708 (9.9%), 14.1 MBs/sec
+2026-10-17T13:32:48.9419729Z Sent 148986708 of 148986708 (100.0%), 107.1 MBs/sec
+2026-10-17T13:32:49.1460570Z Saved cache entry with key gradle-transforms-v1-48fdd3a0e1e8959a9e91e673320cc580 from /home/runner/.gradle/caches/transforms-4/*/,/home/runner/.gradle/caches/*/transforms/*/ in 4305ms
+2026-10-17T13:32:50.4552176Z [command]/usr/bin/tar --posix -cf cache.tzst --exclude cache.tzst -P -C /home/runner/work/scoreledger-android/scoreledger-android --files-from manifest.txt --use-compress-program zstdmt
+2026-10-17T13:32:51.3076132Z Sent 3756249 of 3756249 (100.0%), 8.5 MBs/sec
+2026-10-17T13:32:51.4648659Z Saved cache entry with key gradle-home-v1|Linux-X64|internal-apk[c45e87c217d38ecda81daca63486158a]-f673e787500d8754463b919b91e236eae643eb97 from /home/runner/.gradle/caches,/home/runner/.gradle/notifications,/home/runner/.gradle/.setup-gradle in 1021ms
+2026-10-17T13:32:51.4651618Z ##[endgroup]
+2026-10-17T13:32:51.4652921Z Generating Job Summary
+2026-10-17T13:32:51.4671047Z Completed post-action step
+2026-10-17T13:32:51.4848251Z Post job cleanup.
+2026-10-17T13:32:51.6532529Z (node:3138) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-17T13:32:51.6534004Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-17T13:32:51.6841002Z Post job cleanup.
+2026-10-17T13:32:51.8351168Z [command]/usr/bin/git version
+2026-10-17T13:32:51.8431128Z git version 2.55.0
+2026-10-17T13:32:51.8521846Z Temporarily overriding HOME='/home/runner/work/_temp/2517fd4e-d8e9-4741-a383-24d56c21d7e4' before making global git config changes
+2026-10-17T13:32:51.8551826Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-17T13:32:51.8553429Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/scoreledger-android/scoreledger-android
+2026-10-17T13:32:51.8555788Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-17T13:32:51.8623236Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-17T13:32:51.8971660Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-17T13:32:51.9043190Z http.https://github.com/.extraheader
+2026-10-17T13:32:51.9063520Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-10-17T13:32:51.9143868Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-17T13:32:51.9554524Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-17T13:32:51.9609422Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-17T13:32:52.0055144Z Cleaning up orphan processes
+2026-10-17T13:32:52.0307593Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-java@v4, actions/upload-artifact@v4, gradle/actions/setup-gradle@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

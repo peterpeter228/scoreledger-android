@@ -1,0 +1,47 @@
+name: Package verified beta delivery
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/package-verified-beta.yml'
+      - 'tools/package_verified_delivery.py'
+permissions:
+  contents: read
+  actions: read
+jobs:
+  package:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 39036648565
+          github-token: ${{ github.token }}
+          name: scoreledger-internal-apk
+          path: verified-input/apk
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 39036648565
+          github-token: ${{ github.token }}
+          name: android-test-reports
+          path: verified-input/build-reports
+      - uses: actions/download-artifact@v4
+        with:
+          run-id: 39036648565
+          github-token: ${{ github.token }}
+          pattern: current-round-signed-device-api-*-attempt-1
+          path: verified-input/devices
+      - name: Verify exact accepted APK and all device evidence before packaging
+        run: python3 tools/package_verified_delivery.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ScoreLedger-0.2.0-Complete-Delivery
+          path: delivery-staging/
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 9
