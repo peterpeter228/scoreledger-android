@@ -1,0 +1,24 @@
+{
+  "buildCommit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
+  "workflowRun": 38985168690,
+  "job": 117254833533,
+  "build": "PASSED",
+  "pythonTests": 42,
+  "junitTests": 2,
+  "coreContractCases": 59,
+  "lint": "PASSED_WITH_WARNINGS",
+  "apk": {
+    "path": "evidence/d00-apk/app-localBeta-debug.apk",
+    "sha256": "8a9cba634603d572d9de83c9c1c6d9940a627f9c623d7510824e3573fcec35cb",
+    "bytes": 10997249,
+    "package": "com.example.scoreledger.beta.debug",
+    "versionName": "0.1.0-beta",
+    "minSdk": 26,
+    "targetSdk": 36,
+    "signature": "Android Debug; apksigner verification passed"
+  },
+  "androidInstrumentation": "COMPILED_NOT_RUN",
+  "deviceInstallation": "NOT_RUN",
+  "billing": "NOT_IMPLEMENTED",
+  "schema": "Real Room-generated schema v1 copied from build artifact"
+}

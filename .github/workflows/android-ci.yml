@@ -49,6 +49,9 @@ jobs:
           path: out/
           if-no-files-found: error
           retention-days: 14
+      - name: AOSP API 30 emulator instrumentation and launch
+        timeout-minutes: 20
+        run: bash tools/emulator_smoke.sh
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -59,7 +62,9 @@ jobs:
             app/build/test-results/
             app/schemas/
             evidence/android-ci-build.log
-            app/build/outputs/androidTest/
+            app/build/outputs/apk/androidTest/
+            evidence/emulator-*
+            evidence/android-instrumentation.log
             app/build/reports/
           if-no-files-found: warn
           retention-days: 14

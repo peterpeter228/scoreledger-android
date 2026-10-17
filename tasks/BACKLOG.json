@@ -6,7 +6,7 @@
     {
       "id": "D00",
       "title": "先让起步工程真实构建",
-      "status": "BLOCKED",
+      "status": "IN_PROGRESS",
       "dependsOn": [],
       "priority": "P0",
       "fileScope": [
@@ -31,7 +31,7 @@
         "evidence/d00-python.log",
         "evidence/d00-first-build.log"
       ],
-      "notes": "SDK license confirmation pending; Maven Central request blocked, elevated executor initialization failed. Baseline CLI 58 Kotlin and 42 Python passed, 59 Kotlin after regression. Standard wrapper generated. Android NOT_RUN/UNVERIFIED; D01 source prepared while blocked, not accepted."
+      "notes": "SDK license approved and SDK installed. Dedicated private repository created and first Android CI run 38985168690 is executing. Local Maven restrictions remain, but authorized GitHub build path is active. Standard wrapper and CLI rules verified; no APK or installation acceptance yet."
     },
     {
       "id": "D01",

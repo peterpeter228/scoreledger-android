@@ -1,9 +1,9 @@
 {
   "project": "ScoreLedger Android",
   "kitVersion": "1.0",
-  "asOf": "2026-10-17T00:08:52.630691+00:00",
-  "stage": "D00_sdk_install_and_first_ci",
-  "androidBuild": "BLOCKED",
+  "asOf": "2026-10-17T00:12:51.849725+00:00",
+  "stage": "D00_first_apk_built_emulator_pending",
+  "androidBuild": "VERIFIED",
   "deviceTests": "NOT_RUN",
   "billing": "NOT_IMPLEMENTED",
   "commercialRelease": "BLOCKED",
@@ -36,9 +36,21 @@
     "sdkLicense": "USER_APPROVED Sentinel_51a93471c0588191a3c9737e23794112",
     "repository": "NEW_PRIVATE_REPOSITORY_CONFIRMED",
     "wrapper": "VERIFIED_GENERATED",
-    "dataLayer": "D01 source and five instrumentation cases prepared, Android compilation/device execution NOT_RUN",
+    "dataLayer": "D01 source and instrumentation compiled; device execution pending",
     "gradleCoreCompile": "PASSED (real JVM compilation; Android not compiled)",
-    "gradleCoreTest": "BLOCKED_MISSING_JUNIT"
+    "gradleCoreTest": "PASSED_IN_CI",
+    "sdkInstalled": "SDK36,BuildTools35,platform-tools installed with approved Android license",
+    "apk": {
+      "path": "evidence/d00-apk/app-localBeta-debug.apk",
+      "sha256": "8a9cba634603d572d9de83c9c1c6d9940a627f9c623d7510824e3573fcec35cb",
+      "bytes": 10997249,
+      "package": "com.example.scoreledger.beta.debug",
+      "versionName": "0.1.0-beta",
+      "minSdk": 26,
+      "targetSdk": 36,
+      "signature": "Android Debug; apksigner verification passed"
+    },
+    "roomSchema": "GENERATED_V1"
   },
   "blockers": [
     {
@@ -46,5 +58,11 @@
       "status": "BLOCKED_ENVIRONMENT",
       "detail": "repo.maven.apache.org dependency download denied by policy; escalation executor failed before command execution; offline Gradle lacks junit 4.13.2 jar"
     }
-  ]
+  ],
+  "ci": {
+    "commit": "1ea7e5ba44b165856b7b3a5ee64ceceb7e21db0d",
+    "runId": 38985168690,
+    "status": "SUCCESS",
+    "url": "https://github.com/peterpeter228/scoreledger-android/actions/runs/38985168690"
+  }
 }
